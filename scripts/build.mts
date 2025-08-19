@@ -1,8 +1,9 @@
 import process from 'node:process'
 import { $ } from 'zx'
 
-// Build Go service
+// Setup dependencies
 await setupGo()
+await setupUPX()
 
 console.log('Building Go service...')
 const ldflags = `-s -w -X 'logic.version=${new Date().toISOString().slice(0, 10).replace(/-/g, '')}' -X 'logic.appBaseUrl=http://uni-token.app'`
@@ -16,15 +17,10 @@ await $`GOOS=linux GOARCH=amd64 go -C service build -ldflags=${ldflags} -o ../${
 await $`GOOS=windows GOARCH=amd64 go -C service build -ldflags=${ldflags} -o ../${releaseDir}/service-windows-amd64.exe ./main.go`
 await $`GOOS=darwin GOARCH=amd64 go -C service build -ldflags=${ldflags} -o ../${releaseDir}/service-darwin-amd64 ./main.go`
 
-// Compress binaries with UPX (if available)
-try {
-  console.log('Compressing binaries...')
-  await $`upx --best --lzma ${releaseDir}/service-linux-amd64`
-  await $`upx --best --lzma ${releaseDir}/service-windows-amd64.exe`
-}
-catch (err: any) {
-  console.log(`UPX not available, skipping compression. ${err}`)
-}
+// Compress binaries with UPX
+console.log('Compressing binaries...')
+await $`upx --best --lzma ${releaseDir}/service-linux-amd64`
+await $`upx --best --lzma ${releaseDir}/service-windows-amd64.exe`
 
 // Build frontend
 console.log('Building frontend...')
@@ -57,4 +53,33 @@ async function setupGo() {
   // Verify installation
   await $`go version`
   console.log('Go installation completed.')
+}
+
+async function setupUPX() {
+  try {
+    console.log('Checking UPX installation...')
+    await $`upx --version`
+    console.log('UPX is already installed.')
+    return
+  }
+  catch {
+    console.log('UPX is not installed, proceeding with installation...')
+  }
+
+  try {
+    // Download and install UPX
+    console.log('Downloading UPX...')
+    await $`curl -LO https://github.com/upx/upx/releases/download/v5.0.2/upx-5.0.2-amd64_linux.tar.xz`
+    await $`tar -xf upx-5.0.2-amd64_linux.tar.xz`
+    await $`mv upx-5.0.2-amd64_linux/upx /usr/local/bin/`
+    await $`rm -rf upx-5.0.2-amd64_linux upx-5.0.2-amd64_linux.tar.xz`
+
+    // Verify installation
+    await $`upx --version`
+    console.log('UPX installation completed.')
+  }
+  catch (err: any) {
+    console.log(`Failed to install UPX: ${err}`)
+    throw err
+  }
 }
