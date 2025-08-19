@@ -1,0 +1,8 @@
+packages:
+  - frontend
+  - sdk/node
+
+onlyBuiltDependencies:
+  - '@tailwindcss/oxide'
+  - esbuild
+  - vue-demi

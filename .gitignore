@@ -1,0 +1,11 @@
+node_modules
+.DS_Store
+.env
+dist
+__pycache__
+target
+service/uni-token-service
+service/data.db
+frontend/public/release
+.eslintcache
+sdk/node/README.md

@@ -1,0 +1,17 @@
+{
+  "name": "@uni-token/monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.13.1",
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint --cache",
+    "build": "node --experimental-strip-types scripts/build.mts"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^5.2.1",
+    "@types/node": "^24.3.0",
+    "eslint": "^9.33.0",
+    "zx": "^8.8.0"
+  }
+}
