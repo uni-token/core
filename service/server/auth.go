@@ -10,8 +10,6 @@ import (
 	"uni-token-service/store"
 )
 
-var jwtSecret = []byte("your-secret-key-change-this-in-production")
-
 type LoginRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`

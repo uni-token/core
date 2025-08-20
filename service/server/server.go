@@ -5,12 +5,15 @@ import (
 	"net"
 	"strconv"
 	"time"
+	"uni-token-service/logic"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func SetupAPIServer() (int, error) {
+	logic.InitJWTSecret()
+
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 

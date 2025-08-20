@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
 	"time"
@@ -12,7 +13,14 @@ func MakeToken() string {
 	return "TODO"
 }
 
-var jwtSecret = []byte("your-secret-key-change-this-in-production")
+var jwtSecret = make([]byte, 32)
+
+func InitJWTSecret() {
+	// Generate a random 32-byte secret for JWT signing
+	if _, err := rand.Read(jwtSecret); err != nil {
+		panic("failed to generate JWT secret: " + err.Error())
+	}
+}
 
 type JWTClaims struct {
 	Id string `json:"id"`
