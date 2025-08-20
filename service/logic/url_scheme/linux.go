@@ -33,12 +33,6 @@ func registerURLSchemeLinux(options UrlSchemeRegisterOption) error {
 	desktopFileName := fmt.Sprintf("%s.desktop", options.AppName)
 	desktopFilePath := filepath.Join(desktopDir, desktopFileName)
 
-	// Get current executable path
-	exePath, err := os.Executable()
-	if err != nil {
-		return fmt.Errorf("failed to get executable path: %w", err)
-	}
-
 	// Write .desktop file content
 	content := fmt.Sprintf(`[Desktop Entry]
 Name=%s
@@ -47,7 +41,7 @@ Exec=%s url %%u
 Terminal=false
 Type=Application
 MimeType=x-scheme-handler/%s;
-`, options.AppName, options.Scheme, exePath, options.Scheme)
+`, options.AppName, options.Scheme, options.ExecutablePath, options.Scheme)
 
 	if err := os.WriteFile(desktopFilePath, []byte(content), 0644); err != nil {
 		return fmt.Errorf("failed to write .desktop file: %w", err)

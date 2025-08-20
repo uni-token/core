@@ -10,7 +10,7 @@ import (
 
 	"uni-token-service/discovery"
 	"uni-token-service/logic"
-	urlScheme "uni-token-service/logic/url_scheme"
+	"uni-token-service/logic/url_scheme"
 	"uni-token-service/server"
 	"uni-token-service/store"
 )
@@ -71,6 +71,7 @@ func main() {
 		Name:        serviceName,
 		DisplayName: serviceDisplayName,
 		Description: serviceDescription,
+		Executable:  discovery.GetServiceExecutablePath(),
 		Arguments:   []string{},
 	}
 
@@ -86,6 +87,7 @@ func main() {
 	}
 
 	if len(os.Args) < 2 {
+		discovery.InstallExecutable()
 		err := s.Run()
 		if err != nil {
 			panic(err)
@@ -123,20 +125,28 @@ func main() {
 }
 
 func handleSetup() {
+	err := discovery.InstallExecutable()
+	if err != nil {
+		fmt.Printf("Failed to install service executable: %v\n", err)
+		return
+	}
+
+	if discovery.IsServiceRunning() {
+		return
+	}
+
 	// Register URL scheme for the application
-	err := urlScheme.RegisterURLScheme(urlScheme.UrlSchemeRegisterOption{
-		Scheme:  "uni-token",
-		AppName: "UniToken",
+	execPath := discovery.GetServiceExecutablePath()
+	err = urlScheme.RegisterURLScheme(urlScheme.UrlSchemeRegisterOption{
+		Scheme:         "uni-token",
+		AppName:        "UniToken",
+		ExecutablePath: execPath,
 	})
 	if err != nil {
 		panic(err)
 	}
 
-	// Install and start the service
-	execPath, err := os.Executable()
-	if err != nil {
-		panic(err)
-	}
+	// Install and start the service in sudo mode
 	res, err := logic.SudoExec(
 		execPath+" setup-in-sudo",
 		&logic.SudoOptions{

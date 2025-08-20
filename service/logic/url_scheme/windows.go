@@ -4,7 +4,6 @@ package urlScheme
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -18,13 +17,7 @@ func registerURLSchemeLinux(options UrlSchemeRegisterOption) error {
 
 // registerURLSchemeForWindows registers URL scheme on Windows
 func registerURLSchemeWindows(options UrlSchemeRegisterOption) error {
-	// Get current executable path
-	exePath, err := os.Executable()
-	if err != nil {
-		return fmt.Errorf("failed to get executable path: %w", err)
-	}
-	// Convert path to Windows-style slashes
-	exePath = filepath.ToSlash(exePath)
+	exePath := filepath.ToSlash(options.ExecutablePath)
 
 	// Build registry path
 	// HKEY_CURRENT_USER is user-specific, can be modified without admin privileges

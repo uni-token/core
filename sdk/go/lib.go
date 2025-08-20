@@ -35,19 +35,16 @@ type serviceInfo struct {
 	URL string `json:"url"`
 }
 
-// appRegisterRequest represents the request body for app registration
 type appRegisterRequest struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	UID         string `json:"uid,omitempty"`
 }
 
-// appRegisterResponse represents the response from app registration
 type appRegisterResponse struct {
 	Token string `json:"token"`
 }
 
-// uniTokenDetectionResponse represents the response for service detection
 type uniTokenDetectionResponse struct {
 	UniToken bool `json:"__uni_token"`
 }
@@ -188,18 +185,18 @@ func downloadService(execPath string) error {
 }
 
 // RequestUniTokenOpenAI requests user for OpenAI token via UniToken service
-// Returns the baseURL and apiKey, or nil if the user does not grant permission
-func RequestUniTokenOpenAI(options UniTokenOptions) (*UniTokenResult, error) {
+// Returns the baseURL and apiKey. apiKey is empty if the user does not grant permission
+func RequestUniTokenOpenAI(options UniTokenOptions) (UniTokenResult, error) {
 	rootPath, err := setupServiceRootPath()
 	if err != nil {
-		return nil, fmt.Errorf("failed to setup service root path: %w", err)
+		return UniTokenResult{}, fmt.Errorf("failed to setup service root path: %w", err)
 	}
 	serverURL, err := detectRunningURLFromFile(rootPath)
 
 	if err != nil || serverURL == "" {
 		serverURL, err = startService(rootPath)
 		if err != nil {
-			return nil, fmt.Errorf("failed to start service: %w", err)
+			return UniTokenResult{}, fmt.Errorf("failed to start service: %w", err)
 		}
 	}
 
@@ -211,7 +208,7 @@ func RequestUniTokenOpenAI(options UniTokenOptions) (*UniTokenResult, error) {
 
 	jsonData, err := json.Marshal(requestBody)
 	if err != nil {
-		return nil, fmt.Errorf("failed to marshal request: %w", err)
+		return UniTokenResult{}, fmt.Errorf("failed to marshal request: %w", err)
 	}
 
 	client := &http.Client{Timeout: 30 * time.Second}
@@ -221,12 +218,12 @@ func RequestUniTokenOpenAI(options UniTokenOptions) (*UniTokenResult, error) {
 		bytes.NewBuffer(jsonData),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("registration request failed: %w", err)
+		return UniTokenResult{}, fmt.Errorf("registration request failed: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusForbidden {
-		return &UniTokenResult{
+		return UniTokenResult{
 			BaseURL: fmt.Sprintf("%sopenai/", serverURL),
 			APIKey:  "",
 		}, nil // User denied permission
@@ -234,15 +231,15 @@ func RequestUniTokenOpenAI(options UniTokenOptions) (*UniTokenResult, error) {
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("registration failed: HTTP %d - %s", resp.StatusCode, string(body))
+		return UniTokenResult{}, fmt.Errorf("registration failed: HTTP %d - %s", resp.StatusCode, string(body))
 	}
 
 	var registerResp appRegisterResponse
 	if err := json.NewDecoder(resp.Body).Decode(&registerResp); err != nil {
-		return nil, fmt.Errorf("failed to decode response: %w", err)
+		return UniTokenResult{}, fmt.Errorf("failed to decode response: %w", err)
 	}
 
-	return &UniTokenResult{
+	return UniTokenResult{
 		BaseURL: fmt.Sprintf("%sopenai/", serverURL),
 		APIKey:  registerResp.Token,
 	}, nil

@@ -9,17 +9,30 @@ import (
 	"syscall"
 )
 
-func getFilePath() string {
+func getServiceRootPath() string {
 	if runtime.GOOS == "windows" {
 		localAppData := os.Getenv("LOCALAPPDATA")
-		return filepath.Join(localAppData, "UniToken", "service.json")
+		return filepath.Join(localAppData, "UniToken")
+	} else {
+		home := os.Getenv("HOME")
+		return filepath.Join(home, ".local", "share", "uni-token")
 	}
-	home := os.Getenv("HOME")
-	return filepath.Join(home, ".local", "share", "uni-token", "service.json")
+}
+
+func GetServiceExecutablePath() string {
+	if runtime.GOOS == "windows" {
+		return filepath.Join(getServiceRootPath(), "service.exe")
+	} else {
+		return filepath.Join(getServiceRootPath(), "service")
+	}
+}
+
+func getServiceJsonPath() string {
+	return filepath.Join(getServiceRootPath(), "service.json")
 }
 
 func SetupFileDiscovery(port int) error {
-	filePath := getFilePath()
+	filePath := getServiceJsonPath()
 
 	// Create directory if it doesn't exist
 	if err := os.MkdirAll(filepath.Dir(filePath), 0755); err != nil {
@@ -27,7 +40,7 @@ func SetupFileDiscovery(port int) error {
 	}
 
 	// Write initial service data
-	if err := os.WriteFile(filePath, []byte(GetData(&port)), 0644); err != nil {
+	if err := os.WriteFile(filePath, []byte(GetServiceInfo(&port)), 0644); err != nil {
 		return err
 	}
 
@@ -40,7 +53,7 @@ func SetupFileDiscovery(port int) error {
 	go func() {
 		<-c
 		// Write final service data with null port on exit
-		os.WriteFile(filePath, []byte(GetData(nil)), 0644)
+		os.WriteFile(filePath, []byte(GetServiceInfo(nil)), 0644)
 		os.Exit(0)
 	}()
 

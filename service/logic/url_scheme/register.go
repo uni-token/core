@@ -6,8 +6,9 @@ import (
 )
 
 type UrlSchemeRegisterOption struct {
-	Scheme  string
-	AppName string
+	Scheme         string
+	AppName        string
+	ExecutablePath string
 }
 
 func RegisterURLScheme(options UrlSchemeRegisterOption) error {
