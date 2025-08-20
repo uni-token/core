@@ -6,7 +6,7 @@ import (
 
 	"github.com/openai/openai-go/v2"
 	"github.com/openai/openai-go/v2/option"
-	"github.com/uni-token/core/sdk/go/uni-token"
+	"github.com/uni-token/core/sdk/go"
 )
 
 func loadApiKey() string {

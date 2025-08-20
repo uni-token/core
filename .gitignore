@@ -9,5 +9,6 @@ service/data.db
 frontend/public/release
 .eslintcache
 sdk/node/README.md
-**/.vitepress/cache
+docs/.vitepress/cache
 .fuse_hidden*
+sdk/go/example/uni-token-example

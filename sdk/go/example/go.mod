@@ -6,7 +6,7 @@ toolchain go1.24.6
 
 require (
 	github.com/openai/openai-go/v2 v2.1.0
-	github.com/uni-token/core/sdk/go/uni-token v0.0.0-00010101000000-000000000000
+	github.com/uni-token/core/sdk/go v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -16,4 +16,4 @@ require (
 	github.com/tidwall/sjson v1.2.5 // indirect
 )
 
-replace github.com/uni-token/core/sdk/go/uni-token => ../uni-token
+replace github.com/uni-token/core/sdk/go => ..
