@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AlertTriangle, BarChart3, Brain, Grid3X3, InfoIcon, Settings, Zap } from 'lucide-vue-next'
+import { AlertTriangle, BarChart3, Brain, Grid3X3, InfoIcon, Settings } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 import {
@@ -20,6 +20,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
 import { useService } from '@/composables/service'
+import LogoSvg from '/logo.svg?raw'
 
 const { t } = useI18n()
 const { serverConnected, serviceUrl } = useService()
@@ -29,8 +30,8 @@ const { serverConnected, serviceUrl } = useService()
   <Sidebar>
     <SidebarHeader>
       <div class="flex items-center gap-2 px-2 py-2">
-        <div class="rounded-lg bg-primary p-2 text-primary-foreground">
-          <Zap class="h-4 w-4" />
+        <div class="rounded-lg bg-primary p-1 text-primary-foreground">
+          <div class="h-6 w-6" v-html="LogoSvg" />
         </div>
         <div>
           <h1 class="text-lg font-semibold">

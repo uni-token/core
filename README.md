@@ -1,6 +1,6 @@
 # UniToken
 
-![Arch](https://uni-token.com/arch.png)
+![Arch](https://docs.uni-token.app/arch.png)
 
 <!--DEV-->
 

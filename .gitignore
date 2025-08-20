@@ -9,3 +9,4 @@ service/data.db
 frontend/public/release
 .eslintcache
 sdk/node/README.md
+**/.vitepress/cache

@@ -17,6 +17,7 @@ async function main() {
   const result = await requestUniTokenOpenAI({
     appName: 'MyApp',
     description: 'This is a test application',
+    // If not provided, the user will always be prompted to grant permission to this app.
     savedApiKey: loadApiKey(),
   })
   saveApiKey(result?.apiKey)
