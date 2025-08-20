@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useService } from '@/composables/service'
+import { useServiceStore } from '@/stores'
 
 interface UsageStats {
   totalTokens: number
@@ -43,7 +43,7 @@ interface UsageStats {
 }
 
 const { t } = useI18n()
-const { fetch } = useService()
+const { fetch } = useServiceStore()
 const stats = ref<UsageStats | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)

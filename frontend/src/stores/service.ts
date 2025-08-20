@@ -1,7 +1,8 @@
-import { createSharedComposable, useIntervalFn } from '@vueuse/core'
+import { useIntervalFn } from '@vueuse/core'
+import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
-export const useService = createSharedComposable(() => {
+export const useServiceStore = defineStore('service', () => {
   const serverConnected = ref(true)
   const servicePort = ref<number | null>(null)
   const serviceUrl = computed(() => {

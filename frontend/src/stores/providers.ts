@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
-import { useService } from '@/composables/service'
+import { useServiceStore } from './service'
 
 export interface LLMProvider {
   id: string
@@ -14,7 +14,7 @@ export interface LLMProvider {
 }
 
 export const useProvidersStore = defineStore('providers', () => {
-  const { fetch } = useService()
+  const { fetch } = useServiceStore()
   const { t } = useI18n()
 
   // State

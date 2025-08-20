@@ -3,8 +3,8 @@ import { renderSVG } from 'uqr'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
-import { useService } from '@/composables/service'
 import { useProvidersStore } from './providers'
+import { useServiceStore } from './service'
 
 export interface SiliconFlowUserInfo {
   isLoggedIn: boolean
@@ -71,7 +71,7 @@ export interface PaymentInfo {
 }
 
 export const useSiliconFlowStore = defineStore('siliconflow', () => {
-  const { fetch } = useService()
+  const { fetch } = useServiceStore()
   const providersStore = useProvidersStore()
   const { t } = useI18n()
 

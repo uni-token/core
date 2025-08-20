@@ -4,14 +4,14 @@ import { useI18n } from 'vue-i18n'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/composables/auth'
+import { useAuthStore } from '@/stores'
 
 const props = defineProps<{
   register?: boolean
 }>()
 
 const { t } = useI18n()
-const { login, register, isLoading } = useAuth()
+const authStore = useAuthStore()
 
 const username = ref('')
 const password = ref('')
@@ -39,8 +39,8 @@ async function handleSubmit() {
 
   try {
     const result = props.register
-      ? await register(username.value, password.value)
-      : await login(username.value, password.value)
+      ? await authStore.register(username.value, password.value)
+      : await authStore.login(username.value, password.value)
 
     if (result.status !== 'success') {
       errorMessage.value = result.message || t('loginForm.operationFailed')
@@ -78,7 +78,7 @@ async function handleSubmit() {
               type="text"
               :placeholder="t('loginForm.usernamePlaceholder')"
               required
-              :disabled="isLoading"
+              :disabled="authStore.isLoading"
               autocomplete="username"
               :aria-invalid="errorMessage ? 'true' : 'false'"
               :aria-describedby="errorMessage ? 'error-message' : undefined"
@@ -92,7 +92,7 @@ async function handleSubmit() {
               type="password"
               :placeholder="t('loginForm.passwordPlaceholder')"
               required
-              :disabled="isLoading"
+              :disabled="authStore.isLoading"
               :autocomplete="props.register ? 'new-password' : 'current-password'"
               :aria-invalid="errorMessage ? 'true' : 'false'"
               :aria-describedby="errorMessage ? 'error-message' : undefined"
@@ -106,7 +106,7 @@ async function handleSubmit() {
               type="password"
               :placeholder="t('loginForm.confirmPasswordPlaceholder')"
               required
-              :disabled="isLoading"
+              :disabled="authStore.isLoading"
               autocomplete="new-password"
               :aria-invalid="errorMessage ? 'true' : 'false'"
               :aria-describedby="errorMessage ? 'error-message' : undefined"
@@ -116,10 +116,10 @@ async function handleSubmit() {
           <Button
             type="submit"
             class="w-full"
-            :disabled="isLoading"
-            :aria-label="isLoading ? t('loginForm.processingWait') : (props.register ? t('loginForm.submitRegister') : t('loginForm.submitLogin'))"
+            :disabled="authStore.isLoading"
+            :aria-label="authStore.isLoading ? t('loginForm.processingWait') : (props.register ? t('loginForm.submitRegister') : t('loginForm.submitLogin'))"
           >
-            <div v-if="isLoading" class="flex items-center gap-2">
+            <div v-if="authStore.isLoading" class="flex items-center gap-2">
               <div
                 class="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"
                 aria-hidden="true"

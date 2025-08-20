@@ -19,11 +19,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
-import { useService } from '@/composables/service'
+import { useServiceStore } from '@/stores'
 import LogoSvg from '/logo.svg?raw'
 
 const { t } = useI18n()
-const { serverConnected, serviceUrl } = useService()
+const serviceStore = useServiceStore()
 </script>
 
 <template>
@@ -107,7 +107,7 @@ const { serverConnected, serviceUrl } = useService()
 
     <SidebarFooter>
       <div class="px-2 space-y-2">
-        <div v-if="!serverConnected">
+        <div v-if="!serviceStore.serverConnected">
           <div class="rounded-lg border border-orange-200 bg-orange-50 p-2 dark:border-orange-900 dark:bg-orange-950">
             <div class="flex items-start gap-2">
               <AlertTriangle class="h-4 w-4 text-orange-600 dark:text-orange-400 mt-0.5 flex-shrink-0" />
@@ -132,14 +132,14 @@ const { serverConnected, serviceUrl } = useService()
               <div class="h-8 flex items-center gap-1 text-xs text-sidebar-foreground/70">
                 <div
                   class="mx-1 h-2 w-2 rounded-full mb-[2px]"
-                  :class="serverConnected ? 'bg-green-500' : 'bg-red-500'"
+                  :class="serviceStore.serverConnected ? 'bg-green-500' : 'bg-red-500'"
                 />
-                <span class="text-sm select-none">{{ serverConnected ? t('service.connected') : t('service.disconnected') }}</span>
+                <span class="text-sm select-none">{{ serviceStore.serverConnected ? t('service.connected') : t('service.disconnected') }}</span>
               </div>
             </HoverCardTrigger>
-            <HoverCardContent v-if="serverConnected" :side-offset="0" class="pt-2 py-1">
+            <HoverCardContent v-if="serviceStore.serverConnected" :side-offset="0" class="pt-2 py-1">
               <div class="font-mono text-sm text-center mt-1 ">
-                {{ serviceUrl }}
+                {{ serviceStore.serviceUrl }}
               </div>
             </HoverCardContent>
           </HoverCard>

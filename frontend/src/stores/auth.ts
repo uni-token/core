@@ -1,6 +1,7 @@
-import { createSharedComposable, useLocalStorage } from '@vueuse/core'
+import { useLocalStorage } from '@vueuse/core'
+import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { useService } from './service'
+import { useServiceStore } from './service'
 
 export interface AuthState {
   status: 'success' | 'error' | 'not_registered'
@@ -9,8 +10,8 @@ export interface AuthState {
   token?: string
 }
 
-export const useAuth = createSharedComposable(() => {
-  const { fetch: serviceFetch, token } = useService()
+export const useAuthStore = defineStore('auth', () => {
+  const serviceStore = useServiceStore()
 
   const params = new URLSearchParams(window.location.search)
   const currentUser = ref<string | null>(params.get('username') || null)
@@ -27,7 +28,7 @@ export const useAuth = createSharedComposable(() => {
   async function login(username: string, password: string): Promise<AuthState> {
     isLoading.value = true
     try {
-      const response = await serviceFetch('auth/login', {
+      const response = await serviceStore.fetch('auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -39,7 +40,7 @@ export const useAuth = createSharedComposable(() => {
 
       if (result.status === 'success' && result.username) {
         currentUser.value = result.username
-        token.value = result.token!
+        serviceStore.token = result.token!
         savedUsername.value = username
         savedPassword.value = password
       }
@@ -64,7 +65,7 @@ export const useAuth = createSharedComposable(() => {
   ): Promise<AuthState> {
     isLoading.value = true
     try {
-      const response = await serviceFetch('auth/register', {
+      const response = await serviceStore.fetch('auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -76,7 +77,7 @@ export const useAuth = createSharedComposable(() => {
 
       if (result.status === 'success' && result.username) {
         currentUser.value = result.username
-        token.value = result.token!
+        serviceStore.token = result.token!
         savedUsername.value = username
         savedPassword.value = password
       }
@@ -97,7 +98,7 @@ export const useAuth = createSharedComposable(() => {
 
   async function logout() {
     currentUser.value = null
-    token.value = null
+    serviceStore.token = null
     savedUsername.value = ''
     savedPassword.value = ''
   }

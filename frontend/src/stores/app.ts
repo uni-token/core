@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
-import { useService } from '@/composables/service'
+import { useServiceStore } from './service'
 
 export interface App {
   id: string
@@ -15,7 +15,7 @@ export interface App {
 }
 
 export const useAppStore = defineStore('app', () => {
-  const { fetch } = useService()
+  const { fetch } = useServiceStore()
   const { t } = useI18n()
 
   // State

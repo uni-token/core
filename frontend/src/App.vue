@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AuthState } from '@/composables/auth'
+import type { AuthState } from './stores'
 import Clarity from '@microsoft/clarity'
 import { Zap } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
@@ -10,13 +10,13 @@ import LoginForm from '@/components/LoginForm.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { Toaster } from '@/components/ui/sonner'
-import { useAuth } from '@/composables/auth'
 import { useThemeStore } from '@/stores/theme'
 import ActionHandler from '@/views/ActionHandler.vue'
+import { useAuthStore } from './stores'
 import 'vue-sonner/style.css'
 
 const { t } = useI18n()
-const { checkAuth, isLoggedIn } = useAuth()
+const authStore = useAuthStore()
 const { replace, currentRoute } = useRouter()
 const themeStore = useThemeStore()
 
@@ -28,7 +28,7 @@ onMounted(async () => {
   themeStore.initTheme()
   themeStore.setupSystemThemeListener()
 
-  authState.value = await checkAuth()
+  authState.value = await authStore.checkAuth()
   isCheckingAuth.value = false
   setTimeout(() => replace(currentRoute.value.path), 100)
   Clarity.init('sx60zbxtfz')
@@ -48,7 +48,7 @@ onMounted(async () => {
       </div>
     </div>
 
-    <LoginForm v-else-if="!isLoggedIn" :register="authState?.status === 'not_registered'" />
+    <LoginForm v-else-if="!authStore.isLoggedIn" :register="authState?.status === 'not_registered'" />
 
     <SidebarProvider v-else>
       <AppSidebar />

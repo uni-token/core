@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
-import { useService } from '@/composables/service'
+import { useServiceStore } from './service'
 
 export interface AppPreset {
   id: string
@@ -13,7 +13,7 @@ export interface AppPreset {
 }
 
 export const usePresetsStore = defineStore('presets', () => {
-  const { fetch } = useService()
+  const { fetch } = useServiceStore()
   const { t } = useI18n()
 
   // State

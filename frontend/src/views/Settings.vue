@@ -19,25 +19,24 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { useAuth } from '@/composables/auth'
-import { useService } from '@/composables/service'
+import { useAuthStore, useServiceStore } from '@/stores'
 import { useAppStore } from '@/stores/app'
 
 const { t } = useI18n()
 const router = useRouter()
-const { logout, currentUser } = useAuth()
-const { fetch, serverConnected } = useService()
+const authStore = useAuthStore()
+const serviceStore = useServiceStore()
 const { deleteAllApps } = useAppStore()
 
 const clearingRecords = ref(false)
 const deletingApps = ref(false)
 
 const serviceStatus = computed(() => {
-  return serverConnected.value ? t('service.connected') : t('service.disconnected')
+  return serviceStore.serverConnected ? t('service.connected') : t('service.disconnected')
 })
 
 function handleLogout() {
-  logout()
+  authStore.logout()
   toast.success(t('settings.logoutSuccess'))
   router.push('/')
 }
@@ -126,7 +125,7 @@ async function handleDeleteAllApps() {
                   {{ t('settings.currentUser') }}
                 </h4>
                 <p class="text-sm text-muted-foreground">
-                  {{ currentUser || t('settings.unknownUser') }}
+                  {{ authStore.currentUser || t('settings.unknownUser') }}
                 </p>
               </div>
             </div>
@@ -265,7 +264,7 @@ async function handleDeleteAllApps() {
             <div class="flex justify-between">
               <span class="text-muted-foreground">{{ t('settings.serviceStatus') }}:</span>
               <div class="flex items-center gap-2">
-                <div class="h-2 w-2 rounded-full" :class="serverConnected ? 'bg-green-500' : 'bg-red-500'" />
+                <div class="h-2 w-2 rounded-full" :class="serviceStore.serverConnected ? 'bg-green-500' : 'bg-red-500'" />
                 <span>{{ serviceStatus }}</span>
               </div>
             </div>
