@@ -5,7 +5,7 @@ import json
 import requests
 
 
-class UnitedTokenClient:
+class UniTokenClient:
     def __init__(self):
         self.server_url = None  # type: str | None
         self.setup_root_path()
@@ -17,7 +17,7 @@ class UnitedTokenClient:
 
     def setup_root_path(self):
         if sys.platform == "win32":
-            self.root_path = os.path.join(os.environ["LOCALAPPDATA"], "UnitedToken")
+            self.root_path = os.path.join(os.environ["LOCALAPPDATA"], "UniToken")
         else:
             self.root_path = os.path.join(os.environ["HOME"], ".local/share/uni-token")
 
@@ -38,7 +38,7 @@ class UnitedTokenClient:
 
             self.server_url = service_info.get("url")
 
-            if not self.get("").json().get("__united_token", None):
+            if not self.get("").json().get("__uni_token", None):
                 self.server_url = None
         except Exception as _:
             self.server_url = None
@@ -87,7 +87,7 @@ class UnitedTokenClient:
 def request_unitoken_openai(
     app_name: str, description: str, saved_api_key: str | None = None
 ) -> tuple[str, str | None]:
-    client = UnitedTokenClient()
+    client = UniTokenClient()
     base_url = str(client.server_url) + "openai/"
 
     response = client.post(

@@ -59,7 +59,7 @@ export const useService = createSharedComposable(() => {
         cache: 'no-cache',
         method: 'GET',
       })
-      if ((await response.json()).__united_token) {
+      if ((await response.json()).__uni_token) {
         return true
       }
     }

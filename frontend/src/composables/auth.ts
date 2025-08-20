@@ -17,8 +17,8 @@ export const useAuth = createSharedComposable(() => {
   const isLoggedIn = computed(() => !!currentUser.value)
   const isLoading = ref(false)
 
-  const savedUsername = useLocalStorage('united_token_username', '')
-  const savedPassword = useLocalStorage('united_token_password', '')
+  const savedUsername = useLocalStorage('uni_token_username', '')
+  const savedPassword = useLocalStorage('uni_token_password', '')
 
   function checkAuth() {
     return login(savedUsername.value, savedPassword.value)

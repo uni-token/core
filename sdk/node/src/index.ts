@@ -9,7 +9,7 @@ function setupServiceRootPath(): string {
 
   let root: string
   if (os.platform() === 'win32') {
-    root = path.join(userHome, 'AppData', 'Local', 'UnitedToken')
+    root = path.join(userHome, 'AppData', 'Local', 'UniToken')
   }
   else {
     root = path.join(userHome, '.local', 'share', 'uni-token')
@@ -37,7 +37,7 @@ async function detectRunningUrlFromFile(rootPath: string): Promise<string | null
     if (serverUrl) {
       const response = await fetch(serverUrl)
       const data = await response.json()
-      if (data && typeof data === 'object' && '__united_token' in data) {
+      if (data && typeof data === 'object' && '__uni_token' in data) {
         return serverUrl
       }
     }
