@@ -71,7 +71,6 @@ func main() {
 		Name:        serviceName,
 		DisplayName: serviceDisplayName,
 		Description: serviceDescription,
-		Executable:  discovery.GetServiceExecutablePath(),
 		Arguments:   []string{},
 	}
 

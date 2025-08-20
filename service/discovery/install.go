@@ -22,12 +22,21 @@ func InstallExecutable() error {
 		return nil
 	}
 
-	if _, err := os.Stat(targetPath); os.IsNotExist(err) {
-		if err := os.MkdirAll(filepath.Dir(targetPath), 0755); err != nil {
+	_, err := os.Stat(targetPath)
+	notExist := os.IsNotExist(err)
+
+	if err := os.MkdirAll(filepath.Dir(targetPath), 0755); err != nil {
+		if notExist {
 			return err
+		} else {
+			return nil
 		}
-		if err := copyFile(selfPath, targetPath); err != nil {
+	}
+	if err := copyFile(selfPath, targetPath); err != nil {
+		if notExist {
 			return err
+		} else {
+			return nil
 		}
 	}
 
