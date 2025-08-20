@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -11,6 +10,7 @@ import (
 
 	"uni-token-service/discovery"
 	"uni-token-service/logic"
+	urlScheme "uni-token-service/logic/url_scheme"
 	"uni-token-service/server"
 	"uni-token-service/store"
 )
@@ -94,50 +94,87 @@ func main() {
 	}
 	command := os.Args[1]
 
-	if command == "sudo" {
-		command, err := filepath.Abs(os.Args[0])
-		if err != nil {
-			panic(err)
-		}
-		for _, arg := range os.Args[2:] {
-			command += " " + arg
-		}
-
-		res, err := logic.SudoExec(command, &logic.SudoOptions{
-			Name: serviceDisplayName,
-		})
-		if err != nil {
-			panic(err)
-		}
-		if res.Stdout != "" {
-			fmt.Println(res.Stdout)
-		}
-		if res.Stderr != "" {
-			fmt.Println(res.Stderr)
-		}
-		return
-	}
-
 	if command == "version" {
 		fmt.Printf("Service Version: %d\n", logic.GetVersion())
 		return
 	}
 
+	if command == "url" {
+		handleUrlScheme(os.Args[2])
+		return
+	}
+
 	if command == "setup" {
-		err = service.Control(s, "install")
-		if err != nil && !strings.Contains(err.Error(), "already exists") {
-			fmt.Println("Failed to install service:", err)
-		}
-		err = service.Control(s, "start")
-		if err != nil {
-			panic(err)
-		}
+		handleSetup()
+		return
+	}
+
+	if command == "setup-in-sudo" {
+		handleSetupInSudo(&s)
 		return
 	}
 
 	prg.logger.Infof("Executing command: %s\n", command)
 
 	err = service.Control(s, command)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func handleSetup() {
+	// Register URL scheme for the application
+	err := urlScheme.RegisterURLScheme(urlScheme.UrlSchemeRegisterOption{
+		Scheme:  "uni-token",
+		AppName: "UniToken",
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	// Install and start the service
+	execPath, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+	res, err := logic.SudoExec(
+		execPath+" setup-in-sudo",
+		&logic.SudoOptions{
+			Name: serviceDisplayName,
+		},
+	)
+	if err != nil {
+		panic(err)
+	}
+	if res.Stdout != "" {
+		fmt.Println(res.Stdout)
+	}
+	if res.Stderr != "" {
+		fmt.Println(res.Stderr)
+	}
+}
+
+func handleUrlScheme(url string) {
+	if !strings.HasPrefix(url, "uni-token://") {
+		fmt.Println("Invalid URL scheme. Expected 'uni-token://'.")
+		return
+	}
+	url = strings.TrimPrefix(url, "uni-token://")
+
+	switch url {
+	case "start":
+		handleSetup()
+	default:
+		fmt.Printf("Unknown URL action: %s\n", url)
+	}
+}
+
+func handleSetupInSudo(s *service.Service) {
+	err := service.Control(*s, "install")
+	if err != nil && !strings.Contains(err.Error(), "already exists") {
+		fmt.Println("Failed to install service:", err)
+	}
+	err = service.Control(*s, "start")
 	if err != nil {
 		panic(err)
 	}

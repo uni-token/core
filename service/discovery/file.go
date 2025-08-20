@@ -12,7 +12,7 @@ import (
 func getFilePath() string {
 	if runtime.GOOS == "windows" {
 		localAppData := os.Getenv("LOCALAPPDATA")
-		return filepath.Join(localAppData, "UnitedToken", "service.json")
+		return filepath.Join(localAppData, "UniToken", "service.json")
 	}
 	home := os.Getenv("HOME")
 	return filepath.Join(home, ".local", "share", "uni-token", "service.json")

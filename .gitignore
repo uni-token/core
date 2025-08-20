@@ -10,3 +10,4 @@ frontend/public/release
 .eslintcache
 sdk/node/README.md
 **/.vitepress/cache
+.fuse_hidden*
