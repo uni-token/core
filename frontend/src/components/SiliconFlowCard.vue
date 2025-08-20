@@ -67,8 +67,8 @@ async function handleCreateKey() {
           {{ t('providers.siliconFlow') }}
         </div>
 
-        <div class="h-2 w-2 bg-green-500 rounded-full" />
-        <div class="text-green-700 text-base">
+        <div class="h-2 w-2 bg-green-500 dark:bg-green-400 rounded-full" />
+        <div class="text-green-700 dark:text-green-500 text-base">
           {{ t('siliconFlow.loggedIn') }}
         </div>
 

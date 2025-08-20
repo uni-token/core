@@ -60,7 +60,7 @@ function formatDate(dateString: string) {
             </h3>
           </div>
 
-          <p class="text-gray-600 text-sm">
+          <p class="text-muted-foreground text-sm">
             {{ app.description || t('appDetailDialog.noDescription') }}
           </p>
         </div>

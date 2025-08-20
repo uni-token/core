@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
 import LanguageSelector from '@/components/LanguageSelector.vue'
+import ThemeSelector from '@/components/ThemeSelector.vue'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -105,6 +106,7 @@ async function handleDeleteAllApps() {
         <CardContent>
           <div class="space-y-4">
             <LanguageSelector />
+            <ThemeSelector />
           </div>
         </CardContent>
       </Card>

@@ -27,14 +27,14 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="space-y-1">
-    <div class="text-sm font-medium text-gray-700">
+  <div class="space-y-2">
+    <div class="text-sm font-medium">
       {{ t('providers.selectProvider') }}:
     </div>
-    <div v-if="providersStore.loading" class="text-sm text-gray-500">
+    <div v-if="providersStore.loading" class="text-sm text-muted-foreground">
       {{ t('providers.loadingProviders') }}
     </div>
-    <div v-else-if="providersStore.providers.length === 0" class="text-sm text-gray-500">
+    <div v-else-if="providersStore.providers.length === 0" class="text-sm text-muted-foreground">
       <span class="text-red-500">
         {{ t('providers.noProvidersAvailable') }}
       </span>
@@ -48,10 +48,10 @@ watchEffect(() => {
         v-for="provider in providersStore.providers"
         :key="provider.id"
         :variant="selectedProviderId === provider.id ? 'default' : 'secondary'"
-        class="cursor-pointer transition-colors hover:bg-gray-300"
+        class="cursor-pointer transition-colors"
         :class="{
-          'bg-blue-500 hover:bg-blue-600 text-white': selectedProviderId === provider.id,
-          'bg-gray-200 hover:bg-gray-300': selectedProviderId !== provider.id,
+          'bg-blue-500 hover:bg-blue-600 dark:bg-blue-800 dark:hover:bg-blue-600 text-white': selectedProviderId === provider.id,
+          'bg-muted hover:bg-muted-foreground': selectedProviderId !== provider.id,
         }"
         @click="selectedProviderId = provider.id"
       >
@@ -60,9 +60,8 @@ watchEffect(() => {
 
       <!-- Add new provider button -->
       <Badge
-        key="new"
         variant="secondary"
-        class="text-xs cursor-pointer transition-colors hover:bg-gray-300 h-6"
+        class="text-xs cursor-pointer transition-colors bg-muted hover:bg-muted-foreground h-6"
         @click="openAddProviderDialog = true"
       >
         <Plus class="inline h-4 w-4" />

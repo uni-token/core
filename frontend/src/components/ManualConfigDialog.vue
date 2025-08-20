@@ -54,7 +54,7 @@ watch(open, (newValue) => {
 
 <template>
   <Dialog v-model:open="open">
-    <DialogContent class="sm:max-w-lg" autocomplete="off">
+    <DialogContent class="sm:max-w-lg">
       <DialogHeader>
         <DialogTitle>{{ t('manualConfigDialog.title') }}</DialogTitle>
         <DialogDescription>
@@ -62,7 +62,7 @@ watch(open, (newValue) => {
         </DialogDescription>
       </DialogHeader>
 
-      <div class="mt-6 space-y-4" autocomplete="off">
+      <div class="mt-6 space-y-4">
         <div class="space-y-2">
           <label class="text-sm font-medium">{{ t('manualConfigDialog.providerName') }}</label>
           <Input

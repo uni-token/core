@@ -39,7 +39,7 @@
     "tools": "工具",
     "home": "首页",
     "usage": "用量统计",
-    "models": "模型管理",
+    "models": "模型提供商",
     "settings": "设置",
     "about": "关于",
     "appManagement": "应用管理"
@@ -98,6 +98,7 @@
     "general": "通用设置",
     "language": "语言",
     "theme": "主题",
+    "themeDescription": "选择您偏好的颜色主题",
     "darkMode": "深色模式",
     "lightMode": "浅色模式",
     "systemMode": "跟随系统",
@@ -156,7 +157,7 @@
     "manualConfigDescription": "手动输入 Base URL 和 API Key",
     "addManualConfig": "添加手动配置",
     "loggedIn": "已登录",
-    "notLoggedIn": "未登录",
+    "loggedOut": "未登录",
     "edit": "编辑",
     "siliconFlowDescription1": "通过",
     "siliconFlowDescription2": "购买和配置 API",
@@ -263,7 +264,8 @@
     "realname": "实名认证",
     "auth-success": "已认证",
     "not-authenticated": "未认证",
-    "realNameRequired": "实名认证后，才能充值"
+    "realNameRequired": "实名认证后，才能充值",
+    "accountRechargeDescription": "向硅基流动账户充值"
   },
   "presets": {
     "preset": "预设",

@@ -43,7 +43,7 @@ async function handleManualConfigSave(config: ManualConfig) {
     </CardHeader>
 
     <CardContent class="flex-grow">
-      <div class="text-sm text-gray-600">
+      <div class="text-sm text-muted-foreground">
         <p>{{ t('providers.manualConfigDescription') }}</p>
       </div>
     </CardContent>

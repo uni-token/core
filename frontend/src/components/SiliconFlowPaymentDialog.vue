@@ -5,6 +5,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
@@ -28,6 +29,9 @@ function handleOpenChange(open: boolean) {
     <DialogContent class="max-w-sm">
       <DialogHeader>
         <DialogTitle>{{ t('siliconFlow.accountRecharge') }}</DialogTitle>
+        <DialogDescription>
+          {{ t('siliconFlow.accountRechargeDescription') }}
+        </DialogDescription>
         <DialogClose />
       </DialogHeader>
       <div class="space-y-4">

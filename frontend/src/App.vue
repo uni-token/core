@@ -7,20 +7,27 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import AppSidebar from '@/components/AppSidebar.vue'
 import LoginForm from '@/components/LoginForm.vue'
+import ThemeToggle from '@/components/ThemeToggle.vue'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { Toaster } from '@/components/ui/sonner'
 import { useAuth } from '@/composables/auth'
+import { useThemeStore } from '@/stores/theme'
 import ActionHandler from '@/views/ActionHandler.vue'
 import 'vue-sonner/style.css'
 
 const { t } = useI18n()
 const { checkAuth, isLoggedIn } = useAuth()
 const { replace, currentRoute } = useRouter()
+const themeStore = useThemeStore()
 
 const authState = ref<AuthState | null>(null)
 const isCheckingAuth = ref(true)
 
 onMounted(async () => {
+  // Initialize theme
+  themeStore.initTheme()
+  themeStore.setupSystemThemeListener()
+
   authState.value = await checkAuth()
   isCheckingAuth.value = false
   setTimeout(() => replace(currentRoute.value.path), 100)
@@ -59,6 +66,7 @@ onMounted(async () => {
                 </h1>
               </div>
             </div>
+            <ThemeToggle />
           </div>
         </div>
         <RouterView />

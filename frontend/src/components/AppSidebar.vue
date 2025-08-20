@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { AlertTriangle, BarChart3, Brain, Grid3X3, InfoIcon, Settings, Zap } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
+import ThemeToggle from '@/components/ThemeToggle.vue'
 import {
   HoverCard,
   HoverCardContent,
@@ -124,22 +125,25 @@ const { serverConnected, serviceUrl } = useService()
           </div>
         </div>
 
-        <HoverCard :open-delay="400">
-          <HoverCardTrigger>
-            <div class="h-8 flex items-center gap-1 text-xs text-sidebar-foreground/70">
-              <div
-                class="mx-1 h-2 w-2 rounded-full mb-[2px]"
-                :class="serverConnected ? 'bg-green-500' : 'bg-red-500'"
-              />
-              <span class="text-sm select-none">{{ serverConnected ? t('service.connected') : t('service.disconnected') }}</span>
-            </div>
-          </HoverCardTrigger>
-          <HoverCardContent v-if="serverConnected" :side-offset="0" class="pt-2 py-1">
-            <div class="font-mono text-sm text-center mt-1 ">
-              {{ serviceUrl }}
-            </div>
-          </HoverCardContent>
-        </HoverCard>
+        <div class="flex items-center justify-between">
+          <HoverCard :open-delay="400">
+            <HoverCardTrigger>
+              <div class="h-8 flex items-center gap-1 text-xs text-sidebar-foreground/70">
+                <div
+                  class="mx-1 h-2 w-2 rounded-full mb-[2px]"
+                  :class="serverConnected ? 'bg-green-500' : 'bg-red-500'"
+                />
+                <span class="text-sm select-none">{{ serverConnected ? t('service.connected') : t('service.disconnected') }}</span>
+              </div>
+            </HoverCardTrigger>
+            <HoverCardContent v-if="serverConnected" :side-offset="0" class="pt-2 py-1">
+              <div class="font-mono text-sm text-center mt-1 ">
+                {{ serviceUrl }}
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+          <ThemeToggle />
+        </div>
       </div>
     </SidebarFooter>
   </Sidebar>

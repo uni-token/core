@@ -39,10 +39,10 @@
     "tools": "Tools",
     "home": "Home",
     "usage": "Usage",
-    "models": "Models",
+    "models": "Providers",
     "settings": "Settings",
     "about": "About",
-    "appManagement": "App Management"
+    "appManagement": "Apps"
   },
   "usage": {
     "title": "Token Usage Statistics",
@@ -98,6 +98,7 @@
     "general": "General Settings",
     "language": "Language",
     "theme": "Theme",
+    "themeDescription": "Choose your preferred color theme",
     "darkMode": "Dark Mode",
     "lightMode": "Light Mode",
     "systemMode": "Follow System",
@@ -156,7 +157,7 @@
     "manualConfigDescription": "Manually enter Base URL and API Key",
     "addManualConfig": "Add Provider",
     "loggedIn": "Logged In",
-    "notLoggedIn": "Logged Out",
+    "loggedOut": "Logged Out",
     "edit": "Edit",
     "siliconFlowDescription1": "Purchase and configure API through",
     "selectProvider": "Provider",
@@ -174,7 +175,8 @@
       "manualConfigSuccess": "Manual configuration provider saved successfully",
       "manualConfigError": "Failed to save manual configuration provider"
     },
-    "manualConfigSuccess": "Configuration successful"
+    "manualConfigSuccess": "Configuration successful",
+    "siliconFlowDescription2": " "
   },
   "siliconFlow": {
     "loggedIn": "Logged In",
@@ -262,7 +264,8 @@
     "realname": "Real-name verification",
     "auth-success": "Verified",
     "not-authenticated": "Not verified",
-    "realNameRequired": "Real-name verification required before recharge"
+    "realNameRequired": "Real-name verification required before recharge",
+    "accountRechargeDescription": "Recharge to your SiliconFlow account"
   },
   "presets": {
     "preset": "Preset",

@@ -58,7 +58,7 @@ onMounted(() => {
       </div>
 
       <div v-else-if="apps.length === 0" class="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center">
-        <p class="text-gray-600">
+        <p class="text-muted-foreground">
           {{ t('appManagement.noApps') }}
         </p>
       </div>

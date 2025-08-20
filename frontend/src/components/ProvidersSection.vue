@@ -69,23 +69,23 @@ onMounted(() => {
               </CardTitle>
               <div v-show="!siliconFlowStore.isLoading" class="flex items-center gap-2">
                 <span
-                  class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium text-gray-800"
+                  class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium text-accent-foreground"
                   :class="{
-                    'bg-emerald-200': siliconFlowStore.isLoggedIn,
-                    'bg-gray-200': !siliconFlowStore.isLoggedIn,
+                    'bg-emerald-200 dark:bg-green-500/60': siliconFlowStore.isLoggedIn,
+                    'bg-accent': !siliconFlowStore.isLoggedIn,
                   }"
                 >
-                  {{ siliconFlowStore.isLoggedIn ? t('providers.loggedIn') : t('providers.notLoggedIn') }}
+                  {{ siliconFlowStore.isLoggedIn ? t('providers.loggedIn') : t('providers.loggedOut') }}
                 </span>
               </div>
             </div>
           </CardHeader>
 
           <CardContent>
-            <div class="text-sm text-gray-600">
+            <div class="text-sm text-muted-foreground">
               <p>
                 {{ t('providers.siliconFlowDescription1') }}
-                <a href="https://www.siliconflow.cn" target="_blank" class="text-blue-900 hover:underline">
+                <a href="https://www.siliconflow.cn" target="_blank" class="text-blue-900 dark:text-blue-200 hover:underline">
                   {{ t('providers.siliconFlow') }}
                 </a>
                 {{ t('providers.siliconFlowDescription2') }}
