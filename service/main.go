@@ -36,7 +36,7 @@ func (p *program) Start(s service.Service) error {
 }
 
 func (p *program) run() {
-	store.Init("data.db")
+	store.Init(discovery.GetDbPath())
 
 	p.logger.Info("Service is running. Starting main logic...")
 

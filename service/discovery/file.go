@@ -31,6 +31,10 @@ func getServiceJsonPath() string {
 	return filepath.Join(getServiceRootPath(), "service.json")
 }
 
+func GetDbPath() string {
+	return filepath.Join(getServiceRootPath(), "data.db")
+}
+
 func SetupFileDiscovery(port int) error {
 	filePath := getServiceJsonPath()
 
