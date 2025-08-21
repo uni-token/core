@@ -1,6 +1,6 @@
 [project]
 name = "unitoken"
-version = "0.0.3"
+version = "0.0.4"
 description = "UniToken Python SDK - Unified token management for AI applications"
 readme = "README.md"
 keywords = [

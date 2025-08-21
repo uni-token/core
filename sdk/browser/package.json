@@ -1,7 +1,7 @@
 {
   "name": "@uni-token/browser-sdk",
   "type": "module",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Browser SDK for UniToken - LLM Token Solution for Local AI Agents",
   "license": "MIT",
   "repository": {
