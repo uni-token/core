@@ -1,3 +1,4 @@
+import { findServicePort } from '@uni-token/web-sdk'
 import { useIntervalFn } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
@@ -26,7 +27,7 @@ export const useServiceStore = defineStore('service', () => {
     useIntervalFn(
       async () => {
         if (requireFindService) {
-          const port = await findPort()
+          const port = await findServicePort()
           resolve()
           if (port) {
             serverConnected.value = true
@@ -50,33 +51,6 @@ export const useServiceStore = defineStore('service', () => {
     requireFindService = true
   }, 3000)
 
-  async function findPort() {
-    for (let port = 18000; port < 18010; port++) {
-      if (await checkPort(port)) {
-        return port
-      }
-    }
-    return null
-  }
-
-  async function checkPort(port: number) {
-    try {
-      const response = await fetch(`http://localhost:${port}/`, {
-        cache: 'no-cache',
-        method: 'GET',
-      })
-      if ((await response.json()).__uni_token) {
-        return true
-      }
-    }
-    catch {}
-    return false
-  }
-
-  async function tryStartService() {
-    window.open('uni-token://start')
-  }
-
   return {
     serverConnected,
     serviceHost,
@@ -85,7 +59,6 @@ export const useServiceStore = defineStore('service', () => {
     refreshService: () => {
       requireFindService = true
     },
-    tryStartService,
     token,
     fetch: async (path: string, options?: RequestInit) => {
       await initialLoad

@@ -4,15 +4,14 @@ import { defineConfig } from 'tsdown'
 
 export default defineConfig({
   entry: {
-    'index': 'src/index.ts',
-    'node': 'src/node.ts',
-    'browser': 'src/browser.ts',
+    index: 'src/index.ts',
   },
   sourcemap: true,
   clean: true,
   dts: {
     oxc: true,
   },
+  platform: 'browser',
   onSuccess() {
     const readme = readFileSync(resolve(import.meta.dirname, '../../README.md'), 'utf8')
     const trimmed = readme.replace(/\n<!--DEV-->([\s\S]*?)<!--\/DEV-->\n/g, '')

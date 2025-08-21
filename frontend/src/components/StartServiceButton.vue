@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { downloadService, startService, SUPPORTED_OS } from '@uni-token/web-sdk'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
@@ -16,20 +17,6 @@ const serviceStore = useServiceStore()
 
 const showStartServiceDialog = ref(false)
 const showDownloadDialog = ref(false)
-
-function download(os: 'windows' | 'macos' | 'linux') {
-  const filename = {
-    linux: 'service-linux-amd64',
-    macos: 'service-darwin-amd64',
-    windows: 'service-windows-amd64.exe',
-  }[os]
-  const url = `https://uni-token.app/release/${filename}`
-  const link = document.createElement('a')
-  link.href = url
-  link.download = filename
-  link.click()
-  link.remove()
-}
 
 watch(() => serviceStore.serverConnected, (connected) => {
   if (connected) {
@@ -89,28 +76,14 @@ watch(() => serviceStore.serverConnected, (connected) => {
 
                     <div class="flex flex-col gap-2 my-4">
                       <Button
+                        v-for="os in SUPPORTED_OS"
+                        :key="os"
                         size="sm"
                         variant="secondary"
                         class="w-full"
-                        @click="download('windows')"
+                        @click="downloadService(os)"
                       >
-                        Windows
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        class="w-full"
-                        @click="download('macos')"
-                      >
-                        macOS
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        class="w-full"
-                        @click="download('linux')"
-                      >
-                        Linux
+                        {{ os }}
                       </Button>
                     </div>
 
@@ -125,7 +98,7 @@ watch(() => serviceStore.serverConnected, (connected) => {
       <AlertDialogFooter>
         <AlertDialogCancel>{{ t('common.cancel') }}</AlertDialogCancel>
         <AlertDialogAction
-          @click="serviceStore.tryStartService"
+          @click="startService()"
         >
           {{ t('common.confirm') }}
         </AlertDialogAction>

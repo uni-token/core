@@ -50,6 +50,9 @@ importers:
       '@tanstack/vue-table':
         specifier: ^8.21.3
         version: 8.21.3(vue@3.5.18(typescript@5.8.3))
+      '@uni-token/web-sdk':
+        specifier: workspace:*
+        version: link:../sdk/web
       '@vue/runtime-core':
         specifier: ^3.5.18
         version: 3.5.18
@@ -132,6 +135,15 @@ importers:
       '@types/node':
         specifier: ^22.17.2
         version: 22.17.2
+      openai:
+        specifier: ^5.12.2
+        version: 5.12.2
+      tsdown:
+        specifier: ^0.14.1
+        version: 0.14.1(typescript@5.8.3)(vue-tsc@3.0.5(typescript@5.8.3))
+
+  sdk/web:
+    devDependencies:
       openai:
         specifier: ^5.12.2
         version: 5.12.2

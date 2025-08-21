@@ -115,18 +115,30 @@ export interface UniTokenOptions {
   savedApiKey?: string | null | undefined
 }
 
+export interface UniTokenOpenAIResult {
+  /**
+   * The base URL for the OpenAI API.
+   */
+  baseUrl: string
+  /**
+   * The API key granted by UniToken for accessing OpenAI.
+   *
+   * This key is null if the user did not grant permission.
+   */
+  apiKey: string | null
+}
+
 /**
  * Requests user for OpenAI token via UniToken service.
  * @param options - The options for the request.
- * @returns An object containing the appID, baseUrl, and apiKey, or null if the user does not grant permission.
+ * @returns An object containing the baseUrl, and apiKey.
+ *   If the user did not grant permission, apiKey will be null.
  * @throws Possible network issues or service errors.
  */
-export async function requestUniTokenOpenAI(options: UniTokenOptions): Promise<{
-  baseUrl: string
-  apiKey: string
-} | null> {
+export async function requestUniTokenOpenAI(options: UniTokenOptions): Promise<UniTokenOpenAIResult> {
   const rootPath = setupServiceRootPath()
   const serverUrl = await detectRunningUrlFromFile(rootPath) || await startService(rootPath)
+  const baseUrl = `${serverUrl}openai/`
 
   const response = await fetch(`${serverUrl}app/register`, {
     method: 'POST',
@@ -139,7 +151,10 @@ export async function requestUniTokenOpenAI(options: UniTokenOptions): Promise<{
   })
 
   if (response.status === 403) {
-    return null
+    return {
+      baseUrl,
+      apiKey: null,
+    }
   }
 
   if (!response.ok) {
@@ -149,7 +164,7 @@ export async function requestUniTokenOpenAI(options: UniTokenOptions): Promise<{
 
   const responseJson = await response.json()
   return {
-    baseUrl: `${serverUrl}openai/`,
+    baseUrl,
     apiKey: responseJson.token,
   }
 }

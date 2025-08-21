@@ -2,12 +2,12 @@ import process from 'node:process'
 import { OpenAI } from 'openai'
 import { requestUniTokenOpenAI } from './index.ts'
 
-function loadApiKey(): string | undefined {
+function loadApiKey(): string | null {
   // ...
-  return undefined
+  return null
 }
 
-function saveApiKey(apiKey: string | undefined): void {
+function saveApiKey(apiKey: string | null): void {
   // ...
   // eslint-disable-next-line no-console
   console.log('API key: ', apiKey)
@@ -20,8 +20,8 @@ async function main() {
     // If not provided, the user will always be prompted to grant permission to this app.
     savedApiKey: loadApiKey(),
   })
-  saveApiKey(result?.apiKey)
-  if (!result) {
+  saveApiKey(result.apiKey)
+  if (!result.apiKey) {
     console.error('User did not grant permission for OpenAI token.')
     return
   }
