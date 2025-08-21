@@ -22,7 +22,7 @@ features:
     details: No backend server required. All data is stored locally.
   - icon: <span class="i-carbon:ibm-toolchain"></span>
     title: Lightweight SDK
-    details: Supports Node.js and Python. Few lines of code to integrate.
+    details: Supports Python, Node.js, Browser and Go. Few lines of code to integrate.
   - icon: <span class="i-carbon:create-link"></span>
     title: Auto Connection
     details: AI Agents can automatically connect to existing UniToken service.

@@ -7,6 +7,9 @@
     "build": "vitepress build",
     "serve": "vitepress serve"
   },
+  "dependencies": {
+    "@vercel/analytics": "^1.5.0"
+  },
   "devDependencies": {
     "@iconify-json/carbon": "^1.2.13",
     "unocss": "^66.4.2",

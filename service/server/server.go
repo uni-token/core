@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"strconv"
@@ -55,13 +56,15 @@ func checkPortAvailability(port int) bool {
 	return err != nil
 }
 
+const PORT_RANGE_START = 18760
+
 func getPort() int {
-	for i := 18000; i < 18010; i++ {
+	for i := PORT_RANGE_START; i < PORT_RANGE_START+10; i++ {
 		if checkPortAvailability(i) {
 			return i
 		} else {
 			log.Printf("Port %d is not available", i)
 		}
 	}
-	panic("No available port found in the range 18000-19000")
+	panic(fmt.Sprintf("No available port found in the range %d-%d", PORT_RANGE_START, PORT_RANGE_START+10))
 }

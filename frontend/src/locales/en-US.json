@@ -302,7 +302,7 @@
   "about": {
     "title": "About UniToken",
     "introduction": "Introduction",
-    "description": "UniToken is a unified token management platform that helps developers and enterprises centrally manage and use API tokens from various AI service providers.",
+    "description": "UniToken is a LLM Token Solution for Local-first AI Agents.",
     "features": "With UniToken, you can:",
     "feature1": "Centrally manage API keys from multiple LLM service providers",
     "feature2": "Monitor API usage and costs in real time",
@@ -394,7 +394,7 @@
     "reconnecting": "Reconnecting...",
     "restartAgent": "Local service may not have started properly. Please restart the related Agent software.",
     "troubleshooting": "Please restart the AI agent, or",
-    "tryStart": "Start service",
+    "tryStart": "Start Service",
     "startSuccess": "Service started successfully!",
     "startLocalService": "Start Local Service",
     "browserPrompt": "In the browser prompt that appears, please select to allow opening the UniToken application.",

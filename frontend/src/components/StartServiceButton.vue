@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { downloadService, startService, SUPPORTED_OS } from '@uni-token/web-sdk'
+import { downloadService, startService, SUPPORTED_OS } from '@uni-token/browser-sdk'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'

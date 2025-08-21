@@ -10,5 +10,3 @@ frontend/public/release
 docs/.vitepress/cache
 .fuse_hidden*
 sdk/go/example/uni-token-example
-
-sdk/*/README.md

@@ -302,7 +302,7 @@
   "about": {
     "title": "关于 UniToken",
     "introduction": "介绍",
-    "description": "UniToken 是一个统一的令牌管理平台，帮助开发者和企业集中管理和使用各种 AI 服务提供商的 API 令牌。",
+    "description": "UniToken 是一个为本地优先 AI Agent 提供的 LLM Token 解决方案。",
     "features": "通过 UniToken，您可以：",
     "feature1": "统一管理多个 LLM 服务提供商的 API 密钥",
     "feature2": "实时监控 API 使用量和成本",

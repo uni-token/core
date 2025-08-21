@@ -1,4 +1,4 @@
-import { findServicePort } from '@uni-token/web-sdk'
+import { findServicePort } from '@uni-token/browser-sdk'
 import { useIntervalFn } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
