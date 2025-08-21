@@ -4,4 +4,4 @@ LLM Token Solution for Local AI Agents.
 
 Open-source, local-first, and lightweight.
 
-[**Docs**](https://docs.uni-token.app/sdk/nodejs.html) | [**GitHub**](https://github.com/uni-token/core)
+[**Docs**](https://docs.uni-token.app/sdk/node.html) | [**GitHub**](https://github.com/uni-token/core)

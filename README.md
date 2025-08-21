@@ -4,7 +4,7 @@ LLM Token Solution for Local AI Agents.
 
 Open-source, local-first, and lightweight.
 
-[**Docs**](https://docs.uni-token.app) | [Python SDK](https://docs.uni-token.app/sdk/python) | [Node.js SDK](https://docs.uni-token.app/sdk/nodejs) | [Go SDK](https://docs.uni-token.app/sdk/go) | [Browser SDK](https://docs.uni-token.app/sdk/browser) | [Development](./CONTRIBUTING.md)
+[**Docs**](https://docs.uni-token.app) | [Python SDK](https://docs.uni-token.app/sdk/python.html) | [Node.js SDK](https://docs.uni-token.app/sdk/node.html) | [Go SDK](https://docs.uni-token.app/sdk/go.html) | [Browser SDK](https://docs.uni-token.app/sdk/browser.html) | [Launch App](https://uni-token.ap) | [Development](./CONTRIBUTING.md)
 
 ## Why UniToken?
 
@@ -32,9 +32,9 @@ UniToken consists of three open-source, local-first modules:
 
 For AI Agent developers, you may choose from the following lightweight SDKs to integrate UniToken into your AI agents:
 
-- [Python SDK](/sdk/python/)
-- [Node.js SDK](/sdk/node/)
-- [Go SDK](/sdk/go/)
-- [Browser SDK](/sdk/browser/)
+- [Python SDK](https://docs.uni-token.app/sdk/python.html)
+- [Node.js SDK](https://docs.uni-token.app/sdk/node.html)
+- [Go SDK](https://docs.uni-token.app/sdk/go.html)
+- [Browser SDK](https://docs.uni-token.app/sdk/browser.html)
 
 For users, you can visit the [UniToken App](https://uni-token.app) to manage your LLM tokens.

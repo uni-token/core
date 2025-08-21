@@ -26,9 +26,9 @@ UniToken consists of three open-source, local-first modules:
 
 For AI Agent developers, you may choose from the following lightweight SDKs to integrate UniToken into your AI agents:
 
-- [Python SDK](/sdk/python/)
-- [Node.js SDK](/sdk/node/)
-- [Go SDK](/sdk/go/)
-- [Browser SDK](/sdk/browser/)
+- [Python SDK](/sdk/python)
+- [Node.js SDK](/sdk/node)
+- [Go SDK](/sdk/go)
+- [Browser SDK](/sdk/browser)
 
 For users, you can visit the [UniToken App](https://uni-token.app) to manage your LLM tokens.

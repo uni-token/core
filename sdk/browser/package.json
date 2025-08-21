@@ -2,6 +2,22 @@
   "name": "@uni-token/browser-sdk",
   "type": "module",
   "version": "0.0.3",
+  "description": "Browser SDK for UniToken - LLM Token Solution for Local AI Agents",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uni-token/core",
+    "directory": "sdk/browser"
+  },
+  "keywords": [
+    "uni-token",
+    "sdk",
+    "browser",
+    "token",
+    "llm",
+    "agent",
+    "ai"
+  ],
   "exports": {
     ".": {
       "types": "./src/index.ts",
