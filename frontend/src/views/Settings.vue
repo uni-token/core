@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { LogOut, Trash2 } from 'lucide-vue-next'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
@@ -30,10 +30,6 @@ const { deleteAllApps } = useAppStore()
 
 const clearingRecords = ref(false)
 const deletingApps = ref(false)
-
-const serviceStatus = computed(() => {
-  return serviceStore.serverConnected ? t('service.connected') : t('service.disconnected')
-})
 
 function handleLogout() {
   authStore.logout()
@@ -155,7 +151,7 @@ async function handleDeleteAllApps() {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>{{ t('settings.cancel') }}</AlertDialogCancel>
-                    <AlertDialogAction class="bg-red-600 hover:bg-red-700" @click="handleLogout">
+                    <AlertDialogAction class="bg-red-600 hover:bg-red-700 text-white" @click="handleLogout">
                       {{ t('settings.confirm') }}
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -200,7 +196,7 @@ async function handleDeleteAllApps() {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>{{ t('settings.cancel') }}</AlertDialogCancel>
-                    <AlertDialogAction class="bg-red-600 hover:bg-red-700" @click="handleClearRecords">
+                    <AlertDialogAction class="bg-red-600 hover:bg-red-700 text-white" @click="handleClearRecords">
                       {{ t('settings.confirm') }}
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -233,7 +229,7 @@ async function handleDeleteAllApps() {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>{{ t('settings.cancel') }}</AlertDialogCancel>
-                    <AlertDialogAction class="bg-red-600 hover:bg-red-700" @click="handleDeleteAllApps">
+                    <AlertDialogAction class="bg-red-600 hover:bg-red-700 text-white" @click="handleDeleteAllApps">
                       {{ t('settings.confirmDelete') }}
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -265,7 +261,7 @@ async function handleDeleteAllApps() {
               <span class="text-muted-foreground">{{ t('settings.serviceStatus') }}:</span>
               <div class="flex items-center gap-2">
                 <div class="h-2 w-2 rounded-full" :class="serviceStore.serverConnected ? 'bg-green-500' : 'bg-red-500'" />
-                <span>{{ serviceStatus }}</span>
+                <span>{{ serviceStore.serviceHost || t('service.disconnected') }}</span>
               </div>
             </div>
           </div>

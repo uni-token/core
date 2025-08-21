@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import ServiceStatus from '@/components/ServiceStatus.vue'
+import ThemeToggle from '@/components/ThemeToggle.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -62,6 +64,10 @@ async function handleSubmit() {
         <CardDescription>
           {{ props.register ? t('loginForm.createAccount') : t('loginForm.enterCredentials') }}
         </CardDescription>
+        <!-- Service Status -->
+        <div class="pt-2">
+          <ServiceStatus variant="compact" />
+        </div>
       </CardHeader>
       <CardContent>
         <form
@@ -140,5 +146,7 @@ async function handleSubmit() {
         </form>
       </CardContent>
     </Card>
+
+    <ThemeToggle class="fixed right-4 bottom-4" />
   </div>
 </template>

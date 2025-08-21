@@ -127,7 +127,7 @@ onMounted(() => {
               </SelectItem>
             </SelectContent>
           </Select>
-          <Button :disabled="loading" @click="refreshStats">
+          <Button variant="outline" :disabled="loading" @click="refreshStats">
             <RefreshCw class="mr-2 h-4 w-4" :class="{ 'animate-spin': loading }" />
             {{ t('usage.refresh') }}
           </Button>

@@ -5,14 +5,19 @@ import { computed, ref } from 'vue'
 export const useServiceStore = defineStore('service', () => {
   const serverConnected = ref(true)
   const servicePort = ref<number | null>(null)
-  const serviceUrl = computed(() => {
+  const serviceHost = computed(() => {
     if (servicePort.value) {
-      return `http://localhost:${servicePort.value}/`
+      return `localhost:${servicePort.value}`
+    }
+    return null
+  })
+  const serviceUrl = computed(() => {
+    if (serviceHost.value) {
+      return `http://${serviceHost.value}/`
     }
     return null
   })
   let requireFindService = true
-  let failureSince = 0
 
   const params = new URLSearchParams(window.location.search)
   const token = ref<string | null>(params.get('token') || null)
@@ -27,13 +32,9 @@ export const useServiceStore = defineStore('service', () => {
             serverConnected.value = true
             servicePort.value = port
             requireFindService = false
-            failureSince = 0
           }
           else {
-            failureSince ||= Date.now()
-            if (Date.now() - failureSince > 3 * 1000) {
-              serverConnected.value = false
-            }
+            serverConnected.value = false
           }
         }
       },
@@ -44,6 +45,10 @@ export const useServiceStore = defineStore('service', () => {
       },
     )
   })
+
+  useIntervalFn(() => {
+    requireFindService = true
+  }, 3000)
 
   async function findPort() {
     for (let port = 18000; port < 18010; port++) {
@@ -68,13 +73,19 @@ export const useServiceStore = defineStore('service', () => {
     return false
   }
 
+  async function tryStartService() {
+    window.open('uni-token://start')
+  }
+
   return {
     serverConnected,
+    serviceHost,
     serviceUrl,
     servicePort,
     refreshService: () => {
       requireFindService = true
     },
+    tryStartService,
     token,
     fetch: async (path: string, options?: RequestInit) => {
       await initialLoad

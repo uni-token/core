@@ -22,7 +22,8 @@
     "import": "Import",
     "copy": "Copy",
     "paste": "Paste",
-    "cut": "Cut"
+    "cut": "Cut",
+    "or": " or "
   },
   "auth": {
     "login": "Login",
@@ -387,11 +388,22 @@
     "saveChanges": "Save Changes"
   },
   "service": {
-    "connected": "Service Connected",
+    "connected": "Local Service Connected",
     "disconnected": "Service Disconnected",
     "connectionFailed": "Service Connection Failed",
     "reconnecting": "Reconnecting...",
-    "restartAgent": "Local service may not have started properly. Please try restarting the related Agent software."
+    "restartAgent": "Local service may not have started properly. Please restart the related Agent software.",
+    "troubleshooting": "Please restart the AI agent, or",
+    "tryStart": "Start service",
+    "startSuccess": "Service started successfully!",
+    "startLocalService": "Start Local Service",
+    "browserPrompt": "In the browser prompt that appears, please select to allow opening the UniToken application.",
+    "adminPermission": "When starting for the first time, UniToken will request administrator permissions. Please allow.",
+    "troubleshootingPrefix": "If the service fails to start properly, please try restarting the related Agent software, or ",
+    "manualDownload": "download manually",
+    "downloadService": "Download UniToken Service",
+    "selectOS": "Please select your operating system.",
+    "afterDownload": "After downloading, please run it to start the service."
   },
   "notFound": {
     "title": "Page Not Found",

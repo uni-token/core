@@ -38,7 +38,7 @@ onMounted(() => {
         <h2 class="text-2xl font-bold">
           {{ t('appManagement.title') }}
         </h2>
-        <Button :disabled="loading" @click="refreshApps">
+        <Button variant="outline" :disabled="loading" @click="refreshApps">
           <RefreshCw class="mr-2 h-4 w-4" :class="{ 'animate-spin': loading }" />
           {{ t('appManagement.refresh') }}
         </Button>
@@ -57,7 +57,7 @@ onMounted(() => {
         </p>
       </div>
 
-      <div v-else-if="apps.length === 0" class="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center">
+      <div v-else-if="apps.length === 0" class="rounded-lg border p-8 text-center">
         <p class="text-muted-foreground">
           {{ t('appManagement.noApps') }}
         </p>

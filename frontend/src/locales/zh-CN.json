@@ -22,7 +22,8 @@
     "import": "导入",
     "copy": "复制",
     "paste": "粘贴",
-    "cut": "剪切"
+    "cut": "剪切",
+    "or": "或"
   },
   "auth": {
     "login": "登录",
@@ -387,11 +388,22 @@
     "saveChanges": "保存更改"
   },
   "service": {
-    "connected": "服务已连接",
-    "disconnected": "服务未连接",
+    "connected": "本地服务已连接",
+    "disconnected": "本地服务未连接",
     "connectionFailed": "服务连接失败",
-    "reconnecting": "正在尝试重新连接...",
-    "restartAgent": "可能是本地服务未能正常启动，请尝试重新启动相关 Agent 软件。"
+    "reconnecting": "正在重新连接...",
+    "restartAgent": "可能是本地服务未能正常启动，请重新启动相关 Agent 软件，",
+    "troubleshooting": "请重新启动 AI Agent，或",
+    "tryStart": "启动服务",
+    "startSuccess": "服务已成功启动！",
+    "startLocalService": "启动本地服务",
+    "browserPrompt": "在浏览器弹出的提示框中，请选择允许打开 UniToken 应用。",
+    "adminPermission": "首次启动时，UniToken 会请求管理员权限，请允许。",
+    "troubleshootingPrefix": "若服务未能正常启动，请尝试重新启动相关 Agent 软件，或",
+    "manualDownload": "手动下载",
+    "downloadService": "下载 UniToken 服务",
+    "selectOS": "请选择你的操作系统。",
+    "afterDownload": "下载后，请运行它以启动服务。"
   },
   "notFound": {
     "title": "页面未找到",
