@@ -104,7 +104,7 @@ func handleAppRegister(c *gin.Context) {
 		"appName":        {req.Name},
 		"appDescription": {req.Description},
 	}
-	logic.OpenUI(params)
+	logic.OpenUI(params, true)
 
 	select {
 	case result := <-channel:
@@ -113,7 +113,7 @@ func handleAppRegister(c *gin.Context) {
 		} else {
 			c.JSON(http.StatusForbidden, gin.H{"error": "App registration denied"})
 		}
-	case <-time.After(60 * time.Second):
+	case <-time.After(10 * time.Minute):
 		c.JSON(http.StatusRequestTimeout, gin.H{"error": "App registration timed out"})
 	}
 	delete(waitForGrant, uid)

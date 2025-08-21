@@ -22,7 +22,7 @@ func handleCheck(c *gin.Context) {
 }
 
 func handleOpenUrl(c *gin.Context) {
-	err := logic.OpenUI(url.Values{})
+	err := logic.OpenUI(url.Values{}, true)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open UI"})

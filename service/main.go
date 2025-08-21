@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"net/url"
 	"os"
+	"os/user"
 	"strings"
 	"time"
 
@@ -16,7 +18,7 @@ import (
 )
 
 const (
-	serviceName        = "UniTokenService"
+	serviceNamePrefix  = "UniTokenService"
 	serviceDisplayName = "UniToken Service"
 	serviceDescription = "UniToken Service"
 )
@@ -67,11 +69,18 @@ func (p *program) Stop(s service.Service) error {
 }
 
 func main() {
+	username := getUserName()
+	serviceName := serviceNamePrefix + "-" + username
+
 	svcConfig := &service.Config{
 		Name:        serviceName,
-		DisplayName: serviceDisplayName,
+		DisplayName: serviceDisplayName + " - " + username,
 		Description: serviceDescription,
-		Arguments:   []string{},
+		Arguments:   []string{"run"},
+		EnvVars: map[string]string{
+			"UNI_TOKEN_SERVICE_USER": username,
+			"UNI_TOKEN_SERVICE_ROOT": discovery.GetServiceRootPath(),
+		},
 	}
 
 	prg := &program{}
@@ -86,14 +95,21 @@ func main() {
 	}
 
 	if len(os.Args) < 2 {
-		discovery.InstallExecutable()
+		// Directly run the executable
+		handleSetup()
+		logic.OpenUI(url.Values{}, false)
+		return
+	}
+
+	command := os.Args[1]
+
+	if command == "run" {
 		err := s.Run()
 		if err != nil {
 			panic(err)
 		}
 		return
 	}
-	command := os.Args[1]
 
 	if command == "version" {
 		fmt.Printf("Service Version: %d\n", logic.GetVersion())
@@ -110,8 +126,17 @@ func main() {
 		return
 	}
 
-	if command == "setup-in-sudo" {
-		handleSetupInSudo(&s)
+	if command == "install-and-start" {
+		handleSetupInSudo(&s, serviceName)
+		return
+	}
+
+	if command == "sudo" {
+		if len(os.Args) < 3 {
+			fmt.Println("Usage: sudo <command>")
+			return
+		}
+		handleSudo(os.Args[2:])
 		return
 	}
 
@@ -145,11 +170,26 @@ func handleSetup() {
 		panic(err)
 	}
 
+	fmt.Printf("Sudo is required to install and start the service.\n")
+
 	// Install and start the service in sudo mode
+	handleSudo([]string{"install-and-start"})
+}
+
+func handleSudo(args []string) {
+	execPath := discovery.GetServiceExecutablePath()
+	command := execPath + " " + strings.Join(args, " ")
+
+	fmt.Printf("Executing command with sudo: %s\n", command)
+
 	res, err := logic.SudoExec(
-		execPath+" setup-in-sudo",
+		command,
 		&logic.SudoOptions{
 			Name: serviceDisplayName,
+			Env: map[string]string{
+				"UNI_TOKEN_SERVICE_USER": getUserName(),
+				"UNI_TOKEN_SERVICE_ROOT": discovery.GetServiceRootPath(),
+			},
 		},
 	)
 	if err != nil {
@@ -178,13 +218,27 @@ func handleUrlScheme(url string) {
 	}
 }
 
-func handleSetupInSudo(s *service.Service) {
+func handleSetupInSudo(s *service.Service, serviceName string) {
 	err := service.Control(*s, "install")
 	if err != nil && !strings.Contains(err.Error(), "already exists") {
 		fmt.Println("Failed to install service:", err)
 	}
+	fmt.Printf("Installed service \"%s\".\n", serviceName)
+
 	err = service.Control(*s, "start")
 	if err != nil {
 		panic(err)
 	}
+	fmt.Printf("Started service \"%s\".\n", serviceName)
+}
+
+func getUserName() string {
+	if userName := os.Getenv("UNI_TOKEN_SERVICE_USER"); userName != "" {
+		return userName
+	}
+	currentUser, err := user.Current()
+	if err != nil {
+		panic(err)
+	}
+	return currentUser.Username
 }

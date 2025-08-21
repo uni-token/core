@@ -3,13 +3,15 @@ package discovery
 import (
 	"fmt"
 	"os"
-	"os/signal"
 	"path/filepath"
 	"runtime"
-	"syscall"
 )
 
-func getServiceRootPath() string {
+func GetServiceRootPath() string {
+	overrideRoot := os.Getenv("UNI_TOKEN_SERVICE_ROOT")
+	if overrideRoot != "" {
+		return overrideRoot
+	}
 	if runtime.GOOS == "windows" {
 		localAppData := os.Getenv("LOCALAPPDATA")
 		return filepath.Join(localAppData, "UniToken")
@@ -21,18 +23,18 @@ func getServiceRootPath() string {
 
 func GetServiceExecutablePath() string {
 	if runtime.GOOS == "windows" {
-		return filepath.Join(getServiceRootPath(), "service.exe")
+		return filepath.Join(GetServiceRootPath(), "service.exe")
 	} else {
-		return filepath.Join(getServiceRootPath(), "service")
+		return filepath.Join(GetServiceRootPath(), "service")
 	}
 }
 
 func getServiceJsonPath() string {
-	return filepath.Join(getServiceRootPath(), "service.json")
+	return filepath.Join(GetServiceRootPath(), "service.json")
 }
 
 func GetDbPath() string {
-	return filepath.Join(getServiceRootPath(), "data.db")
+	return filepath.Join(GetServiceRootPath(), "data.db")
 }
 
 func SetupFileDiscovery(port int) error {
@@ -49,17 +51,6 @@ func SetupFileDiscovery(port int) error {
 	}
 
 	fmt.Printf("Service discovery file created at %s\n", filePath)
-
-	// Setup cleanup on exit
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-
-	go func() {
-		<-c
-		// Write final service data with null port on exit
-		os.WriteFile(filePath, []byte(GetServiceInfo(nil)), 0644)
-		os.Exit(0)
-	}()
 
 	return nil
 }

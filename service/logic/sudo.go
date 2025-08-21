@@ -219,11 +219,6 @@ func linuxExec(instance *Instance) (*Result, error) {
 	cwd, _ := os.Getwd()
 	command = append(command, fmt.Sprintf(`cd "%s";`, escapeDoubleQuotes(cwd)))
 
-	// Export environment variables
-	for key, value := range instance.Options.Env {
-		command = append(command, fmt.Sprintf(`export %s="%s";`, key, escapeDoubleQuotes(value)))
-	}
-
 	command = append(command, fmt.Sprintf(`"%s"`, escapeDoubleQuotes(binary)))
 
 	if strings.Contains(strings.ToLower(binary), "kdesudo") {
@@ -236,9 +231,19 @@ func linuxExec(instance *Instance) (*Result, error) {
 	}
 
 	magic := "SUDOPROMPT\n"
-	bashCommand := fmt.Sprintf(`/bin/bash -c "echo %s; %s"`,
-		escapeDoubleQuotes(strings.TrimSpace(magic)),
-		escapeDoubleQuotes(instance.Command))
+
+	// Build the bash command with environment variables and the actual command
+	var bashScript []string
+	bashScript = append(bashScript, fmt.Sprintf("echo %s", escapeDoubleQuotes(strings.TrimSpace(magic))))
+
+	// Add environment variable exports to the bash script
+	for key, value := range instance.Options.Env {
+		bashScript = append(bashScript, fmt.Sprintf(`export %s="%s"`, key, escapeDoubleQuotes(value)))
+	}
+
+	bashScript = append(bashScript, instance.Command)
+
+	bashCommand := fmt.Sprintf(`/bin/bash -c "%s"`, escapeDoubleQuotes(strings.Join(bashScript, "; ")))
 	command = append(command, bashCommand)
 
 	cmdStr := strings.Join(command, " ")
@@ -483,7 +488,7 @@ func macResult(instance *Instance) (*Result, error) {
 	}
 
 	if code != 0 {
-		result.Error = fmt.Errorf("Command failed: %s\n%s", instance.Command, stderr)
+		result.Error = fmt.Errorf("command failed: %s\n%s", instance.Command, stderr)
 	}
 
 	return result, nil
@@ -670,7 +675,7 @@ func windowsResult(instance *Instance) (*Result, error) {
 	}
 
 	if code != 0 {
-		result.Error = fmt.Errorf("Command failed: %s\r\n%s", instance.Command, stderr)
+		result.Error = fmt.Errorf("command failed: %s\r\n%s", instance.Command, stderr)
 	}
 
 	return result, nil
