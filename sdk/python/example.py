@@ -1,4 +1,4 @@
-from lib import request_unitoken_openai
+from unitoken import request_unitoken_openai
 from openai import OpenAI
 
 

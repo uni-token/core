@@ -1,12 +1,14 @@
 {
   "name": "@uni-token/monorepo",
+  "type": "module",
   "version": "1.0.0",
   "private": true,
   "packageManager": "pnpm@10.13.1",
   "license": "MIT",
   "scripts": {
     "lint": "eslint --cache",
-    "build": "node --experimental-strip-types scripts/build.mts"
+    "build": "node --experimental-strip-types scripts/build.ts",
+    "publish:python": "node --experimental-strip-types scripts/publish.ts"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^5.2.1",

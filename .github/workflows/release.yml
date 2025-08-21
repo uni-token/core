@@ -39,7 +39,9 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       - name: Publish
-        run: pnpm -r --filter "./sdk/**" publish --access public --no-git-checks
+        run: |
+          pnpm -r --filter "./sdk/**" publish --access public --no-git-checks
+          pnpm publish:python
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
           NPM_CONFIG_PROVENANCE: true

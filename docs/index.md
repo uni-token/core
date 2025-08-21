@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: UniToken
-  text: Token Solution for Local AI Agents
+  text: LLM Token Solution for Local AI Agents
   tagline: Open-source, local-first, and lightweight.
   image:
     light: /logo-light.png

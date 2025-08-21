@@ -69,6 +69,9 @@
   "[yaml]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
+  "[toml]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
   "i18n-ally.enabledFrameworks": [
     "vue"
   ],

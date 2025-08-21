@@ -7,7 +7,8 @@ target
 service/uni-token-service
 frontend/public/release
 .eslintcache
-sdk/node/README.md
 docs/.vitepress/cache
 .fuse_hidden*
 sdk/go/example/uni-token-example
+
+sdk/*/README.md
