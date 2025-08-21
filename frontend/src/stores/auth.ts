@@ -104,6 +104,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   return {
+    hasSavedCredentials: computed(() => !!savedUsername.value || !!savedPassword.value),
     currentUser,
     isLoggedIn,
     isLoading,

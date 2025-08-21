@@ -61,7 +61,7 @@ async function handleSubmit() {
     <Card class="w-full max-w-md">
       <CardHeader class="text-center">
         <CardTitle class="text-2xl font-bold">
-          {{ props.register ? t('loginForm.register') : t('loginForm.login') }}
+          {{ serverStore.serverConnected || authStore.hasSavedCredentials ? props.register ? t('loginForm.register') : t('loginForm.login') : `${t('loginForm.login')}/${t('loginForm.register')}` }}
         </CardTitle>
         <CardDescription>
           {{ props.register ? t('loginForm.createAccount') : t('loginForm.enterCredentials') }}
