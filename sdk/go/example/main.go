@@ -35,10 +35,10 @@ func main() {
 		return
 	}
 
-	llmCallTest(result.BaseURL, result.APIKey)
+	chatDemo(result.BaseURL, result.APIKey)
 }
 
-func llmCallTest(baseURL, apiKey string) {
+func chatDemo(baseURL, apiKey string) {
 	client := openai.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey(apiKey),

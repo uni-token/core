@@ -1,6 +1,6 @@
 import process from 'node:process'
+import { requestUniTokenOpenAI } from '@uni-token/sdk'
 import { OpenAI } from 'openai'
-import { requestUniTokenOpenAI } from './index.ts'
 
 function loadApiKey(): string | null {
   // ...
@@ -9,28 +9,31 @@ function loadApiKey(): string | null {
 
 function saveApiKey(apiKey: string | null): void {
   // ...
-  // eslint-disable-next-line no-console
   console.log('API key: ', apiKey)
 }
 
 async function main() {
-  const result = await requestUniTokenOpenAI({
+  const { baseURL, apiKey } = await requestUniTokenOpenAI({
     appName: 'MyApp',
     description: 'This is a test application',
     // If not provided, the user will always be prompted to grant permission to this app.
     savedApiKey: loadApiKey(),
   })
-  saveApiKey(result.apiKey)
-  if (!result.apiKey) {
+  saveApiKey(apiKey)
+  if (!apiKey) {
     console.error('User did not grant permission for OpenAI token.')
     return
   }
 
   const openai = new OpenAI({
-    baseURL: result.baseUrl,
-    apiKey: result.apiKey,
+    baseURL,
+    apiKey,
   })
 
+  chatDemo(openai)
+}
+
+async function chatDemo(openai: OpenAI) {
   const stream = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     stream: true,

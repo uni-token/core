@@ -14,4 +14,9 @@ export default antfu({
   rules: {
     'vue/custom-event-name-casing': 'off',
   },
+}, {
+  files: ['sdk/node/src/example.ts'],
+  rules: {
+    'no-console': 'off', // Allow console logs in example files
+  },
 })

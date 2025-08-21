@@ -1,5 +1,7 @@
+const PORT_RANGE_START = 18760
+
 export async function findServicePort(): Promise<number | null> {
-  for (let port = 18000; port < 18010; port++) {
+  for (let port = PORT_RANGE_START; port < PORT_RANGE_START + 10; port++) {
     if (await checkPort(port)) {
       return port
     }

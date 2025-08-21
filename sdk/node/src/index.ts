@@ -119,7 +119,7 @@ export interface UniTokenOpenAIResult {
   /**
    * The base URL for the OpenAI API.
    */
-  baseUrl: string
+  baseURL: string
   /**
    * The API key granted by UniToken for accessing OpenAI.
    *
@@ -138,7 +138,7 @@ export interface UniTokenOpenAIResult {
 export async function requestUniTokenOpenAI(options: UniTokenOptions): Promise<UniTokenOpenAIResult> {
   const rootPath = setupServiceRootPath()
   const serverUrl = await detectRunningUrlFromFile(rootPath) || await startService(rootPath)
-  const baseUrl = `${serverUrl}openai/`
+  const baseURL = `${serverUrl}openai/`
 
   const response = await fetch(`${serverUrl}app/register`, {
     method: 'POST',
@@ -152,7 +152,7 @@ export async function requestUniTokenOpenAI(options: UniTokenOptions): Promise<U
 
   if (response.status === 403) {
     return {
-      baseUrl,
+      baseURL,
       apiKey: null,
     }
   }
@@ -164,7 +164,7 @@ export async function requestUniTokenOpenAI(options: UniTokenOptions): Promise<U
 
   const responseJson = await response.json()
   return {
-    baseUrl,
+    baseURL,
     apiKey: responseJson.token,
   }
 }

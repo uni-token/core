@@ -21,10 +21,10 @@ def main():
         base_url=base_url,
         api_key=api_key,
     )
-    demo_chat_streaming(client)
+    chat_demo(client)
 
 
-def demo_chat_streaming(client: OpenAI) -> None:
+def chat_demo(client: OpenAI) -> None:
     stream = client.chat.completions.create(
         model="gpt-4o-mini",
         stream=True,

@@ -6,4 +6,5 @@ export default defineConfig({
   dts: {
     oxc: true,
   },
+  platform: 'browser',
 })
