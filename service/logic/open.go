@@ -16,7 +16,7 @@ func OpenUI(params url.Values, auth bool) error {
 
 		var userName string
 		if len(allUsers) == 0 {
-			userName = "guest"
+			userName = GetUserName()
 		} else {
 			userName = allUsers[0].Username
 		}
