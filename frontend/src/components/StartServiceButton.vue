@@ -44,14 +44,16 @@ watch(() => serviceStore.serverConnected, (connected) => {
 <template>
   <AlertDialog v-model:open="showStartServiceDialog">
     <AlertDialogTrigger as-child>
-      <Button
-        size="sm"
-        variant="link"
-        class="inline underline px-0 opacity-80 hover:opacity-100 h-6"
-        :class="props.class"
-      >
-        {{ t('service.tryStart') }}
-      </Button>
+      <slot>
+        <Button
+          size="sm"
+          variant="link"
+          class="inline underline px-0 opacity-80 hover:opacity-100 h-6"
+          :class="props.class"
+        >
+          {{ t('service.tryStart') }}
+        </Button>
+      </slot>
     </AlertDialogTrigger>
     <AlertDialogContent>
       <AlertDialogHeader>

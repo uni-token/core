@@ -2,7 +2,7 @@
 import type { AuthState } from './stores'
 import Clarity from '@microsoft/clarity'
 import { Zap } from 'lucide-vue-next'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import AppSidebar from '@/components/AppSidebar.vue'
@@ -12,13 +12,14 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/s
 import { Toaster } from '@/components/ui/sonner'
 import { useThemeStore } from '@/stores/theme'
 import ActionHandler from '@/views/ActionHandler.vue'
-import { useAuthStore } from './stores'
+import { useAuthStore, useServiceStore } from './stores'
 import 'vue-sonner/style.css'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
 const { replace, currentRoute } = useRouter()
 const themeStore = useThemeStore()
+const serviceStore = useServiceStore()
 
 const authState = ref<AuthState | null>(null)
 const isCheckingAuth = ref(true)
@@ -32,6 +33,12 @@ onMounted(async () => {
   isCheckingAuth.value = false
   setTimeout(() => replace(currentRoute.value.path), 100)
   Clarity.init('sx60zbxtfz')
+})
+
+watch(() => serviceStore.serverConnected, async (connected) => {
+  if (connected) {
+    authState.value = await authStore.checkAuth()
+  }
 })
 </script>
 

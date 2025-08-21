@@ -2,17 +2,19 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ServiceStatus from '@/components/ServiceStatus.vue'
+import StartServiceButton from '@/components/StartServiceButton.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useAuthStore } from '@/stores'
+import { useAuthStore, useServiceStore } from '@/stores'
 
 const props = defineProps<{
   register?: boolean
 }>()
 
 const { t } = useI18n()
+const serverStore = useServiceStore()
 const authStore = useAuthStore()
 
 const username = ref('')
@@ -120,6 +122,7 @@ async function handleSubmit() {
             />
           </div>
           <Button
+            v-if="authStore.isLoading || serverStore.serverConnected"
             type="submit"
             class="w-full"
             :disabled="authStore.isLoading"
@@ -134,6 +137,14 @@ async function handleSubmit() {
             </div>
             <span v-else>{{ props.register ? t('loginForm.register') : t('loginForm.login') }}</span>
           </Button>
+          <StartServiceButton v-else>
+            <Button
+              type="button"
+              class="w-full opacity-50"
+            >
+              {{ t('service.disconnected') }}
+            </Button>
+          </StartServiceButton>
           <div
             v-if="errorMessage"
             id="error-message"
