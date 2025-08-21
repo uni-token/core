@@ -2,8 +2,11 @@ import { findServicePort } from '@uni-token/browser-sdk'
 import { useIntervalFn } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 
 export const useServiceStore = defineStore('service', () => {
+  const authStore = useAuthStore()
+
   const serverConnected = ref(true)
   const servicePort = ref<number | null>(null)
   const serviceHost = computed(() => {
@@ -66,7 +69,7 @@ export const useServiceStore = defineStore('service', () => {
         throw new Error('Service not available')
       }
       try {
-        return await fetch(
+        const resp = await fetch(
           `${serviceUrl.value}${path}`,
           token.value
             ? {
@@ -78,6 +81,14 @@ export const useServiceStore = defineStore('service', () => {
               }
             : options,
         )
+
+        if (resp.status === 401) {
+          console.error('Unauthorized access, please check your token')
+          authStore.currentUser = null
+          token.value = null
+        }
+
+        return resp
       }
       catch (error) {
         requireFindService = true

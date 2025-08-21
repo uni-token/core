@@ -68,8 +68,8 @@ function formatDate(dateString: string) {
         <div class="space-y-3 border-t pt-4">
           <div class="text-sm">
             <div>
-              <span class="text-gray-500">{{ t('appDetailDialog.appId') }}:</span>
-              <p class="font-mono text-xs bg-gray-100 p-1 rounded mt-1 break-all">
+              <span class="text-gray-500 dark:text-gray-200">{{ t('appDetailDialog.appId') }}:</span>
+              <p class="font-mono text-xs bg-gray-100 dark:bg-white/10 p-1 rounded mt-1 break-all">
                 {{ app.id }}
               </p>
             </div>
@@ -91,13 +91,13 @@ function formatDate(dateString: string) {
           </div>
         </div>
 
-        <div class="border-t border-red-200 pt-4">
-          <h4 class="text-sm font-medium text-red-800 mb-2">
+        <div class="border-t border-red-200 dark:border-red-800 pt-4">
+          <h4 class="text-sm font-medium text-red-800 dark:text-red-500 mb-2">
             {{ t('appDetailDialog.dangerZone') }}
           </h4>
           <AlertDialog>
             <AlertDialogTrigger as-child>
-              <Button variant="destructive" size="sm" class="w-full" :disabled="loading">
+              <Button variant="destructive" size="sm" class="w-full bg-red-600/70! hover:bg-red-600/60!" :disabled="loading">
                 {{ t('appDetailDialog.deleteApp') }}
               </Button>
             </AlertDialogTrigger>

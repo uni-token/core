@@ -35,11 +35,11 @@ watchEffect(() => {
       {{ t('providers.loadingProviders') }}
     </div>
     <div v-else-if="providersStore.providers.length === 0" class="text-sm text-muted-foreground">
-      <span class="text-red-500">
+      <span class="text-red-500 dark:text-red-600">
         {{ t('providers.noProvidersAvailable') }}
       </span>
 
-      <Button variant="link" class="text-blue-600 hover:underline" @click="openAddProviderDialog = true">
+      <Button variant="link" class="text-blue-600 dark:text-blue-400 underline hover:opacity-80" @click="openAddProviderDialog = true">
         {{ t('providers.addNewProvider') }}
       </Button>
     </div>
