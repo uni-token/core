@@ -3,8 +3,7 @@ package logic
 import (
 	"net/url"
 
-	"github.com/pkg/browser"
-
+	"uni-token-service/logic/open_browser"
 	"uni-token-service/store"
 )
 
@@ -30,5 +29,5 @@ func OpenUI(params url.Values, auth bool) error {
 		params.Set("token", token)
 	}
 
-	return browser.OpenURL(GetAppBaseUrl() + "?" + params.Encode())
+	return openBrowser.OpenBrowser(GetUserName(), GetAppBaseUrl()+"?"+params.Encode())
 }

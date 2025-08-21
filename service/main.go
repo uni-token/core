@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/url"
 	"os"
-	"os/user"
 	"strings"
 	"time"
 
@@ -69,7 +68,7 @@ func (p *program) Stop(s service.Service) error {
 }
 
 func main() {
-	username := getUserName()
+	username := logic.GetUserName()
 	serviceName := serviceNamePrefix + "-" + username
 
 	svcConfig := &service.Config{
@@ -187,7 +186,7 @@ func handleSudo(args []string) {
 		&logic.SudoOptions{
 			Name: serviceDisplayName,
 			Env: map[string]string{
-				"UNI_TOKEN_SERVICE_USER": getUserName(),
+				"UNI_TOKEN_SERVICE_USER": logic.GetUserName(),
 				"UNI_TOKEN_SERVICE_ROOT": discovery.GetServiceRootPath(),
 			},
 		},
@@ -230,15 +229,4 @@ func handleSetupInSudo(s *service.Service, serviceName string) {
 		panic(err)
 	}
 	fmt.Printf("Started service \"%s\".\n", serviceName)
-}
-
-func getUserName() string {
-	if userName := os.Getenv("UNI_TOKEN_SERVICE_USER"); userName != "" {
-		return userName
-	}
-	currentUser, err := user.Current()
-	if err != nil {
-		panic(err)
-	}
-	return currentUser.Username
 }
