@@ -6,17 +6,16 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"uni-token-service/constants"
 )
 
 func OpenBrowser(targetUser string, url string) error {
 	providers := []string{"xdg-open", "x-www-browser", "www-browser"}
 
-	isRoot := os.Geteuid() == 0
-
 	for _, provider := range providers {
 		if _, err := exec.LookPath(provider); err == nil {
 			var cmd *exec.Cmd
-			if isRoot {
+			if constants.ShouldChangeUser() {
 				cmd = exec.Command("sudo", "-i", "-u", targetUser, provider, url)
 			} else {
 				cmd = exec.Command(provider, url)

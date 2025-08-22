@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"uni-token-service/constants"
 	"uni-token-service/logic"
 )
 
@@ -17,7 +18,7 @@ func SetupActionAPI(router *gin.Engine) {
 func handleCheck(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"__uni_token": true,
-		"version":     logic.GetVersion(),
+		"version":     constants.GetVersion(),
 	})
 }
 

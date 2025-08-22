@@ -3,6 +3,7 @@ package logic
 import (
 	"net/url"
 
+	"uni-token-service/constants"
 	"uni-token-service/logic/open_browser"
 	"uni-token-service/store"
 )
@@ -16,7 +17,7 @@ func OpenUI(params url.Values, auth bool) error {
 
 		var userName string
 		if len(allUsers) == 0 {
-			userName = GetUserName()
+			userName = constants.GetUserName()
 		} else {
 			userName = allUsers[0].Username
 		}
@@ -29,5 +30,5 @@ func OpenUI(params url.Values, auth bool) error {
 		params.Set("token", token)
 	}
 
-	return openBrowser.OpenBrowser(GetUserName(), GetAppBaseUrl()+"?"+params.Encode())
+	return openBrowser.OpenBrowser(constants.GetUserName(), constants.GetAppBaseUrl()+"?"+params.Encode())
 }

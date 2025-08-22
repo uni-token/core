@@ -17,6 +17,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"uni-token-service/logic/hide_window"
 )
 
 const (
@@ -565,16 +567,16 @@ func windowsExec(instance *Instance) (*Result, error) {
 
 // windowsElevate elevates the process on Windows
 func windowsElevate(instance *Instance) (string, string, error) {
-	escapedPath := strings.ReplaceAll(instance.PathExecute, "'", "`'")
-	command := fmt.Sprintf(`powershell.exe Start-Process -FilePath "'%s'" -WindowStyle hidden -Verb runAs`, escapedPath)
-
-	cmd := exec.Command("cmd", "/c", command)
-
-	// Close stdin to prevent PowerShell from waiting indefinitely on Windows 7
-	stdin, err := cmd.StdinPipe()
-	if err == nil {
-		stdin.Close()
+	// Create VBScript for UAC elevation - more reliable than PowerShell
+	err := windowsWriteElevateScript(instance)
+	if err != nil {
+		return "", "", err
 	}
+
+	// Execute the VBScript
+	cmd := exec.Command("wscript.exe", instance.PathElevate)
+	// Hide the window on Windows
+	hideWindow.HideWindow(cmd)
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -582,6 +584,15 @@ func windowsElevate(instance *Instance) (string, string, error) {
 	}
 
 	return string(output), "", nil
+}
+
+// windowsWriteElevateScript creates a VBScript for UAC elevation
+func windowsWriteElevateScript(instance *Instance) error {
+	// VBScript that shows UAC prompt and executes the batch file
+	script := fmt.Sprintf(`Set objShell = CreateObject("Shell.Application")
+objShell.ShellExecute "%s", "", "", "runas", 0`, instance.PathExecute)
+
+	return os.WriteFile(instance.PathElevate, []byte(script), 0644)
 }
 
 // windowsWriteExecuteScript writes the execute script for Windows

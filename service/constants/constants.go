@@ -1,4 +1,4 @@
-package logic
+package constants
 
 import (
 	"os"
@@ -39,4 +39,12 @@ func GetUserName() string {
 		panic(err)
 	}
 	return currentUser.Username
+}
+
+func ShouldChangeUser() bool {
+	currentUser, err := user.Current()
+	if err != nil {
+		panic(err)
+	}
+	return currentUser.Username != GetUserName()
 }

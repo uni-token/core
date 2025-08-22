@@ -9,6 +9,7 @@ import (
 
 	"github.com/kardianos/service"
 
+	"uni-token-service/constants"
 	"uni-token-service/discovery"
 	"uni-token-service/logic"
 	"uni-token-service/logic/url_scheme"
@@ -68,8 +69,8 @@ func (p *program) Stop(s service.Service) error {
 }
 
 func main() {
-	username := logic.GetUserName()
-	serviceName := serviceNamePrefix + "-" + username
+	username := constants.GetUserName()
+	serviceName := serviceNamePrefix + "-" + url.PathEscape(username)
 
 	svcConfig := &service.Config{
 		Name:        serviceName,
@@ -111,7 +112,7 @@ func main() {
 	}
 
 	if command == "version" {
-		fmt.Printf("Service Version: %d\n", logic.GetVersion())
+		fmt.Printf("Service Version: %d\n", constants.GetVersion())
 		return
 	}
 
@@ -126,7 +127,17 @@ func main() {
 	}
 
 	if command == "install-and-start" {
-		handleSetupInSudo(&s, serviceName)
+		handleInstallAndStart(&s, serviceName)
+		return
+	}
+
+	if command == "uninstall" {
+		handleSudo(false, []string{"uninstall-impl"})
+		return
+	}
+
+	if command == "uninstall-impl" {
+		handleUninstall(s, serviceName)
 		return
 	}
 
@@ -135,7 +146,7 @@ func main() {
 			fmt.Println("Usage: sudo <command>")
 			return
 		}
-		handleSudo(os.Args[2:])
+		handleSudo(false, os.Args[2:])
 		return
 	}
 
@@ -150,8 +161,7 @@ func main() {
 func handleSetup() {
 	err := discovery.InstallExecutable()
 	if err != nil {
-		fmt.Printf("Failed to install service executable: %v\n", err)
-		return
+		panic(err)
 	}
 
 	if discovery.IsServiceRunning() {
@@ -172,11 +182,20 @@ func handleSetup() {
 	fmt.Printf("Sudo is required to install and start the service.\n")
 
 	// Install and start the service in sudo mode
-	handleSudo([]string{"install-and-start"})
+	handleSudo(true, []string{"install-and-start"})
 }
 
-func handleSudo(args []string) {
-	execPath := discovery.GetServiceExecutablePath()
+func handleSudo(useInstalled bool, args []string) {
+	var execPath string
+	if useInstalled {
+		execPath = discovery.GetServiceExecutablePath()
+	} else {
+		var err error
+		execPath, err = os.Executable()
+		if err != nil {
+			panic(err)
+		}
+	}
 	command := execPath + " " + strings.Join(args, " ")
 
 	fmt.Printf("Executing command with sudo: %s\n", command)
@@ -186,7 +205,7 @@ func handleSudo(args []string) {
 		&logic.SudoOptions{
 			Name: serviceDisplayName,
 			Env: map[string]string{
-				"UNI_TOKEN_SERVICE_USER": logic.GetUserName(),
+				"UNI_TOKEN_SERVICE_USER": constants.GetUserName(),
 				"UNI_TOKEN_SERVICE_ROOT": discovery.GetServiceRootPath(),
 			},
 		},
@@ -217,7 +236,7 @@ func handleUrlScheme(url string) {
 	}
 }
 
-func handleSetupInSudo(s *service.Service, serviceName string) {
+func handleInstallAndStart(s *service.Service, serviceName string) {
 	err := service.Control(*s, "install")
 	if err != nil && !strings.Contains(err.Error(), "already exists") {
 		fmt.Println("Failed to install service:", err)
@@ -229,4 +248,33 @@ func handleSetupInSudo(s *service.Service, serviceName string) {
 		panic(err)
 	}
 	fmt.Printf("Started service \"%s\".\n", serviceName)
+}
+
+func handleUninstall(s service.Service, serviceName string) {
+	err := service.Control(s, "stop")
+	if err != nil {
+		fmt.Printf("Failed to stop service: %v\n", err)
+	} else {
+		fmt.Printf("Stopped service \"%s\".\n", serviceName)
+	}
+
+	err = service.Control(s, "uninstall")
+	if err != nil {
+		fmt.Printf("Failed to uninstall service: %v\n", err)
+	} else {
+		fmt.Printf("Uninstalled service \"%s\".\n", serviceName)
+	}
+
+	// err = urlScheme.UnregisterURLScheme()
+	// if err != nil {
+	// 	fmt.Printf("Failed to unregister URL scheme: %v\n", err)
+	// }
+
+	rootPath := discovery.GetServiceRootPath()
+	err = os.RemoveAll(rootPath)
+	if err != nil {
+		fmt.Printf("Failed to remove service root path %s: %v\n", rootPath, err)
+	} else {
+		fmt.Printf("Removed service root path %s.\n", rootPath)
+	}
 }
