@@ -5,8 +5,10 @@ dist
 __pycache__
 target
 service/uni-token-service
+service/uni-token-service.exe
 frontend/public/release
 .eslintcache
 docs/.vitepress/cache
 .fuse_hidden*
 sdk/go/example/uni-token-example
+sdk/go/example/uni-token-example.exe

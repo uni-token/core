@@ -8,7 +8,7 @@ UniToken provides a local solution. Through a lightweight SDK, AI agents can lau
 
 UniToken consists of three open-source, local-first modules:
 
-- **SDK**: Lightweight SDKs for Node.js and Python.
+- **SDK**: Lightweight SDKs for [Node.js](/sdk/node), [Python](/sdk/python), [Go](/sdk/go) and [Browser](/sdk/browser).
 - **App**: A [static web interface](https://uni-token.app).
 - **Service**: Local service handling storage and connections.
 
