@@ -3,6 +3,7 @@
   "type": "module",
   "version": "0.0.4",
   "private": true,
+  "license": "NCUL-1.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
