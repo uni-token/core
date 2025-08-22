@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 	"time"
@@ -104,7 +105,12 @@ func handleAppRegister(c *gin.Context) {
 		"appName":        {req.Name},
 		"appDescription": {req.Description},
 	}
-	logic.OpenUI(params, true)
+	err := logic.OpenUI(params, true)
+
+	timeout := 10 * time.Minute
+	if err != nil {
+		timeout = 10 * time.Second
+	}
 
 	select {
 	case result := <-channel:
@@ -113,8 +119,12 @@ func handleAppRegister(c *gin.Context) {
 		} else {
 			c.JSON(http.StatusForbidden, gin.H{"error": "App registration denied"})
 		}
-	case <-time.After(10 * time.Minute):
-		c.JSON(http.StatusRequestTimeout, gin.H{"error": "App registration timed out"})
+	case <-time.After(timeout):
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to open UI: %v", err)})
+		} else {
+			c.JSON(http.StatusRequestTimeout, gin.H{"error": "App registration timed out"})
+		}
 	}
 	delete(waitForGrant, uid)
 }

@@ -40,7 +40,7 @@ def request_unitoken_openai(
             "description": description,
             "uid": saved_api_key,
         },
-        timeout=None,
+        timeout=10 * 60,  # 10 minutes
     )
 
     if response.status_code == 403:

@@ -93,7 +93,7 @@ func detectRunningURLFromFile(rootPath string) (string, error) {
 	}
 
 	// Verify the service is actually running
-	client := &http.Client{Timeout: 5 * time.Second}
+	client := &http.Client{Timeout: 10 * time.Minute}
 	resp, err := client.Get(info.URL)
 	if err != nil {
 		return "", nil

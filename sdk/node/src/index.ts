@@ -140,6 +140,11 @@ export async function requestUniTokenOpenAI(options: UniTokenOptions): Promise<U
   const serverUrl = await detectRunningUrlFromFile(rootPath) || await startService(rootPath)
   const baseURL = `${serverUrl}openai/`
 
+  const abortController = new AbortController()
+  setTimeout(() => {
+    abortController.abort()
+  }, 10000) // 10 seconds timeout
+
   const response = await fetch(`${serverUrl}app/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -148,6 +153,7 @@ export async function requestUniTokenOpenAI(options: UniTokenOptions): Promise<U
       description: options.description,
       uid: options.savedApiKey,
     }),
+    signal: abortController.signal,
   })
 
   if (response.status === 403) {
