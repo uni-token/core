@@ -3,7 +3,6 @@
   "type": "module",
   "private": true,
   "packageManager": "pnpm@10.13.1",
-  "license": "MIT",
   "scripts": {
     "lint": "eslint --cache",
     "build": "node --experimental-strip-types scripts/build.ts",
@@ -16,6 +15,8 @@
     "@types/node": "^24.3.0",
     "bumpp": "^10.2.3",
     "eslint": "^9.33.0",
+    "eslint-plugin-format": "^1.0.1",
+    "prettier-plugin-slidev": "^1.0.5",
     "zx": "^8.8.0"
   }
 }

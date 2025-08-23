@@ -8,3 +8,12 @@ onlyBuiltDependencies:
   - '@tailwindcss/oxide'
   - esbuild
   - vue-demi
+catalog:
+  '@antfu/eslint-config': ^5.2.1
+  '@std/toml': jsr:^1.0.9
+  '@types/node': ^24.3.0
+  bumpp: ^10.2.3
+  eslint: ^9.33.0
+  eslint-plugin-format: ^1.0.1
+  prettier-plugin-slidev: ^1.0.5
+  zx: ^8.8.0

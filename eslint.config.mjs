@@ -4,6 +4,15 @@ export default antfu({
   vue: true,
   typescript: true,
   markdown: true,
+  formatters: {
+    markdown: true,
+    css: true,
+    slidev: {
+      files: [
+        '**/slides.md',
+      ],
+    },
+  },
   ignores: [
     'frontend/public/**',
     '**/.venv/**',

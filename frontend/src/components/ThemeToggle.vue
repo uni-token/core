@@ -9,7 +9,7 @@ import { useThemeStore } from '@/stores/theme'
 const { t } = useI18n()
 const themeStore = useThemeStore()
 
-const themeOptions: Theme[] = ['light', 'dark', 'system']
+const themeOptions: Theme[] = ['light', 'dark']
 
 function cycleTheme() {
   const currentIndex = themeOptions.indexOf(themeStore.theme)

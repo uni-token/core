@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import LanguageSelector from '@/components/LanguageSelector.vue'
 import ServiceStatus from '@/components/ServiceStatus.vue'
 import StartServiceButton from '@/components/StartServiceButton.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
@@ -158,6 +159,9 @@ async function handleSubmit() {
       </CardContent>
     </Card>
 
-    <ThemeToggle class="fixed right-4 bottom-4" />
+    <div class="flex gap-2 fixed right-4 bottom-4">
+      <LanguageSelector compact />
+      <ThemeToggle />
+    </div>
   </div>
 </template>

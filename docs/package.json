@@ -5,13 +5,18 @@
   "scripts": {
     "dev": "vitepress dev",
     "build": "vitepress build",
-    "serve": "vitepress serve"
+    "serve": "vitepress serve",
+    "dev:slides": "slidev ./slides/slides.md",
+    "build:slides": "slidev build ./slides/slides.md --base /slides/ --out ../.vitepress/dist/slides"
   },
   "dependencies": {
     "@vercel/analytics": "^1.5.0"
   },
   "devDependencies": {
     "@iconify-json/carbon": "^1.2.13",
+    "@slidev/cli": "^52.1.0",
+    "@slidev/theme-default": "latest",
+    "@slidev/types": "^52.1.0",
     "unocss": "^66.4.2",
     "vitepress": "^1.6.3",
     "vue": "^3.5.18"

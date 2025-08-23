@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Theme } from '@/stores/theme'
-import { Monitor, Moon, Sun } from 'lucide-vue-next'
+import { Moon, Sun } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import {
   Select,
@@ -17,7 +17,7 @@ const themeStore = useThemeStore()
 const themeOptions = [
   { value: 'light' as const, label: t('settings.lightMode'), icon: Sun },
   { value: 'dark' as const, label: t('settings.darkMode'), icon: Moon },
-  { value: 'system' as const, label: t('settings.systemMode'), icon: Monitor },
+  // { value: 'system' as const, label: t('settings.systemMode'), icon: Monitor },
 ]
 
 function handleThemeChange(newTheme: unknown) {
