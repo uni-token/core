@@ -47,6 +47,7 @@ export default defineConfig({
     ['link', { rel: 'icon', href: '/logo-light.png' }],
     ['link', { rel: 'icon', href: '/logo-dark.png', media: '(prefers-color-scheme: dark)' }],
   ],
+  srcExclude: ['/slides/**'],
   vite: {
     plugins: [
       UnoCss(),
