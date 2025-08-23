@@ -16,6 +16,9 @@ hero:
     - theme: alt
       text: View on GitHub
       link: https://github.com/uni-token/core
+    - theme: alt
+      text: Slides
+      link: https://docs.uni-token.app/slides/
 features:
   - icon: <span class="i-carbon:security"></span>
     title: Local-first
