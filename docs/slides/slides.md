@@ -27,7 +27,7 @@ UniToken
 <style>
 
 .text-outline-outward {
-  text-shadow: 
+  text-shadow:
     -1px 0 0 #333,
      1px 0 0 #333,
      0 -1px 0 #333,
@@ -42,7 +42,6 @@ UniToken
 
 <div ml-4 text-2xl space-y-4 class="text-#ddd">
 <div mb-8 mt-8 ml-5>
-
 
 - Logics could run locally.
 - But how to get LLM APIs?

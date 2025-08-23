@@ -3,6 +3,7 @@
 ## Architecture Overview
 
 UniToken is a multi-component monorepo consisting of:
+
 - **Go Service** (`service/`): Local API server providing token management and gateway functionality
 - **Vue.js Frontend** (`frontend/`): Web UI for configuration and management
 - **SDKs** (`sdk/`): Node.js and Python client libraries for service integration
