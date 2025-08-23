@@ -25,7 +25,7 @@ export default defineConfig({
           },
           {
             text: 'Node.js SDK',
-            link: '/sdk/nodejs',
+            link: '/sdk/node',
           },
           {
             text: 'Go SDK',
