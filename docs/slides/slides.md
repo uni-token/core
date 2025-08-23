@@ -37,6 +37,10 @@ UniToken
 </style>
 
 ---
+src: ./about-me.md
+---
+
+---
 
 # [Local AI Agents]{.text-primary.font-bold}[:]{.op-50} Dilemma
 
@@ -169,22 +173,14 @@ U(Users) -->|&nbsp;pay monthly plan&nbsp;| A(Agent) -->|&nbsp;pay token costs&nb
 </div>
 
 ---
-src: ./about-me.md
----
 
----
+<div class="fixed left-14 top-10">
 
-# Why Now?
-
-<div text-2xl>
-
-- AI Agents **will** [blow up]{.font-bold.text-yellow}
-
-- But [not yet]{.text-lightblue.font-bold}!
+# How to Profit
 
 </div>
 
-<img src="./assets/agents-growth.svg" v-drag="[183,89,554,NaN]" />
+<img src="./assets/how-to-profit.svg" fixed h-102 top-4 bottom-4 />
 
 ---
 
@@ -209,24 +205,24 @@ leads to [widespread adoption]{.text-xl.font-bold.text-green}
 Become a [standard]{.text-xl.font-bold}<br>
 like the ["OpenAI Protocol"]{.text-xl.font-bold.text-yellow}
 
-<img src="./assets/plug.svg" v-drag="[458,245,155,NaN]" />
+<img src="./assets/plug.svg" v-drag="[428,241,110,NaN]" />
 
 </div></div>
 
 ---
 
-<div class="fixed left-14 top-10">
+# Why Now
 
-# How to Profit
+<div text-2xl>
+
+- AI Agents **will** [blow up]{.font-bold.text-yellow}
+
+- But [not yet]{.text-lightblue.font-bold}!
 
 </div>
 
-<img src="./assets/how-to-profit.svg" fixed h-102 top-4 bottom-4 />
+<img src="./assets/agents-growth.svg" v-drag="[183,89,554,NaN]" />
 
 ---
 src: ./final-word.md
 ---
-
----
-
-<img src="https://docs.uni-token.app/arch.png" v-drag="[44,32,700,NaN]" rounded-xl />
