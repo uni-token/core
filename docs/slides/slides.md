@@ -10,7 +10,6 @@ info: |
 transition: slide-left
 mdc: true
 canvasWidth: 784
-routerMode: hash
 ---
 
 # <span text-lightblue>Local-first</span><br> AI Token <span font-bold>Platform</span>

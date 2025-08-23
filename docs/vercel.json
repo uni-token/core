@@ -1,6 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
+    { "source": "/slides/(.*)", "destination": "/slides/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "installCommand": "pnpm install",
