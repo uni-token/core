@@ -12,4 +12,4 @@ docs/.vitepress/cache
 .fuse_hidden*
 sdk/go/example/uni-token-example
 sdk/go/example/uni-token-example.exe
-docs/slides/about-me-impl.md
+docs/slides/*-impl.md

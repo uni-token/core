@@ -12,7 +12,7 @@ mdc: true
 canvasWidth: 784
 ---
 
-# <span text-lightblue>Local-first</span><br> AI Token <span font-bold>Platform</span>
+# <span text-lightblue class="text-outline-outward">Local-first</span><br> AI Token <span font-bold>Platform</span>
 
 <div op-80 mt--1 mb-4>
 
@@ -23,6 +23,18 @@ canvasWidth: 784
 <div v-drag="[640,382,103,NaN]" text-2xl>
 UniToken
 </div>
+
+<style>
+
+.text-outline-outward {
+  text-shadow: 
+    -1px 0 0 #333,
+     1px 0 0 #333,
+     0 -1px 0 #333,
+     0 1px 0 #333;
+}
+
+</style>
 
 ---
 
@@ -82,11 +94,11 @@ U(Users) -->|&nbsp;pay monthly plan&nbsp;| A(Agent) -->|&nbsp;pay token costs&nb
 <table class="w-full">
   <thead text-sm>
     <tr>
-      <th class="pb-0!"></th>
-      <th class="pb-0! p-2 font-semibold">On first Agent</th>
-      <th class="pb-0! p-2 font-semibold">On next Agent</th>
-      <th class="pb-0! p-2 font-semibold">On the future...</th>
-      <th class="pb-0!"></th>
+      <th class="pb-1!"></th>
+      <th class="pb-1! p-2 font-semibold">On first Agent</th>
+      <th class="pb-1! p-2 font-semibold">On next Agent</th>
+      <th class="pb-1! p-2 font-semibold">On the future...</th>
+      <th class="pb-1!"></th>
     </tr>
   </thead>
   <tbody>
@@ -97,7 +109,7 @@ U(Users) -->|&nbsp;pay monthly plan&nbsp;| A(Agent) -->|&nbsp;pay token costs&nb
       <td>
         <ol class="flex flex-col h-full">
           <li>Search for provider</li>
-          <li>Visit <span class="font-mono text-6px">OpenRouter.ai</span></li>
+          <li>Visit <span class="font-mono">OpenRouter.ai</span></li>
           <li>Sign up account</li>
           <li>Add credits</li>
           <li>Create API Key</li>
@@ -107,7 +119,7 @@ U(Users) -->|&nbsp;pay monthly plan&nbsp;| A(Agent) -->|&nbsp;pay token costs&nb
       </td>
       <td align-top>
         <ol class="flex flex-col h-full">
-          <li>Visit <span class="font-mono text-6px">OpenRouter.ai</span></li>
+          <li>Visit <span class="font-mono">OpenRouter.ai</span></li>
           <li>Sign in account</li>
           <li>Create API Key</li>
           <li>Go back to agent</li>
@@ -116,7 +128,7 @@ U(Users) -->|&nbsp;pay monthly plan&nbsp;| A(Agent) -->|&nbsp;pay token costs&nb
       </td>
       <td align-top>
         <ol class="flex flex-col h-full">
-          <li>Visit <span class="font-mono text-6px">OpenRouter.ai</span></li>
+          <li>Visit <span class="font-mono">OpenRouter.ai</span></li>
           <li>Sign in account</li>
           <li>Create API Key</li>
           <li>Go back to agent</li>
@@ -134,7 +146,7 @@ U(Users) -->|&nbsp;pay monthly plan&nbsp;| A(Agent) -->|&nbsp;pay token costs&nb
         After
       </td>
       <td>
-        <ol class="flex flex-col h-full">
+        <ol class="flex flex-col h-full text-10px">
           <li><span text-primary font-bold>Auto</span> open UniToken</li>
           <li>Sign up <span text-primary font-bold>in-app</span></li>
           <li>Add credits <span text-primary font-bold>in-app</span></li>
@@ -169,7 +181,7 @@ src: ./about-me.md
 
 - AI Agents **will** [blow up]{.font-bold.text-yellow}
 
-- [But not yet!]{.text-lightblue.font-bold}
+- But [not yet]{.text-lightblue.font-bold}!
 
 </div>
 
@@ -213,14 +225,8 @@ like the ["OpenAI Protocol"]{.text-xl.font-bold.text-yellow}
 <img src="./assets/how-to-profit.svg" fixed h-102 top-4 bottom-4 />
 
 ---
-class: flex items-center justify-center
+src: ./final-word.md
 ---
-
-<div text-2xl>
-
-Thanks
-
-</div>
 
 ---
 
