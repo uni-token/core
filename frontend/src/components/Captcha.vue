@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, shallowRef } from 'vue'
+import { computed, onMounted, onUnmounted, ref, shallowRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
@@ -10,7 +10,7 @@ const emits = defineEmits<{
   next: [result: any]
 }>()
 const { t } = useI18n()
-const state = ref<'init' | 'pending' | 'success'>('init')
+const state = ref<'loading' | 'init' | 'pending' | 'success'>('loading')
 
 declare global {
   interface Window {
@@ -35,6 +35,7 @@ onMounted(async () => {
   window.initGeetest4(
     props.config,
     (e: any) => {
+      state.value = 'init'
       captcha.value = e
       e.onReady(() => {
         setTimeout(() => {
@@ -71,10 +72,17 @@ function onClick() {
   state.value = 'pending'
   captcha.value.showCaptcha()
 }
+
+const statusText = computed(() => ({
+  loading: t('common.loading'),
+  init: t('captcha.getCode'),
+  pending: t('captcha.getCode'),
+  success: t('captcha.smsSent'),
+})[state.value])
 </script>
 
 <template>
-  <button v-if="captcha" @click="onClick">
-    {{ state !== 'success' ? t('captcha.getCode') : t('captcha.smsSent') }}
+  <button @click="onClick">
+    {{ statusText }}
   </button>
 </template>

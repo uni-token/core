@@ -1,6 +1,6 @@
 {
   "common": {
-    "loading": "正在验证身份...",
+    "loading": "加载中...",
     "error": "未知错误",
     "invalidTime": "无效时间",
     "confirm": "确认",

@@ -4,7 +4,7 @@ LLM Token Solution for Local AI Agents.
 
 Open-source, local-first, and lightweight.
 
-[**Docs**](https://docs.uni-token.app) | [Python SDK](https://docs.uni-token.app/sdk/python.html) | [Node.js SDK](https://docs.uni-token.app/sdk/node.html) | [Go SDK](https://docs.uni-token.app/sdk/go.html) | [Browser SDK](https://docs.uni-token.app/sdk/browser.html) | [Launch App](https://uni-token.ap) | [Development](./CONTRIBUTING.md)
+[**Docs**](https://docs.uni-token.app) | [Python SDK](https://docs.uni-token.app/sdk/python.html) | [Node.js SDK](https://docs.uni-token.app/sdk/node.html) | [Go SDK](https://docs.uni-token.app/sdk/go.html) | [Browser SDK](https://docs.uni-token.app/sdk/browser.html) | [Launch App](https://uni-token.app) | [Development](./CONTRIBUTING.md)
 
 ## Why UniToken?
 

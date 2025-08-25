@@ -195,12 +195,5 @@ func ensureToken(c *gin.Context) string {
 		c.Abort()
 		return ""
 	}
-	token := strings.TrimPrefix(authHeader, "Bearer ")
-	claims, err := logic.ValidateJWT(token)
-	if err != nil {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Invalid or expired token"})
-		c.Abort()
-		return ""
-	}
-	return claims.Id
+	return strings.TrimPrefix(authHeader, "Bearer ")
 }

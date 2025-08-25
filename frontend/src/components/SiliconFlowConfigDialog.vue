@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import SiliconFlow from '@/components/SiliconFlowCard.vue'
+import SiliconFlowCard from '@/components/SiliconFlowCard.vue'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
 const emit = defineEmits<{
@@ -22,7 +22,7 @@ const open = defineModel<boolean>('open')
       </DialogHeader>
 
       <div class="my-2">
-        <SiliconFlow @configured="(provider) => emit('configured', provider)" />
+        <SiliconFlowCard @configured="(provider) => emit('configured', provider)" />
       </div>
     </DialogContent>
   </Dialog>
