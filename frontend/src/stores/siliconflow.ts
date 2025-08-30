@@ -81,9 +81,9 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
   const phoneNumber = ref('')
   const email = ref('')
   const smsCode = ref('')
-  const agreed = ref(false)
+  const agreed = ref(true)
   const keepLogin = ref(true)
-  const isLoading = ref(false)
+  const isLoading = ref(true)
   const isEmailLogin = ref(false)
 
   // Payment related state
@@ -129,7 +129,6 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
 
   // Actions
   async function checkLoginStatus() {
-    isLoading.value = true
     try {
       const res = await fetch('siliconflow/status', {
         method: 'GET',
@@ -593,6 +592,7 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
     canLogin,
     canCreatePayment,
     authed: computed(() => userInfo.value?.data?.auth === 1),
+    providerId: computed(() => providersStore.providers.find(p => p.type === 'siliconflow')?.id || null),
 
     // Actions
     checkLoginStatus,

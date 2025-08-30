@@ -273,7 +273,8 @@
     "emailLogin": "Email Login",
     "phoneLogin": "Phone Login",
     "emailAddress": "Email Address",
-    "emailAddressPlaceholder": "Your email address"
+    "emailAddressPlaceholder": "Your email address",
+    "login": "Login"
   },
   "presets": {
     "preset": "Preset",
@@ -378,7 +379,7 @@
   },
   "captcha": {
     "getCode": "Get Verification Code",
-    "smsSent": "SMS Sent"
+    "smsSent": "Code Sent"
   },
   "editProviderDialog": {
     "title": "Edit Provider",

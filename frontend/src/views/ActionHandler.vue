@@ -5,6 +5,7 @@ import { toast } from 'vue-sonner'
 import ProviderSelector from '@/components/ProviderSelector.vue'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { useProvidersStore } from '@/stores'
 import { useAppStore } from '@/stores/app'
 
 const { t } = useI18n()
@@ -14,6 +15,7 @@ let actionType = params.get('action')
 const open = ref(!!actionType)
 const selectedProvider = ref<string>('')
 const appStore = useAppStore()
+const providersStore = useProvidersStore()
 
 async function registerAction(granted: boolean) {
   const appId = params.get('appId')
@@ -39,7 +41,7 @@ watch(open, (open) => {
 
 <template>
   <Dialog v-model:open="open">
-    <DialogContent v-if="actionType === 'register'" class="sm:max-w-lg">
+    <DialogContent v-if="actionType === 'register'" class="sm:max-w-xl">
       <DialogHeader>
         <DialogTitle>{{ t('actionHandler.appPermissionRequest') }}</DialogTitle>
         <DialogDescription>
@@ -50,18 +52,17 @@ watch(open, (open) => {
       <div class="space-y-4">
         <div class="space-y-2">
           <div>
-            <strong>{{ t('actionHandler.appName') }}: </strong>
-            <span>{{ params.get('appName') }}</span>
+            <strong class="mr-4">{{ t('actionHandler.appName') }}</strong>
+            <span class="text-lg">{{ params.get('appName') }}</span>
           </div>
           <div>
-            <strong>{{ t('actionHandler.appDescription') }}: </strong>
-            <span>{{ params.get('appDescription') }}</span>
+            <strong class="mr-4">{{ t('actionHandler.appDescription') }}</strong>
+            <span class="text-lg">{{ params.get('appDescription') }}</span>
           </div>
+          <ProviderSelector v-model="selectedProvider" class="pt-1"/>
         </div>
 
-        <ProviderSelector v-model="selectedProvider" />
-
-        <div class="flex justify-end mt-6 gap-2">
+        <div v-if="providersStore.providers.length > 0" class="flex justify-end mt-6 gap-2">
           <Button variant="outline" @click="registerAction(false)">
             {{ t('actionHandler.deny') }}
           </Button>

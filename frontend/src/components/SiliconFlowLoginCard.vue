@@ -99,7 +99,7 @@ function wxLogin() {
       </div>
       <Button class="w-full h-10" :disabled="!siliconFlowStore.canLogin" @click="siliconFlowStore.login()">
         <span v-if="siliconFlowStore.isLoading">{{ t('siliconFlow.loggingIn') }}</span>
-        <span v-else>{{ t('siliconFlow.registerLogin') }}</span>
+        <span v-else>{{ siliconFlowStore.isEmailLogin ? t('siliconFlow.login') : t('siliconFlow.registerLogin') }}</span>
       </Button>
       <div class="w-full grid grid-cols-2 gap-3">
         <Dialog>

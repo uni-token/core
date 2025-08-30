@@ -2,17 +2,6 @@
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -46,13 +35,6 @@ function handleRecharge() {
   }
   else {
     siliconFlowStore.openPaymentDialog()
-  }
-}
-
-async function handleCreateKey() {
-  const result = await siliconFlowStore.createApiKeyAndApply()
-  if (result) {
-    emit('configured', result.id)
   }
 }
 </script>
@@ -98,7 +80,7 @@ async function handleCreateKey() {
       </div>
     </CardContent>
     <CardFooter class="pt-2 flex gap-2">
-      <AlertDialog>
+      <!-- <AlertDialog>
         <AlertDialogTrigger as-child>
           <Button variant="default" size="sm" class="h-8">
             {{ t('siliconFlow.createKey') }}
@@ -118,7 +100,11 @@ async function handleCreateKey() {
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
+      </AlertDialog> -->
+      <Button variant="default" size="sm" class="h-8" @click="emit('configured', siliconFlowStore.providerId!)">
+        {{ t('common.confirm') }}
+      </Button>
+      <div class="flex-grow" />
       <Button variant="secondary" size="sm" class="h-8" @click="handleRecharge">
         {{ t('siliconFlow.recharge') }}
       </Button>

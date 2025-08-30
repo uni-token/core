@@ -21,6 +21,10 @@ const showEditDialog = ref(false)
 const editingProvider = ref<LLMProvider | null>(null)
 
 function editProvider(provider: LLMProvider) {
+  if (provider.type === 'siliconflow') {
+    showSiliconFlowConfig.value = true
+    return
+  }
   editingProvider.value = provider
   showEditDialog.value = true
 }

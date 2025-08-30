@@ -92,8 +92,8 @@ onMounted(() => {
                 {{ app.granted ? t('appManagement.hasAccess') : t('appManagement.noAccess') }}
               </p>
             </div>
-            <div :class="{ 'opacity-40 pointer-events-none select-none': !app.granted }" class="mt-4">
-              <ProviderSelector v-model="app.provider" @update:model-value="appStore.toggleAppAuthorization(app.id, true, app.provider)" />
+            <div :class="{ 'opacity-0 pointer-events-none select-none': !app.granted }" class="mt-4 transition-opacity duration-300">
+              <ProviderSelector v-model="app.provider" compact @update:model-value="appStore.toggleAppAuthorization(app.id, true, app.provider)" />
             </div>
           </CardContent>
         </Card>
