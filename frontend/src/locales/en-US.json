@@ -189,8 +189,10 @@
     "logout": "Logout",
     "loginTitle": "Login to SiliconFlow",
     "loginDescription": "Login using phone number and SMS verification code",
+    "emailLoginDescription": "Login using email address and verification code",
     "phoneNumber": "Your phone number",
     "smsCode": "SMS verification code",
+    "emailCode": "Email verification code",
     "agreeToTerms": "I agree to SiliconFlow's",
     "userAgreement": "User Agreement",
     "and": "and",
@@ -266,7 +268,12 @@
     "auth-success": "Verified",
     "not-authenticated": "Not verified",
     "realNameRequired": "Real-name verification required before recharge",
-    "accountRechargeDescription": "Recharge to your SiliconFlow account"
+    "accountRechargeDescription": "Recharge to your SiliconFlow account",
+    "wechatLogin": "WeChat",
+    "emailLogin": "Email Login",
+    "phoneLogin": "Phone Login",
+    "emailAddress": "Email Address",
+    "emailAddressPlaceholder": "Your email address"
   },
   "presets": {
     "preset": "Preset",

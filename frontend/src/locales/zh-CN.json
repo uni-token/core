@@ -189,8 +189,10 @@
     "logout": "退出登录",
     "loginTitle": "登录 硅基流动",
     "loginDescription": "使用手机号码和短信验证码登录",
+    "emailLoginDescription": "使用邮箱地址和验证码登录",
     "phoneNumber": "您的手机号",
     "smsCode": "短信验证码",
+    "emailCode": "邮箱验证码",
     "agreeToTerms": "我同意硅基流动的",
     "userAgreement": "用户协议",
     "and": "和",
@@ -266,7 +268,12 @@
     "auth-success": "已认证",
     "not-authenticated": "未认证",
     "realNameRequired": "实名认证后，才能充值",
-    "accountRechargeDescription": "向硅基流动账户充值"
+    "accountRechargeDescription": "向硅基流动账户充值",
+    "wechatLogin": "微信登录",
+    "emailLogin": "邮箱登录",
+    "phoneLogin": "短信登录",
+    "emailAddress": "邮箱地址",
+    "emailAddressPlaceholder": "您的邮箱地址"
   },
   "presets": {
     "preset": "预设",

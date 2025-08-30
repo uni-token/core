@@ -79,10 +79,12 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
   const userInfo = ref<SiliconFlowUserInfo | null>(null)
   const authInfo = ref<AuthInfo | null>(null)
   const phoneNumber = ref('')
+  const email = ref('')
   const smsCode = ref('')
   const agreed = ref(false)
   const keepLogin = ref(true)
   const isLoading = ref(false)
+  const isEmailLogin = ref(false)
 
   // Payment related state
   const payment = ref<PaymentInfo>({
@@ -106,7 +108,10 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
   // Computed
   const isLoggedIn = computed(() => userInfo.value?.isLoggedIn || false)
   const userBalance = computed(() => userInfo.value?.data?.totalBalance || '0')
-  const canLogin = computed(() => phoneNumber.value && smsCode.value && agreed.value && !isLoading.value)
+  const canLogin = computed(() => {
+    const hasContact = isEmailLogin.value ? email.value : phoneNumber.value
+    return hasContact && smsCode.value && agreed.value && !isLoading.value
+  })
   const canCreatePayment = computed(() =>
     !payment.value.loading
     && payment.value.amount
@@ -160,14 +165,27 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
   }
 
   async function sendSMS(result: any) {
-    await fetch('siliconflow/sms', {
-      body: JSON.stringify({
-        area: '+86',
-        phone: phoneNumber.value,
-        ...result,
-      }),
-      method: 'POST',
-    })
+    if (isEmailLogin.value) {
+      // Send email verification code
+      await fetch('siliconflow/email', {
+        body: JSON.stringify({
+          email: email.value,
+          ...result,
+        }),
+        method: 'POST',
+      })
+    }
+    else {
+      // Send SMS verification code
+      await fetch('siliconflow/sms', {
+        body: JSON.stringify({
+          area: '+86',
+          phone: phoneNumber.value,
+          ...result,
+        }),
+        method: 'POST',
+      })
+    }
   }
 
   async function login() {
@@ -176,22 +194,34 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
 
     try {
       isLoading.value = true
-      const res = await fetch('siliconflow/login', {
-        body: JSON.stringify({
-          phone: phoneNumber.value,
-          code: smsCode.value,
-          shareCode: '',
-          agree: agreed.value,
-          keep: keepLogin.value,
-          area: '+86',
-        }),
-        method: 'POST',
-      })
+      const res = isEmailLogin.value
+        ? await fetch('siliconflow/login/email', {
+            body: JSON.stringify({
+              email: email.value,
+              code: smsCode.value,
+              agree: agreed.value,
+              keep: keepLogin.value,
+              area: '+86',
+            }),
+            method: 'POST',
+          })
+        : await fetch('siliconflow/login', {
+            body: JSON.stringify({
+              phone: phoneNumber.value,
+              code: smsCode.value,
+              shareCode: '',
+              agree: agreed.value,
+              keep: keepLogin.value,
+              area: '+86',
+            }),
+            method: 'POST',
+          })
 
       if (res.ok) {
         await checkLoginStatus()
         // Clear login form
         phoneNumber.value = ''
+        email.value = ''
         smsCode.value = ''
         toast.success(t('stores.siliconflow.loginSuccess'))
 
@@ -546,6 +576,7 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
     userInfo,
     authInfo,
     phoneNumber,
+    email,
     smsCode,
     agreed,
     keepLogin,
@@ -554,6 +585,7 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
     showPaymentDialog,
     quickAmounts,
     captchaConfig,
+    isEmailLogin,
 
     // Computed
     isLoggedIn,

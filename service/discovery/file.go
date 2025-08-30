@@ -34,6 +34,9 @@ func getServiceJsonPath() string {
 }
 
 func GetDbPath() string {
+	if os.Args[1] == "debug" {
+		return "./data.db"
+	}
 	return filepath.Join(GetServiceRootPath(), "data.db")
 }
 

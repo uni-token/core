@@ -18,7 +18,9 @@ func SetupSiliconFlowAPI(router gin.IRouter) {
 	{
 		api.GET("/status", handleGetStatus)
 		api.POST("/sms", handleSendSMS)
+		api.POST("/email", handleSendEmail)
 		api.POST("/login", handleSiliconLogin)
+		api.POST("/login/email", handleSiliconLoginEmail)
 		api.POST("/logout", handleLogout)
 		api.POST("/apikey/create", handleCreateAPIKey)
 		api.POST("/payment/create", handleCreatePayment)
@@ -82,6 +84,45 @@ func handleSendSMS(c *gin.Context) {
 	c.Data(resp.StatusCode, "application/json", respBody)
 }
 
+// handleSendEmail handles Email sending request
+func handleSendEmail(c *gin.Context) {
+	// Read the raw request body
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to read request body"})
+		return
+	}
+
+	// Create HTTP request
+	httpReq, err := http.NewRequest("POST", "https://account.siliconflow.cn/api/open/email", bytes.NewBuffer(body))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create request"})
+		return
+	}
+
+	// Set headers
+	setCommonHeaders(httpReq)
+	httpReq.Header.Set("Content-Type", "text/plain;charset=UTF-8")
+
+	// Make the request
+	client := &http.Client{}
+	resp, err := client.Do(httpReq)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send SMS request"})
+		return
+	}
+	defer resp.Body.Close()
+
+	// Read response
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read response"})
+		return
+	}
+
+	c.Data(resp.StatusCode, "application/json", respBody)
+}
+
 // handleSiliconLogin handles user login request
 func handleSiliconLogin(c *gin.Context) {
 	// Read the raw request body
@@ -93,6 +134,104 @@ func handleSiliconLogin(c *gin.Context) {
 
 	// Create HTTP request
 	httpReq, err := http.NewRequest("POST", "https://account.siliconflow.cn/api/open/login/user", bytes.NewBuffer(body))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create request"})
+		return
+	}
+
+	// Set headers
+	setCommonHeaders(httpReq)
+	httpReq.Header.Set("Content-Type", "text/plain;charset=UTF-8")
+
+	// Make the request
+	client := &http.Client{}
+	resp, err := client.Do(httpReq)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send login request"})
+		return
+	}
+	defer resp.Body.Close()
+
+	// Read response
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read response"})
+		return
+	}
+
+	// Store cookies if login was successful
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		cookies := resp.Header["Set-Cookie"]
+		var subjectID string
+
+		if len(cookies) > 0 {
+			// Parse Set-Cookie headers and extract only name=value pairs
+			var cookiePairs []string
+			for _, cookie := range cookies {
+				// Split by semicolon and take only the first part (name=value)
+				parts := strings.Split(cookie, ";")
+				if len(parts) > 0 {
+					nameValue := strings.TrimSpace(parts[0])
+					if nameValue != "" {
+						cookiePairs = append(cookiePairs, nameValue)
+					}
+				}
+			}
+			cookieStr := strings.Join(cookiePairs, "; ")
+
+			// Make a request to /me to get the subject ID
+			meReq, err := http.NewRequest("GET", "https://cloud.siliconflow.cn/me", nil)
+			if err == nil {
+				// Set headers for /me request
+				meReq.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7")
+				meReq.Header.Set("Accept-Language", "zh-CN,zh;q=0.9")
+				meReq.Header.Set("Priority", "u=0, i")
+				meReq.Header.Set("Referer", "https://account.siliconflow.cn/")
+				meReq.Header.Set("Sec-CH-UA", `"Not)A;Brand";v="8", "Chromium";v="138", "Microsoft Edge";v="138"`)
+				meReq.Header.Set("Sec-CH-UA-Mobile", "?0")
+				meReq.Header.Set("Sec-CH-UA-Platform", `"Linux"`)
+				meReq.Header.Set("Sec-Fetch-Dest", "document")
+				meReq.Header.Set("Sec-Fetch-Mode", "navigate")
+				meReq.Header.Set("Sec-Fetch-Site", "same-site")
+				meReq.Header.Set("Sec-Fetch-User", "?1")
+				meReq.Header.Set("Upgrade-Insecure-Requests", "1")
+				meReq.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0")
+				meReq.Header.Set("Cookie", cookieStr)
+
+				meResp, err := client.Do(meReq)
+				if err == nil {
+					defer meResp.Body.Close()
+					// Extract X-Subject-ID from response headers
+					if xSubjectID := meResp.Header.Get("X-Subject-ID"); xSubjectID != "" {
+						subjectID = xSubjectID
+					}
+				}
+			}
+
+			session := store.SiliconFlowSession{
+				Cookie:    cookieStr,
+				SubjectID: subjectID,
+				CreatedAt: time.Now(),
+			}
+			// Use a simple key for storage
+			store.SiliconFlowSessions.Put("latest", session)
+		}
+	}
+
+	c.Data(resp.StatusCode, "application/json", respBody)
+}
+
+// handleSiliconLoginEmail handles user login request via email
+func handleSiliconLoginEmail(c *gin.Context) {
+	// Read the raw request body
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to read request body"})
+		return
+	}
+
+	// Create HTTP request
+	httpReq, err := http.NewRequest("POST", "https://account.siliconflow.cn/api/open/login/email", bytes.NewBuffer(body))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create request"})
 		return

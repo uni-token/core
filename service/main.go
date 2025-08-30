@@ -103,7 +103,7 @@ func main() {
 
 	command := os.Args[1]
 
-	if command == "run" {
+	if command == "run" || command == "debug" {
 		err := s.Run()
 		if err != nil {
 			panic(err)
