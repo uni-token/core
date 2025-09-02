@@ -46,10 +46,23 @@ async function onUIOpened() {
   const session = params.get('session')
   if (!session)
     return
-  await serviceStore.fetch('ui/opened', {
-    method: 'POST',
-    body: JSON.stringify({ session }),
-  })
+  pingActive()
+
+  async function pingActive() {
+    try {
+      const resp = await serviceStore.fetch('ui/active', {
+        method: 'POST',
+        body: JSON.stringify({ session }),
+      })
+      const data = await resp.json()
+      if (data.continue !== false) {
+        setTimeout(pingActive, 1000)
+      }
+    }
+    catch {
+      setTimeout(pingActive, 1000)
+    }
+  }
 }
 onUIOpened()
 </script>

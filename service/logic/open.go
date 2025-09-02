@@ -13,14 +13,15 @@ import (
 	"github.com/google/uuid"
 )
 
-var openingUI = make(map[string](chan struct{}))
 var ServerPort = -1
 
-func OpenUI(params url.Values, auth bool) error {
+var sessionActive = make(map[string]chan<- struct{})
+
+func OpenUI(params url.Values, auth bool) (<-chan struct{}, func(), error) {
 	if auth {
 		allUsers, err := store.Users.List()
 		if err != nil {
-			return err
+			return nil, nil, err
 		}
 
 		var userName string
@@ -32,7 +33,7 @@ func OpenUI(params url.Values, auth bool) error {
 
 		token, err := GenerateJWT(userName)
 		if err != nil {
-			return err
+			return nil, nil, err
 		}
 		params.Set("username", userName)
 		params.Set("token", token)
@@ -42,28 +43,27 @@ func OpenUI(params url.Values, auth bool) error {
 	params.Set("session", sessionId)
 	params.Set("port", strconv.Itoa(ServerPort))
 
-	err := openBrowser.OpenBrowser(constants.UserName, constants.AppBaseUrl+"?"+params.Encode())
-	if err != nil {
-		return err
-	}
+	openBrowser.OpenBrowser(constants.UserName, constants.AppBaseUrl+"?"+params.Encode())
 
 	channel := make(chan struct{})
-	openingUI[sessionId] = channel
-	defer delete(openingUI, sessionId)
+	sessionActive[sessionId] = channel
+	cleanup := func() {
+		delete(sessionActive, sessionId)
+	}
 
 	select {
 	case <-channel:
-		return nil
+		return channel, cleanup, nil
 	case <-time.After(5 * time.Second):
-		return fmt.Errorf("failed to open UI: timeout")
+		cleanup()
+		return nil, nil, fmt.Errorf("failed to open UI: timeout")
 	}
 }
 
-func OnUIOpened(sessionId string) {
-	channel, ok := openingUI[sessionId]
-	if !ok {
-		return
+func OnUIActive(sessionId string) bool {
+	channel, ok := sessionActive[sessionId]
+	if ok {
+		channel <- struct{}{}
 	}
-	channel <- struct{}{}
-	close(channel)
+	return ok
 }

@@ -26,13 +26,14 @@ export const useServiceStore = defineStore('service', () => {
   })
   let requireFindService = true
 
-  const givenServerPort = Number.parseInt(params.get('port') || '')
-  if (givenServerPort > 0 && givenServerPort < 65535) {
-    servicePort.value = givenServerPort
-    requireFindService = false
-  }
-
   const initialLoad = new Promise<void>((resolve) => {
+    const givenServerPort = Number.parseInt(params.get('port') || '')
+    if (givenServerPort > 0 && givenServerPort < 65535) {
+      servicePort.value = givenServerPort
+      requireFindService = false
+      resolve()
+    }
+
     useIntervalFn(
       async () => {
         if (requireFindService) {
@@ -58,7 +59,7 @@ export const useServiceStore = defineStore('service', () => {
 
   useIntervalFn(() => {
     requireFindService = true
-  }, 3000)
+  }, 5000)
 
   return {
     serverConnected,

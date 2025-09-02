@@ -21,7 +21,7 @@ func SetupAppAPI(router gin.IRouter) {
 	router.Group("/app").Use(RequireUserLogin()).DELETE("/clear", handleAppClear)
 }
 
-var waitForGrant = make(map[string]chan bool)
+var waitForGrant = make(map[string]chan<- bool)
 
 func handleAppRegister(c *gin.Context) {
 	var req struct {
@@ -98,6 +98,7 @@ func handleAppRegister(c *gin.Context) {
 
 	channel := make(chan bool)
 	waitForGrant[uid] = channel
+	defer delete(waitForGrant, uid)
 
 	params := url.Values{
 		"action":         {"register"},
@@ -105,28 +106,31 @@ func handleAppRegister(c *gin.Context) {
 		"appName":        {req.Name},
 		"appDescription": {req.Description},
 	}
-	err := logic.OpenUI(params, true)
-
-	timeout := 10 * time.Minute
+	uiActive, cleanup, err := logic.OpenUI(params, true)
+	if cleanup != nil {
+		defer cleanup()
+	}
 	if err != nil {
-		timeout = 10 * time.Second
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to open UI: %v", err)})
+		return
 	}
 
-	select {
-	case result := <-channel:
-		if result {
-			granted()
-		} else {
-			c.JSON(http.StatusForbidden, gin.H{"error": "App registration denied"})
-		}
-	case <-time.After(timeout):
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to open UI: %v", err)})
-		} else {
-			c.JSON(http.StatusRequestTimeout, gin.H{"error": "App registration timed out"})
+	for {
+		select {
+		case result := <-channel:
+			if result {
+				granted()
+			} else {
+				c.JSON(http.StatusForbidden, gin.H{"error": "App registration denied"})
+			}
+			return
+		case <-uiActive:
+			continue
+		case <-time.After(5 * time.Second):
+			c.JSON(http.StatusRequestTimeout, gin.H{"error": "App registration timed out. User may have closed the tab"})
+			return
 		}
 	}
-	delete(waitForGrant, uid)
 }
 
 func handleAppList(c *gin.Context) {

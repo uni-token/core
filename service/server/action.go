@@ -13,7 +13,7 @@ import (
 func SetupActionAPI(router *gin.Engine) {
 	router.GET("/", handleCheck)
 	router.GET("/ui/open", handleOpenUI)
-	router.POST("/ui/opened", handleUIOpened)
+	router.POST("/ui/active", handleUIActive)
 }
 
 func handleCheck(c *gin.Context) {
@@ -24,7 +24,10 @@ func handleCheck(c *gin.Context) {
 }
 
 func handleOpenUI(c *gin.Context) {
-	err := logic.OpenUI(url.Values{}, true)
+	_, cleanup, err := logic.OpenUI(url.Values{}, true)
+	if cleanup != nil {
+		cleanup()
+	}
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open UI"})
@@ -32,7 +35,7 @@ func handleOpenUI(c *gin.Context) {
 	}
 }
 
-func handleUIOpened(c *gin.Context) {
+func handleUIActive(c *gin.Context) {
 	var req struct {
 		Session string `json:"session"`
 	}
@@ -41,6 +44,7 @@ func handleUIOpened(c *gin.Context) {
 		return
 	}
 
-	logic.OnUIOpened(req.Session)
-	c.Status(http.StatusOK)
+	shouldContinue := logic.OnUIActive(req.Session)
+
+	c.JSON(http.StatusOK, gin.H{"continue": shouldContinue})
 }
