@@ -43,7 +43,7 @@ func setupRoutes(router *gin.Engine) {
 	SetupActionAPI(router)
 	SetupGatewayAPI(router)
 	SetupAppAPI(router)
-	SetupProvidersAPI(router)
+	SetupKeysAPI(router)
 	SetupPresetsAPI(router)
 	SetupUsageAPI(router)
 	SetupSiliconFlowAPI(router)

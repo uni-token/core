@@ -15,7 +15,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  configured: [provider: string]
+  configured: [key: string]
 }>()
 
 const { t } = useI18n()
@@ -101,7 +101,7 @@ function handleRecharge() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog> -->
-      <Button variant="default" size="sm" class="h-8" @click="emit('configured', siliconFlowStore.providerId!)">
+      <Button variant="default" size="sm" class="h-8" @click="emit('configured', siliconFlowStore.keyId!)">
         {{ t('common.confirm') }}
       </Button>
       <div class="flex-grow" />

@@ -8,7 +8,7 @@ export interface App {
   id: string
   name: string
   description?: string
-  provider: string
+  key: string
   granted: boolean
   createdAt: string
   lastActiveAt: string
@@ -59,11 +59,11 @@ export const useAppStore = defineStore('app', () => {
     await loadApps()
   }
 
-  const toggleAppAuthorization = async (id: string, granted: boolean, provider?: string) => {
+  const toggleAppAuthorization = async (id: string, granted: boolean, key?: string) => {
     try {
       const body: any = { id, granted }
-      if (granted && provider) {
-        body.provider = provider
+      if (granted && key) {
+        body.key = key
       }
 
       const response = await fetch('app/toggle', {

@@ -18,13 +18,13 @@ interface UsageStats {
     totalCost: number
     requestCount: number
   }>
-  byProvider: Record<string, {
+  byKey: Record<string, {
     totalTokens: number
     totalCost: number
     requestCount: number
   }>
   byModel: Record<string, {
-    provider: string
+    key: string
     totalTokens: number
     totalCost: number
     requestCount: number
@@ -32,7 +32,7 @@ interface UsageStats {
   recentUsages: Array<{
     id: string
     appName: string
-    provider: string
+    key: string
     model: string
     totalTokens: number
     cost: number
@@ -254,11 +254,11 @@ onMounted(() => {
           </CardHeader>
           <CardContent>
             <div class="space-y-2">
-              <div v-if="Object.keys(stats.byProvider).length === 0" class="text-sm text-muted-foreground text-center py-4">
+              <div v-if="Object.keys(stats.byKey).length === 0" class="text-sm text-muted-foreground text-center py-4">
                 {{ t('usage.noData') }}
               </div>
               <div
-                v-for="(provider, name) in stats.byProvider" v-else :key="name"
+                v-for="(provider, name) in stats.byKey" v-else :key="name"
                 class="flex justify-between items-center p-2 rounded border"
               >
                 <div>
@@ -303,7 +303,7 @@ onMounted(() => {
                     {{ name.split('/')[1] || name }}
                   </div>
                   <div class="text-xs text-muted-foreground">
-                    {{ model.provider }} · {{ model.requestCount }} {{ t('usage.times') }}
+                    {{ model.key }} · {{ model.requestCount }} {{ t('usage.times') }}
                   </div>
                 </div>
                 <div class="text-right">
@@ -339,7 +339,7 @@ onMounted(() => {
               <div class="flex-1">
                 <div class="flex items-center gap-2">
                   <span class="font-medium text-sm">{{ usage.appName || t('usage.unknownApp') }}</span>
-                  <span class="text-xs px-2 py-1 bg-muted rounded">{{ usage.provider }}</span>
+                  <span class="text-xs px-2 py-1 bg-muted rounded">{{ usage.key }}</span>
                   <span class="text-xs text-muted-foreground">{{ usage.model }}</span>
                 </div>
                 <div class="text-xs text-muted-foreground mt-1">

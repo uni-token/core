@@ -3,7 +3,7 @@ import { renderSVG } from 'uqr'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
-import { useProvidersStore } from './providers'
+import { useKeysStore } from './keys'
 import { useServiceStore } from './service'
 
 export interface SiliconFlowUserInfo {
@@ -72,7 +72,7 @@ export interface PaymentInfo {
 
 export const useSiliconFlowStore = defineStore('siliconflow', () => {
   const { fetch } = useServiceStore()
-  const providersStore = useProvidersStore()
+  const keysStore = useKeysStore()
   const { t } = useI18n()
 
   // User related state
@@ -277,7 +277,7 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
 
       if (res.ok) {
         const data = await res.json()
-        const result = await addApiKeyAsProvider(data.data.secretKey)
+        const result = await saveApiKey(data.data.secretKey)
         toast.success(t('stores.siliconflow.apiKeyCreated'))
         return result
       }
@@ -292,14 +292,14 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
     }
   }
 
-  async function addApiKeyAsProvider(apiKey: string) {
+  async function saveApiKey(apiKey: string) {
     function getName(index: number): string {
-      return `${t('stores.siliconflow.providerName')}${index > 0 ? ` ${index}` : ''}`
+      return `${t('stores.siliconflow.keyName')}${index > 0 ? ` ${index}` : ''}`
     }
 
     let count = 0
     while (true) {
-      if (providersStore.providers.some(p => p.name === getName(count))) {
+      if (keysStore.keys.some(p => p.name === getName(count))) {
         count++
       }
       else {
@@ -307,7 +307,7 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
       }
     }
 
-    return await providersStore.addProvider({
+    return await keysStore.addKey({
       name: getName(count),
       type: 'siliconflow',
       protocol: 'openai',
@@ -592,7 +592,7 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
     canLogin,
     canCreatePayment,
     authed: computed(() => userInfo.value?.data?.auth === 1),
-    providerId: computed(() => providersStore.providers.find(p => p.type === 'siliconflow')?.id || null),
+    keyId: computed(() => keysStore.keys.find(p => p.type === 'siliconflow')?.id || null),
 
     // Actions
     checkLoginStatus,
@@ -600,7 +600,7 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
     login,
     logout,
     createApiKeyAndApply,
-    addApiKeyAsProvider,
+    saveApiKey,
     openPaymentDialog,
     closePaymentDialog,
     resetPayment,

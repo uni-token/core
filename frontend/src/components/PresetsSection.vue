@@ -12,12 +12,12 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { usePresetsStore, useProvidersStore } from '@/stores'
+import { useKeysStore, usePresetsStore } from '@/stores'
 
 const { t } = useI18n()
 const presetsStore = usePresetsStore()
-const providersStore = useProvidersStore()
-const showProviderSelector = ref<string | null>(null)
+const keysStore = useKeysStore()
+const showKeySelector = ref<string | null>(null)
 
 const editContainerRefs = reactive<{ [key: string]: HTMLElement | null }>({})
 
@@ -28,65 +28,65 @@ onClickOutside(computed(() => presetsStore.activeEditId ? editContainerRefs[pres
   }
 })
 
-// Add provider to preset
-async function addProviderToPreset(presetId: string, providerId: string) {
-  await presetsStore.addProviderToPreset(presetId, providerId)
-  showProviderSelector.value = null
+// Add key to preset
+async function addKeyToPreset(presetId: string, keyId: string) {
+  await presetsStore.addKeyToPreset(presetId, keyId)
+  showKeySelector.value = null
 }
 
-// Remove provider from preset
-async function removeProviderFromPreset(presetId: string, providerId: string) {
-  await presetsStore.removeProviderFromPreset(presetId, providerId)
+// Remove key from preset
+async function removeKeyFromPreset(presetId: string, keyId: string) {
+  await presetsStore.removeKeyFromPreset(presetId, keyId)
 }
 
-// Get unique providers for display (removes duplicates while preserving latest position)
-function getUniqueProviders(providers: string[]) {
-  if (!providers || providers.length === 0)
+// Get unique keys for display (removes duplicates while preserving latest position)
+function getUniqueKeys(keys: string[]) {
+  if (!keys || keys.length === 0)
     return []
 
-  const lastPositions = new Map<string, { provider: string, position: number }>()
+  const lastPositions = new Map<string, { key: string, position: number }>()
 
-  for (let i = 0; i < providers.length; i++) {
-    const provider = providers[i]
-    lastPositions.set(provider, { provider, position: i })
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i]
+    lastPositions.set(key, { key, position: i })
   }
 
   return Array.from(lastPositions.values())
     .sort((a, b) => a.position - b.position)
-    .map(item => item.provider)
+    .map(item => item.key)
 }
 
-// Get available providers that are not already in the preset
-function getAvailableProviders(preset: AppPreset) {
+// Get available keys that are not already in the preset
+function getAvailableKeys(preset: AppPreset) {
   const available = []
-  for (const provider of providersStore.providers) {
-    if (!preset.providers.includes(provider.id)) {
-      available.push(provider)
+  for (const key of keysStore.keys) {
+    if (!preset.keys.includes(key.id)) {
+      available.push(key)
     }
   }
   return available
 }
 
-// Handle drag and drop - update preset providers
-async function updatePresetProviders(presetId: string, newProviders: (string | { newProvider: string })[]) {
-  const newProviderIds = new Set()
-  for (const item of newProviders) {
-    if (typeof item === 'object' && item.newProvider) {
-      newProviderIds.add(item.newProvider)
+// Handle drag and drop - update preset keys
+async function updatePresetKeys(presetId: string, newKeys: (string | { newKey: string })[]) {
+  const newKeyIds = new Set()
+  for (const item of newKeys) {
+    if (typeof item === 'object' && item.newKey) {
+      newKeyIds.add(item.newKey)
     }
   }
 
-  const uniqueProviders: string[] = []
-  for (const item of newProviders) {
-    if (typeof item === 'object' && item.newProvider) {
-      uniqueProviders.push(item.newProvider)
+  const uniqueKeys: string[] = []
+  for (const item of newKeys) {
+    if (typeof item === 'object' && item.newKey) {
+      uniqueKeys.push(item.newKey)
     }
-    if (typeof item === 'string' && !newProviderIds.has(item)) {
-      uniqueProviders.push(item)
+    if (typeof item === 'string' && !newKeyIds.has(item)) {
+      uniqueKeys.push(item)
     }
   }
 
-  await presetsStore.updatePreset(presetId, { providers: uniqueProviders })
+  await presetsStore.updatePreset(presetId, { keys: uniqueKeys })
 }
 
 onMounted(() => {
@@ -127,7 +127,7 @@ onMounted(() => {
               {{ t('presets.presetName') }}
             </TableHead>
             <TableHead class="w-full">
-              {{ t('presets.providers') }}
+              {{ t('presets.keys') }}
             </TableHead>
             <TableHead>
               {{ t('presets.actions') }}
@@ -172,44 +172,44 @@ onMounted(() => {
                     class="preset-drop-area group relative flex items-center pl-2 pr-1 py-1 border-2 border-dashed border-gray-200 rounded-md hover:border-gray-300 hover:bg-gray-100 transition-colors"
                   >
                     <VueDraggable
-                      :model-value="preset.providers"
-                      :group="{ name: 'providers', pull: 'clone' }"
+                      :model-value="preset.keys"
+                      :group="{ name: 'keys', pull: 'clone' }"
                       class="flex flex-wrap flex-grow gap-1 items-center min-h-8"
                       :class="
                         {
-                          'group-hover:blur-[2px]': getAvailableProviders(preset).length > 0,
+                          'group-hover:blur-[2px]': getAvailableKeys(preset).length > 0,
                         }"
-                      :clone="provider => ({ newProvider: provider })"
-                      @update:model-value="(newProviders: (string | {newProvider:string})[]) => updatePresetProviders(preset.id, newProviders)"
-                      @click="(ev: MouseEvent) => getAvailableProviders(preset).length === 0 && ev.stopImmediatePropagation()"
+                      :clone="key => ({ newKey: key })"
+                      @update:model-value="(newKeys: (string | {newKey:string})[]) => updatePresetKeys(preset.id, newKeys)"
+                      @click="(ev: MouseEvent) => getAvailableKeys(preset).length === 0 && ev.stopImmediatePropagation()"
                     >
                       <Badge
-                        v-for="providerId in getUniqueProviders(preset.providers)"
-                        :key="providerId"
+                        v-for="keyId in getUniqueKeys(preset.keys)"
+                        :key="keyId"
                         variant="secondary"
                         class="text-sm flex items-center gap-1 cursor-move bg-gray-200 hover:bg-gray-300"
                         @click="(ev: MouseEvent) => ev.stopPropagation()"
                       >
-                        {{ providersStore.providers.find(p => p.id === providerId)?.name || t('presets.unknownProvider') }}
+                        {{ keysStore.keys.find(p => p.id === keyId)?.name || t('presets.unknownKey') }}
                         <button
                           class="ml-1 text-xs hover:text-red-600"
                           :title="t('presets.remove')"
-                          @click="removeProviderFromPreset(preset.id, providerId)"
+                          @click="removeKeyFromPreset(preset.id, keyId)"
                         >
                           ×
                         </button>
                       </Badge>
                     </VueDraggable>
 
-                    <div v-if="getAvailableProviders(preset).length > 0" class="absolute inset-0 flex pointer-events-none backdrop-blur-[0px]">
+                    <div v-if="getAvailableKeys(preset).length > 0" class="absolute inset-0 flex pointer-events-none backdrop-blur-[0px]">
                       <div
                         class="w-10 flex flex-grow flex-wrap gap-x-1 gap-y-0 items-center justify-center text-sm text-center"
-                        :class="getUniqueProviders(preset.providers).length === 0 ? 'opacity-90' : 'opacity-0 group-hover:opacity-80 bg-transparent group-hover:bg-gray-200 duration-400 transition-all'"
+                        :class="getUniqueKeys(preset.keys).length === 0 ? 'opacity-90' : 'opacity-0 group-hover:opacity-80 bg-transparent group-hover:bg-gray-200 duration-400 transition-all'"
                         style="text-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6);"
                       >
                         <Plus class="h-4 w-4" />
                         <span class="hidden sm:inline">
-                          {{ t('presets.dragProvidersHere') }}
+                          {{ t('presets.dragKeysHere') }}
                         </span>
                       </div>
                     </div>
@@ -217,28 +217,28 @@ onMounted(() => {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>{{ t('presets.addProviderToPreset') }}</AlertDialogTitle>
+                    <AlertDialogTitle>{{ t('presets.addKeyToPreset') }}</AlertDialogTitle>
                     <AlertDialogDescription>
-                      {{ t('presets.selectProviderDescription') }} "{{ preset.name }}" {{ t('presets.selectProviderDescription2') }}
+                      {{ t('presets.selectKeyDescription') }} "{{ preset.name }}" {{ t('presets.selectKeyDescription2') }}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <div class="py-4">
-                    <div v-if="getAvailableProviders(preset).length === 0" class="text-sm text-gray-500">
-                      {{ t('presets.noAvailableProviders') }}
+                    <div v-if="getAvailableKeys(preset).length === 0" class="text-sm text-gray-500">
+                      {{ t('presets.noAvailableKeys') }}
                     </div>
                     <div v-else class="space-y-2 flex flex-col max-h-[50vh] overflow-y-auto">
                       <Button
-                        v-for="provider in getAvailableProviders(preset)"
-                        :key="provider.id"
+                        v-for="key in getAvailableKeys(preset)"
+                        :key="key.id"
                         variant="outline"
                         class="flex items-center p-4 border rounded cursor-pointer hover:bg-gray-50"
-                        @click="addProviderToPreset(preset.id, provider.id)"
+                        @click="addKeyToPreset(preset.id, key.id)"
                       >
                         <div class="font-medium">
-                          {{ provider.name }}
+                          {{ key.name }}
                         </div>
                         <div class="text-sm text-gray-500">
-                          {{ provider.type }}
+                          {{ key.type }}
                         </div>
                         <div class="flex-grow" />
                       </Button>

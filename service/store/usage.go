@@ -6,29 +6,28 @@ import (
 
 // TokenUsage represents a token usage record
 type TokenUsage struct {
-	ID           string    `json:"id"`
 	AppID        string    `json:"appId"`
 	AppName      string    `json:"appName"`
-	Provider     string    `json:"provider"`
+	Key          string    `json:"key"`
 	Model        string    `json:"model"`
 	PromptTokens int       `json:"promptTokens"`
 	OutputTokens int       `json:"outputTokens"`
 	TotalTokens  int       `json:"totalTokens"`
 	Cost         float64   `json:"cost"`
-	Timestamp    time.Time `json:"timestamp"`
 	Endpoint     string    `json:"endpoint"`
 	Status       string    `json:"status"`
+	Timestamp    time.Time `json:"timestamp"`
 }
 
 // UsageStats represents aggregated usage statistics
 type UsageStats struct {
-	TotalTokens   int                      `json:"totalTokens"`
-	TotalCost     float64                  `json:"totalCost"`
-	TotalRequests int                      `json:"totalRequests"`
-	ByApp         map[string]AppUsage      `json:"byApp"`
-	ByProvider    map[string]ProviderUsage `json:"byProvider"`
-	ByModel       map[string]ModelUsage    `json:"byModel"`
-	RecentUsages  []TokenUsage             `json:"recentUsages"`
+	TotalTokens   int                   `json:"totalTokens"`
+	TotalCost     float64               `json:"totalCost"`
+	TotalRequests int                   `json:"totalRequests"`
+	ByApp         map[string]AppUsage   `json:"byApp"`
+	ByKey         map[string]KeyUsage   `json:"byKey"`
+	ByModel       map[string]ModelUsage `json:"byModel"`
+	RecentUsages  []TokenUsage          `json:"recentUsages"`
 }
 
 type AppUsage struct {
@@ -38,14 +37,14 @@ type AppUsage struct {
 	RequestCount int     `json:"requestCount"`
 }
 
-type ProviderUsage struct {
+type KeyUsage struct {
 	TotalTokens  int     `json:"totalTokens"`
 	TotalCost    float64 `json:"totalCost"`
 	RequestCount int     `json:"requestCount"`
 }
 
 type ModelUsage struct {
-	Provider     string  `json:"provider"`
+	Key          string  `json:"key"`
 	TotalTokens  int     `json:"totalTokens"`
 	TotalCost    float64 `json:"totalCost"`
 	RequestCount int     `json:"requestCount"`
@@ -61,7 +60,7 @@ func GetUsageStats(days int) (*UsageStats, error) {
 	cutoff := time.Now().AddDate(0, 0, -days)
 	stats := &UsageStats{
 		ByApp:        make(map[string]AppUsage),
-		ByProvider:   make(map[string]ProviderUsage),
+		ByKey:        make(map[string]KeyUsage),
 		ByModel:      make(map[string]ModelUsage),
 		RecentUsages: make([]TokenUsage, 0, len(usages)),
 	}
@@ -90,14 +89,14 @@ func GetUsageStats(days int) (*UsageStats, error) {
 			}
 		}
 
-		// By Provider
-		if providerUsage, exists := stats.ByProvider[usage.Provider]; exists {
-			providerUsage.TotalTokens += usage.TotalTokens
-			providerUsage.TotalCost += usage.Cost
-			providerUsage.RequestCount++
-			stats.ByProvider[usage.Provider] = providerUsage
+		// By Key
+		if keyUsage, exists := stats.ByKey[usage.Key]; exists {
+			keyUsage.TotalTokens += usage.TotalTokens
+			keyUsage.TotalCost += usage.Cost
+			keyUsage.RequestCount++
+			stats.ByKey[usage.Key] = keyUsage
 		} else {
-			stats.ByProvider[usage.Provider] = ProviderUsage{
+			stats.ByKey[usage.Key] = KeyUsage{
 				TotalTokens:  usage.TotalTokens,
 				TotalCost:    usage.Cost,
 				RequestCount: 1,
@@ -105,7 +104,7 @@ func GetUsageStats(days int) (*UsageStats, error) {
 		}
 
 		// By Model
-		modelKey := usage.Provider + "/" + usage.Model
+		modelKey := usage.Key + "/" + usage.Model
 		if modelUsage, exists := stats.ByModel[modelKey]; exists {
 			modelUsage.TotalTokens += usage.TotalTokens
 			modelUsage.TotalCost += usage.Cost
@@ -113,7 +112,7 @@ func GetUsageStats(days int) (*UsageStats, error) {
 			stats.ByModel[modelKey] = modelUsage
 		} else {
 			stats.ByModel[modelKey] = ModelUsage{
-				Provider:     usage.Provider,
+				Key:          usage.Key,
 				TotalTokens:  usage.TotalTokens,
 				TotalCost:    usage.Cost,
 				RequestCount: 1,
@@ -141,12 +140,11 @@ func GetUsageStats(days int) (*UsageStats, error) {
 }
 
 // RecordUsage records a new token usage
-func RecordUsage(appID, appName, provider, model, endpoint string, promptTokens, outputTokens int, cost float64, status string) error {
+func RecordUsage(appID, appName, key, model, endpoint string, promptTokens, outputTokens int, cost float64, status string) error {
 	usage := TokenUsage{
-		ID:           generateID(),
 		AppID:        appID,
 		AppName:      appName,
-		Provider:     provider,
+		Key:          key,
 		Model:        model,
 		PromptTokens: promptTokens,
 		OutputTokens: outputTokens,
@@ -157,7 +155,8 @@ func RecordUsage(appID, appName, provider, model, endpoint string, promptTokens,
 		Status:       status,
 	}
 
-	return Usage.Put(usage.ID, usage)
+	id := generateID()
+	return Usage.Put(id, usage)
 }
 
 func generateID() string {

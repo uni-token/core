@@ -43,14 +43,14 @@ func handleOpenAIProxy(c *gin.Context) {
 	// 	return
 	// }
 
-	provider, err := store.LLMProviders.Get(appInfo.Provider)
+	key, err := store.LLMKeys.Get(appInfo.Key)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get provider"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to resolve key"})
 		return
 	}
 
 	// Build target URL
-	targetURL, err := url.JoinPath(provider.BaseURL, path)
+	targetURL, err := url.JoinPath(key.BaseURL, path)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to build target URL"})
 		return
@@ -86,8 +86,8 @@ func handleOpenAIProxy(c *gin.Context) {
 		}
 	}
 
-	// Set authorization header with provider token
-	req.Header.Set("Authorization", "Bearer "+provider.Token)
+	// Set authorization header with key token
+	req.Header.Set("Authorization", "Bearer "+key.Token)
 
 	// Create HTTP client with no timeout for streaming
 	client := &http.Client{
@@ -97,7 +97,7 @@ func handleOpenAIProxy(c *gin.Context) {
 	resp, err := client.Do(req)
 	if err != nil {
 		// Record failed request
-		logic.RecordUsage(appId, appInfo.Name, provider.Name, model, path, 0, 0, 0, "error")
+		logic.RecordUsage(appId, appInfo.Name, key.Name, model, path, 0, 0, 0, "error")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to proxy request"})
 		return
 	}
@@ -125,7 +125,7 @@ func handleOpenAIProxy(c *gin.Context) {
 
 		// Create usage extractor for streaming
 		usageExtractor := logic.NewStreamingUsageExtractor(model)
-		usageExtractor.SetContext(appId, appInfo.Name, provider.Name, path)
+		usageExtractor.SetContext(appId, appInfo.Name, key.Name, path)
 
 		// Stream response body
 		buffer := make([]byte, 4096)
@@ -160,7 +160,7 @@ func handleOpenAIProxy(c *gin.Context) {
 		responseBody, err := io.ReadAll(resp.Body)
 		if err != nil {
 			// Record failed request
-			logic.RecordUsage(appId, appInfo.Name, provider.Name, model, path, 0, 0, 0, "error")
+			logic.RecordUsage(appId, appInfo.Name, key.Name, model, path, 0, 0, 0, "error")
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read response"})
 			return
 		}
@@ -180,7 +180,7 @@ func handleOpenAIProxy(c *gin.Context) {
 			finalModel = usageData.Model
 		}
 
-		logic.RecordUsage(appId, appInfo.Name, provider.Name, finalModel, path,
+		logic.RecordUsage(appId, appInfo.Name, key.Name, finalModel, path,
 			usageData.PromptTokens, usageData.OutputTokens, usageData.Cost, status)
 
 		// Write response body

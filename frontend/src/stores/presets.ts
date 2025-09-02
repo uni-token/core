@@ -1,20 +1,19 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
+import { t } from '@/locales'
 import { useServiceStore } from './service'
 
 export interface AppPreset {
   id: string
   name: string
-  providers: string[]
+  keys: string[]
   createdAt: string
   updatedAt: string
 }
 
 export const usePresetsStore = defineStore('presets', () => {
   const { fetch } = useServiceStore()
-  const { t } = useI18n()
 
   // State
   const presets = ref<AppPreset[]>([])
@@ -80,7 +79,7 @@ export const usePresetsStore = defineStore('presets', () => {
         },
         body: JSON.stringify({
           name: defaultName,
-          providers: [],
+          keys: [],
         }),
       })
 
@@ -120,7 +119,7 @@ export const usePresetsStore = defineStore('presets', () => {
     }
   }
 
-  async function updatePreset(presetId: string, updates: Partial<Pick<AppPreset, 'name' | 'providers'>>) {
+  async function updatePreset(presetId: string, updates: Partial<Pick<AppPreset, 'name' | 'keys'>>) {
     const preset = presets.value.find(p => p.id === presetId)
     if (!preset) {
       toast.error(t('stores.presets.presetNotFound'))
@@ -131,8 +130,8 @@ export const usePresetsStore = defineStore('presets', () => {
       preset.name = updates.name
       editingPresetName.value[presetId] = updates.name
     }
-    if (updates.providers) {
-      preset.providers = updates.providers
+    if (updates.keys) {
+      preset.keys = updates.keys
     }
 
     try {
@@ -143,7 +142,7 @@ export const usePresetsStore = defineStore('presets', () => {
         },
         body: JSON.stringify({
           name: updates.name || preset.name,
-          providers: updates.providers || preset.providers,
+          keys: updates.keys || preset.keys,
         }),
       })
 
@@ -243,42 +242,42 @@ export const usePresetsStore = defineStore('presets', () => {
     return success
   }
 
-  // Helper function to add provider to preset
-  async function addProviderToPreset(presetId: string, providerId: string) {
+  // Helper function to add key to preset
+  async function addKeyToPreset(presetId: string, keyId: string) {
     const preset = presets.value.find(p => p.id === presetId)
     if (!preset) {
       toast.error(t('stores.presets.presetNotFound'))
       return false
     }
 
-    // Check if provider already exists
-    const existingIndex = preset.providers.findIndex(p => p === providerId)
-    let newProviders: string[]
+    // Check if key already exists
+    const existingIndex = preset.keys.findIndex(p => p === keyId)
+    let newKeys: string[]
 
     if (existingIndex !== -1) {
-      // Provider already exists, move it to the end
-      newProviders = [...preset.providers]
-      newProviders.splice(existingIndex, 1) // Remove from current position
-      newProviders.push(providerId) // Add to the end
+      // Key already exists, move it to the end
+      newKeys = [...preset.keys]
+      newKeys.splice(existingIndex, 1) // Remove from current position
+      newKeys.push(keyId) // Add to the end
     }
     else {
-      // Provider doesn't exist, add it to the end
-      newProviders = [...preset.providers, providerId]
+      // Key doesn't exist, add it to the end
+      newKeys = [...preset.keys, keyId]
     }
 
-    return await updatePreset(presetId, { providers: newProviders })
+    return await updatePreset(presetId, { keys: newKeys })
   }
 
-  // Helper function to remove provider from preset
-  async function removeProviderFromPreset(presetId: string, providerId: string) {
+  // Helper function to remove key from preset
+  async function removeKeyFromPreset(presetId: string, keyId: string) {
     const preset = presets.value.find(p => p.id === presetId)
     if (!preset) {
       toast.error(t('stores.presets.presetNotFound'))
       return false
     }
 
-    const newProviders = preset.providers.filter(p => p !== providerId)
-    return await updatePreset(presetId, { providers: newProviders })
+    const newKeys = preset.keys.filter(p => p !== keyId)
+    return await updatePreset(presetId, { keys: newKeys })
   }
 
   return {
@@ -300,7 +299,7 @@ export const usePresetsStore = defineStore('presets', () => {
     savePresetName,
     autoSavePresetName,
     cancelEditPresetName,
-    addProviderToPreset,
-    removeProviderFromPreset,
+    addKeyToPreset,
+    removeKeyFromPreset,
   }
 })

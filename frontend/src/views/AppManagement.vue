@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AppDetailDialog from '@/components/AppDetailDialog.vue'
-import ProviderSelector from '@/components/ProviderSelector.vue'
+import KeySelector from '@/components/KeySelector.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -93,7 +93,7 @@ onMounted(() => {
               </p>
             </div>
             <div :class="{ 'opacity-0 pointer-events-none select-none': !app.granted }" class="mt-4 transition-opacity duration-300">
-              <ProviderSelector v-model="app.provider" compact @update:model-value="app.granted && appStore.toggleAppAuthorization(app.id, app.granted, app.provider)" />
+              <KeySelector v-model="app.key" compact @update:model-value="app.granted && appStore.toggleAppAuthorization(app.id, app.granted, app.key)" />
             </div>
           </CardContent>
         </Card>

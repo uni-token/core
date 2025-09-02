@@ -1,31 +1,31 @@
 <script setup lang="ts">
-import type { LLMProvider } from '@/stores'
+import type { APIKey } from '@/stores'
 import { Edit } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
 import { VueDraggable } from 'vue-draggable-plus'
 import { useI18n } from 'vue-i18n'
-import EditProviderDialog from '@/components/EditProviderDialog.vue'
+import EditKeyDialog from '@/components/EditKeyDialog.vue'
 import ManualConfigCard from '@/components/ManualConfigCard.vue'
 import SiliconFlowConfigDialog from '@/components/SiliconFlowConfigDialog.vue'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useProvidersStore, useSiliconFlowStore } from '@/stores'
+import { useKeysStore, useSiliconFlowStore } from '@/stores'
 
 const { t } = useI18n()
-const providersStore = useProvidersStore()
+const keysStore = useKeysStore()
 const siliconFlowStore = useSiliconFlowStore()
 const showSiliconFlowConfig = ref(false)
 const showEditDialog = ref(false)
-const editingProvider = ref<LLMProvider | null>(null)
+const editingKey = ref<APIKey | null>(null)
 
-function editProvider(provider: LLMProvider) {
-  if (provider.type === 'siliconflow') {
+function editKey(key: APIKey) {
+  if (key.type === 'siliconflow') {
     showSiliconFlowConfig.value = true
     return
   }
-  editingProvider.value = provider
+  editingKey.value = key
   showEditDialog.value = true
 }
 
@@ -35,7 +35,7 @@ function formatUrl(url: string): string {
 }
 
 onMounted(() => {
-  providersStore.loadProviders()
+  keysStore.loadKeys()
   siliconFlowStore.checkLoginStatus()
 })
 </script>
@@ -44,20 +44,20 @@ onMounted(() => {
   <div class="space-y-6 flex-grow flex flex-col min-h-100">
     <div class="flex items-center justify-between">
       <h2 class="text-2xl font-bold">
-        {{ t('providers.title') }}
+        {{ t('keys.title') }}
       </h2>
     </div>
 
-    <div v-if="providersStore.loading" class="space-y-3">
+    <div v-if="keysStore.loading" class="space-y-3">
       <div v-for="i in 3" :key="i" class="space-y-3">
         <Skeleton class="h-4 w-full" />
         <Skeleton class="h-4 w-3/4" />
       </div>
     </div>
 
-    <div v-else-if="providersStore.loadingError" class="rounded-lg border border-red-200 bg-red-50 p-4">
+    <div v-else-if="keysStore.loadingError" class="rounded-lg border border-red-200 bg-red-50 p-4">
       <p class="text-red-800">
-        {{ t('providers.loadFailed') }}: {{ providersStore.loadingError }}
+        {{ t('keys.loadFailed') }}: {{ keysStore.loadingError }}
       </p>
     </div>
 
@@ -108,28 +108,28 @@ onMounted(() => {
         <ManualConfigCard class="relative gap-2" />
       </div>
       <VueDraggable
-        v-model="providersStore.providers"
-        :group="{ name: 'providers', pull: false /* 'clone' */, put: false }"
+        v-model="keysStore.keys"
+        :group="{ name: 'keys', pull: false /* 'clone' */, put: false }"
         :sort="false"
         :disabled="true"
-        :clone="provider => ({ newProvider: provider.id })"
+        :clone="key => ({ newKey: key.id })"
         class="max-h-fit grid gap-4 overflow-y-auto pb-1 flex-grow h-0"
         :style="{
-          'grid-template-columns': providersStore.providers.length > 2 ? 'repeat(auto-fit, minmax(250px, 1fr))' : 'repeat(3, 1fr)',
+          'grid-template-columns': keysStore.keys.length > 2 ? 'repeat(auto-fit, minmax(250px, 1fr))' : 'repeat(3, 1fr)',
         }"
       >
-        <div v-for="provider in providersStore.providers" :key="provider.id" class="draggable-provider">
-          <Card class="draggable-provider-card relative cursor-select hover:shadow-md transition-shadow gap-0! pt-4 pb-2">
+        <div v-for="key in keysStore.keys" :key="key.id" class="draggable-key">
+          <Card class="draggable-key-card relative cursor-select hover:shadow-md transition-shadow gap-0! pt-4 pb-2">
             <CardHeader>
               <div class="flex items-center justify-between">
                 <CardTitle class="text-lg">
-                  {{ provider.name }}
+                  {{ key.name }}
                 </CardTitle>
                 <div class="flex items-center gap-2">
                   <Button
                     variant="outline"
                     size="sm"
-                    @click="editProvider(provider)"
+                    @click="editKey(key)"
                   >
                     <Edit class="h-4 w-4" />
                   </Button>
@@ -138,16 +138,16 @@ onMounted(() => {
             </CardHeader>
 
             <CardContent class="flex mb-2 mt-2">
-              <div class="font-mono text-xs truncate" :title="provider.baseUrl">
-                {{ formatUrl(provider.baseUrl) }}
+              <div class="font-mono text-xs truncate" :title="key.baseUrl">
+                {{ formatUrl(key.baseUrl) }}
               </div>
             </CardContent>
           </Card>
           <Badge
             variant="default"
-            class="draggable-provider-badge text-sm flex items-center gap-1 cursor-move"
+            class="draggable-key-badge text-sm flex items-center gap-1 cursor-move"
           >
-            {{ provider.name }}
+            {{ key.name }}
             <button
               class="ml-1 text-xs hover:text-red-600"
             >
@@ -163,21 +163,21 @@ onMounted(() => {
       v-model:open="showSiliconFlowConfig"
     />
 
-    <EditProviderDialog
+    <EditKeyDialog
       v-model:open="showEditDialog"
-      :provider="editingProvider"
+      :api-key="editingKey"
     />
   </div>
 </template>
 
 <style>
-.preset-drop-area .draggable-provider-card {
+.preset-drop-area .draggable-key-card {
   display: none;
 }
-.draggable-provider-badge {
+.draggable-key-badge {
   display: none;
 }
-.preset-drop-area .draggable-provider-badge {
+.preset-drop-area .draggable-key-badge {
   display: block;
 }
 </style>

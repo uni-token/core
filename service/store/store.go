@@ -99,7 +99,7 @@ var (
 
 	Users               Bucket[UserInfo]
 	Apps                Bucket[AppInfo]
-	LLMProviders        Bucket[LLMProvider]
+	LLMKeys             Bucket[LLMKey]
 	AppPresets          Bucket[AppPreset]
 	Usage               Bucket[TokenUsage]
 	SiliconFlowSessions Bucket[SiliconFlowSession]
@@ -115,7 +115,7 @@ func Init(dbPath string) {
 	Users = NewBucket[UserInfo]("users", db)
 	Usage = NewBucket[TokenUsage]("usage", db)
 	Apps = NewBucket[AppInfo]("apps", db)
-	LLMProviders = NewBucket[LLMProvider]("llm_providers", db)
+	LLMKeys = NewBucket[LLMKey]("llm_keys", db)
 	AppPresets = NewBucket[AppPreset]("app_presets", db)
 	SiliconFlowSessions = NewBucket[SiliconFlowSession]("silicon_flow_sessions", db)
 
@@ -127,7 +127,7 @@ func Init(dbPath string) {
 		defaultPreset := AppPreset{
 			ID:        "default",
 			Name:      "Default Preset",
-			Providers: []string{},
+			Keys:      []string{},
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		}

@@ -46,7 +46,7 @@ func handleAppRegister(c *gin.Context) {
 		ID:           uid,
 		Name:         req.Name,
 		Description:  req.Description,
-		Provider:     "",
+		Key:          "",
 		Granted:      false,
 		CreatedAt:    time.Now(),
 		LastActiveAt: time.Now(),
@@ -60,8 +60,8 @@ func handleAppRegister(c *gin.Context) {
 				granted()
 				return
 			}
-			if app.Provider != "" {
-				info.Provider = app.Provider
+			if app.Key != "" {
+				info.Key = app.Key
 			}
 			if app.CreatedAt != (time.Time{}) {
 				info.CreatedAt = app.CreatedAt
@@ -77,8 +77,8 @@ func handleAppRegister(c *gin.Context) {
 		for _, app := range apps {
 			if app.Name == req.Name {
 				uid = app.ID
-				if app.Provider != "" {
-					info.Provider = app.Provider
+				if app.Key != "" {
+					info.Key = app.Key
 				}
 				if app.CreatedAt != (time.Time{}) {
 					info.CreatedAt = app.CreatedAt
@@ -145,9 +145,9 @@ func handleAppList(c *gin.Context) {
 
 func handleAppToggle(c *gin.Context) {
 	var req struct {
-		ID       string `json:"id" binding:"required"`
-		Granted  bool   `json:"granted"`
-		Provider string `json:"provider"`
+		ID      string `json:"id" binding:"required"`
+		Granted bool   `json:"granted"`
+		Key     string `json:"key"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -156,8 +156,8 @@ func handleAppToggle(c *gin.Context) {
 
 	if info, err := store.Apps.Get(req.ID); err == nil {
 		info.Granted = req.Granted
-		if req.Provider != "" {
-			info.Provider = req.Provider
+		if req.Key != "" {
+			info.Key = req.Key
 		}
 		store.Apps.Put(req.ID, info)
 		action := "authorized"

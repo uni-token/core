@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
 import { useServiceStore } from './service'
 
-export interface LLMProvider {
+export interface APIKey {
   id: string
   name: string
   type: string
@@ -13,24 +13,24 @@ export interface LLMProvider {
   token: string
 }
 
-export const useProvidersStore = defineStore('providers', () => {
+export const useKeysStore = defineStore('keys', () => {
   const { fetch } = useServiceStore()
   const { t } = useI18n()
 
   // State
-  const providers = ref<LLMProvider[]>([])
+  const keys = ref<APIKey[]>([])
   const loading = ref(true)
   const loadingError = ref<string | null>(null)
 
   // Actions
-  async function loadProviders() {
+  async function loadKeys() {
     loadingError.value = null
 
     try {
-      const response = await fetch('providers/list')
+      const response = await fetch('keys/list')
       if (response.ok) {
         const data = await response.json()
-        providers.value = data.data
+        keys.value = data.data
       }
       else {
         loadingError.value = `HTTP ${response.status}: ${response.statusText}`
@@ -44,22 +44,22 @@ export const useProvidersStore = defineStore('providers', () => {
     }
   }
 
-  async function addProvider(provider: Omit<LLMProvider, 'id' | 'name'> & { name?: string }): Promise<LLMProvider> {
+  async function addKey(key: Omit<APIKey, 'id' | 'name'> & { name?: string }): Promise<APIKey> {
     try {
-      const response = await fetch('providers/add', {
+      const response = await fetch('keys/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(provider),
+        body: JSON.stringify(key),
       })
 
       if (response.ok) {
-        await loadProviders()
+        await loadKeys()
         return (await response.json()).data
       }
       else {
-        toast.error(t('stores.providers.addProviderFailed'))
+        toast.error(t('stores.keys.addKeyFailed'))
         throw new Error(`HTTP ${response.status}: ${response.statusText}`)
       }
     }
@@ -69,22 +69,22 @@ export const useProvidersStore = defineStore('providers', () => {
     }
   }
 
-  async function updateProvider(providerId: string, provider: LLMProvider) {
+  async function updateKey(keyId: string, key: APIKey) {
     try {
-      const response = await fetch(`providers/update/${encodeURIComponent(providerId)}`, {
+      const response = await fetch(`keys/update/${encodeURIComponent(keyId)}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(provider),
+        body: JSON.stringify(key),
       })
 
       if (response.ok) {
-        await loadProviders()
+        await loadKeys()
         return true
       }
       else {
-        toast.error(t('stores.providers.updateProviderFailed'))
+        toast.error(t('stores.keys.updateKeyFailed'))
         return false
       }
     }
@@ -94,18 +94,18 @@ export const useProvidersStore = defineStore('providers', () => {
     }
   }
 
-  async function deleteProvider(providerId: string) {
+  async function deleteKey(keyId: string) {
     try {
-      const response = await fetch(`providers/delete/${encodeURIComponent(providerId)}`, {
+      const response = await fetch(`keys/delete/${encodeURIComponent(keyId)}`, {
         method: 'DELETE',
       })
 
       if (response.ok) {
-        await loadProviders()
+        await loadKeys()
         return true
       }
       else {
-        toast.error(t('stores.providers.deleteProviderFailed'))
+        toast.error(t('stores.keys.deleteKeyFailed'))
         return false
       }
     }
@@ -117,13 +117,13 @@ export const useProvidersStore = defineStore('providers', () => {
 
   return {
     // State
-    providers,
+    keys,
     loading,
     loadingError,
     // Actions
-    loadProviders,
-    addProvider,
-    updateProvider,
-    deleteProvider,
+    loadKeys,
+    addKey,
+    updateKey,
+    deleteKey,
   }
 })

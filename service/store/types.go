@@ -7,7 +7,7 @@ type UserInfo struct {
 	Password string `json:"password"`
 }
 
-type LLMProvider struct {
+type LLMKey struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
 	Type     string `json:"type"`     // "manual", "siliconflow", etc.
@@ -19,7 +19,7 @@ type LLMProvider struct {
 type AppPreset struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`
-	Providers []string  `json:"providers"`
+	Keys      []string  `json:"keys"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
@@ -34,7 +34,7 @@ type AppInfo struct {
 	ID           string    `json:"id"`
 	Name         string    `json:"name"`
 	Description  string    `json:"description"`
-	Provider     string    `json:"provider"`
+	Key          string    `json:"key"`
 	Granted      bool      `json:"granted"`
 	CreatedAt    time.Time `json:"createdAt"`
 	LastActiveAt time.Time `json:"lastActiveAt"`

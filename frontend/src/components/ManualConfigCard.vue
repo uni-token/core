@@ -6,19 +6,19 @@ import { toast } from 'vue-sonner'
 import ManualConfigDialog from '@/components/ManualConfigDialog.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { useProvidersStore } from '@/stores'
+import { useKeysStore } from '@/stores'
 
 const emit = defineEmits<{
-  configured: [provider: string]
+  configured: [key: string]
 }>()
 
 const { t } = useI18n()
-const providersStore = useProvidersStore()
+const keysStore = useKeysStore()
 
 const showEditDialog = ref(false)
 
 async function handleManualConfigSave(config: ManualConfig) {
-  const provider = await providersStore.addProvider({
+  const key = await keysStore.addKey({
     name: config.name,
     type: 'manual',
     protocol: config.protocol,
@@ -26,9 +26,9 @@ async function handleManualConfigSave(config: ManualConfig) {
     token: config.token,
   })
 
-  emit('configured', provider.id)
+  emit('configured', key.id)
   showEditDialog.value = false
-  toast.success(t('providers.manualConfigSuccess'))
+  toast.success(t('keys.manualConfigSuccess'))
 }
 </script>
 
@@ -37,20 +37,20 @@ async function handleManualConfigSave(config: ManualConfig) {
     <CardHeader>
       <div class="flex items-center justify-between">
         <CardTitle class="text-lg">
-          {{ t('providers.manualConfig') }}
+          {{ t('keys.manualConfig') }}
         </CardTitle>
       </div>
     </CardHeader>
 
     <CardContent class="flex-grow">
       <div class="text-sm text-muted-foreground">
-        <p>{{ t('providers.manualConfigDescription') }}</p>
+        <p>{{ t('keys.manualConfigDescription') }}</p>
       </div>
     </CardContent>
 
     <CardFooter>
       <Button class="w-full" @click="showEditDialog = true">
-        {{ t('providers.addManualConfig') }}
+        {{ t('keys.addManualConfig') }}
       </Button>
     </CardFooter>
 

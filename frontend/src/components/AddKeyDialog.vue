@@ -5,15 +5,15 @@ import ManualConfigCard from './ManualConfigCard.vue'
 import SiliconFlowCard from './SiliconFlowCard.vue'
 
 const emit = defineEmits<{
-  configured: [provider: string]
+  configured: [key: string]
 }>()
 
 const open = defineModel<boolean>('open')
 
 const { t } = useI18n()
 
-async function handleConfigured(provider: string) {
-  emit('configured', provider)
+async function handleConfigured(key: string) {
+  emit('configured', key)
   open.value = false
 }
 </script>
@@ -22,9 +22,9 @@ async function handleConfigured(provider: string) {
   <Dialog v-model:open="open">
     <DialogContent class="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
       <DialogHeader>
-        <DialogTitle>{{ t('providers.addProviderDialog.title') }}</DialogTitle>
+        <DialogTitle>{{ t('keys.addKeyDialog.title') }}</DialogTitle>
         <DialogDescription>
-          {{ t('providers.addProviderDialog.description') }}
+          {{ t('keys.addKeyDialog.description') }}
         </DialogDescription>
       </DialogHeader>
 

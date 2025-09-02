@@ -119,15 +119,15 @@ func ExtractUsageFromResponse(responseBody []byte) UsageData {
 }
 
 // RecordUsage records token usage to the store
-func RecordUsage(appID, appName, provider, model, endpoint string, promptTokens, outputTokens int, cost float64, status string) error {
-	return store.RecordUsage(appID, appName, provider, model, endpoint, promptTokens, outputTokens, cost, status)
+func RecordUsage(appID, appName, key, model, endpoint string, promptTokens, outputTokens int, cost float64, status string) error {
+	return store.RecordUsage(appID, appName, key, model, endpoint, promptTokens, outputTokens, cost, status)
 }
 
 // StreamingUsageExtractor extracts usage data from streaming responses
 type StreamingUsageExtractor struct {
 	AppID        string
 	AppName      string
-	Provider     string
+	Key          string
 	Model        string
 	Endpoint     string
 	PromptTokens int
@@ -188,14 +188,14 @@ func (s *StreamingUsageExtractor) ProcessChunk(chunk []byte) {
 // RecordUsage records the collected usage data for streaming
 func (s *StreamingUsageExtractor) RecordUsage(status string) error {
 	cost := CalculateCost(s.Model, s.PromptTokens, s.OutputTokens)
-	return RecordUsage(s.AppID, s.AppName, s.Provider, s.Model, s.Endpoint, s.PromptTokens, s.OutputTokens, cost, status)
+	return RecordUsage(s.AppID, s.AppName, s.Key, s.Model, s.Endpoint, s.PromptTokens, s.OutputTokens, cost, status)
 }
 
 // SetContext sets the context information for the streaming extractor
-func (s *StreamingUsageExtractor) SetContext(appID, appName, provider, endpoint string) {
+func (s *StreamingUsageExtractor) SetContext(appID, appName, key, endpoint string) {
 	s.AppID = appID
 	s.AppName = appName
-	s.Provider = provider
+	s.Key = key
 	s.Endpoint = endpoint
 }
 

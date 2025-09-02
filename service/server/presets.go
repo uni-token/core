@@ -11,13 +11,13 @@ import (
 )
 
 type AddPresetRequest struct {
-	Name      string   `json:"name" binding:"required"`
-	Providers []string `json:"providers"`
+	Name string   `json:"name" binding:"required"`
+	Keys []string `json:"keys"`
 }
 
 type UpdatePresetRequest struct {
-	Name      string   `json:"name" binding:"required"`
-	Providers []string `json:"providers"`
+	Name string   `json:"name" binding:"required"`
+	Keys []string `json:"keys"`
 }
 
 // Helper function to check if preset name exists (excluding specified ID)
@@ -83,7 +83,7 @@ func handleAddPreset(c *gin.Context) {
 	preset := store.AppPreset{
 		ID:        presetID,
 		Name:      req.Name,
-		Providers: req.Providers,
+		Keys:      req.Keys,
 		CreatedAt: now,
 		UpdatedAt: now,
 	}
@@ -161,7 +161,7 @@ func handleUpdatePreset(c *gin.Context) {
 	preset := store.AppPreset{
 		ID:        existingPreset.ID,
 		Name:      req.Name,
-		Providers: req.Providers,
+		Keys:      req.Keys,
 		CreatedAt: existingPreset.CreatedAt,
 		UpdatedAt: time.Now(),
 	}

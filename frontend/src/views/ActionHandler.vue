@@ -2,10 +2,10 @@
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
-import ProviderSelector from '@/components/ProviderSelector.vue'
+import KeySelector from '@/components/KeySelector.vue'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { useProvidersStore } from '@/stores'
+import { useKeysStore } from '@/stores'
 import { useAppStore } from '@/stores/app'
 
 const { t } = useI18n()
@@ -13,9 +13,9 @@ const params = new URLSearchParams(window.location.search)
 let actionType = params.get('action')
 
 const open = ref(!!actionType)
-const selectedProvider = ref<string>('')
+const selectedKey = ref<string>('')
 const appStore = useAppStore()
-const providersStore = useProvidersStore()
+const keysStore = useKeysStore()
 
 async function registerAction(granted: boolean) {
   const appId = params.get('appId')
@@ -25,7 +25,7 @@ async function registerAction(granted: boolean) {
     return
   }
 
-  await appStore.toggleAppAuthorization(appId, granted, selectedProvider.value)
+  await appStore.toggleAppAuthorization(appId, granted, selectedKey.value)
   actionType = null
   open.value = false
 }
@@ -59,20 +59,20 @@ watch(open, (open) => {
             <strong class="mr-4">{{ t('actionHandler.appDescription') }}</strong>
             <span class="text-lg">{{ params.get('appDescription') }}</span>
           </div>
-          <ProviderSelector v-model="selectedProvider" class="pt-1" />
+          <KeySelector v-model="selectedKey" class="pt-1" />
         </div>
 
-        <div v-if="providersStore.providers.length > 0" class="flex justify-end mt-6 gap-2">
+        <div v-if="keysStore.keys.length > 0" class="flex justify-end mt-6 gap-2">
           <Button variant="outline" @click="registerAction(false)">
             {{ t('actionHandler.deny') }}
           </Button>
           <div
-            :class="!selectedProvider ? 'cursor-not-allowed!' : ''"
-            :title="!selectedProvider ? t('actionHandler.pleaseSelectProvider') : ''"
+            :class="!selectedKey ? 'cursor-not-allowed!' : ''"
+            :title="!selectedKey ? t('actionHandler.pleaseSelectKey') : ''"
           >
             <Button
               variant="default"
-              :disabled="!selectedProvider"
+              :disabled="!selectedKey"
               @click="registerAction(true)"
             >
               {{ t('actionHandler.approve') }}
