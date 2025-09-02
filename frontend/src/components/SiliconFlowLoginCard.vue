@@ -37,10 +37,10 @@ function wxLogin() {
   <Card>
     <CardHeader class="pb-4">
       <CardTitle class="text-lg">
-        {{ t('siliconFlow.loginTitle') }}
+        {{ t('loginTitle') }}
       </CardTitle>
       <CardDescription class="text-sm">
-        {{ siliconFlowStore.isEmailLogin ? t('siliconFlow.emailLoginDescription') : t('siliconFlow.loginDescription') }}
+        {{ siliconFlowStore.isEmailLogin ? t('emailLoginDescription') : t('loginDescription') }}
       </CardDescription>
     </CardHeader>
     <CardContent class="space-y-4">
@@ -50,7 +50,7 @@ function wxLogin() {
           <span class="text-sm font-medium text-muted-foreground">+86</span>
         </div>
         <Input
-          id="phone" v-model="siliconFlowStore.phoneNumber" :placeholder="t('siliconFlow.phoneNumber')" type="tel"
+          id="phone" v-model="siliconFlowStore.phoneNumber" :placeholder="t('phoneNumber')" type="tel"
           class="border-0 rounded-l-none focus-visible:ring-0 focus-visible:ring-offset-0 h-10"
         />
       </div>
@@ -58,7 +58,7 @@ function wxLogin() {
       <!-- Email Input -->
       <div v-if="siliconFlowStore.isEmailLogin" class="flex rounded-md border border-input bg-background">
         <Input
-          id="email" v-model="siliconFlowStore.email" :placeholder="t('siliconFlow.emailAddressPlaceholder')" type="email"
+          id="email" v-model="siliconFlowStore.email" :placeholder="t('emailAddressPlaceholder')" type="email"
           class="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-10"
         />
       </div>
@@ -67,7 +67,7 @@ function wxLogin() {
       <div class="flex rounded-md border border-input bg-background">
         <Input
           id="sms" v-model="siliconFlowStore.smsCode"
-          :placeholder="siliconFlowStore.isEmailLogin ? t('siliconFlow.emailCode') : t('siliconFlow.smsCode')"
+          :placeholder="siliconFlowStore.isEmailLogin ? t('emailCode') : t('smsCode')"
           type="text" maxlength="6"
           class="w-fit flex-grow border-0 rounded-r-none focus-visible:ring-0 focus-visible:ring-offset-0 h-10"
         />
@@ -85,45 +85,87 @@ function wxLogin() {
       <div class="flex items-center space-x-2 text-xs text-muted-foreground">
         <input id="agree" v-model="siliconFlowStore.agreed" type="checkbox" class="h-3 w-3 rounded border border-input">
         <label for="agree" class="flex items-center gap-1 cursor-pointer">
-          <span>{{ t('siliconFlow.agreeToTerms') }}</span>
+          <span>{{ t('agreeToTerms') }}</span>
           <a
             href="https://docs.siliconflow.cn/docs/user-agreement" target="_blank"
             class="text-primary hover:underline"
-          >{{ t('siliconFlow.userAgreement') }}</a>
-          <span>{{ t('siliconFlow.and') }}</span>
+          >{{ t('userAgreement') }}</a>
+          <span>{{ t('and') }}</span>
           <a
             href="https://docs.siliconflow.cn/docs/privacy-policy" target="_blank"
             class="text-primary hover:underline"
-          >{{ t('siliconFlow.privacyPolicy') }}</a>
+          >{{ t('privacyPolicy') }}</a>
         </label>
       </div>
       <Button class="w-full h-10" :disabled="!siliconFlowStore.canLogin" @click="siliconFlowStore.login()">
-        <span v-if="siliconFlowStore.isLoading">{{ t('siliconFlow.loggingIn') }}</span>
-        <span v-else>{{ siliconFlowStore.isEmailLogin ? t('siliconFlow.login') : t('siliconFlow.registerLogin') }}</span>
+        <span v-if="siliconFlowStore.isLoading">{{ t('loggingIn') }}</span>
+        <span v-else>{{ siliconFlowStore.isEmailLogin ? t('login') : t('registerLogin') }}</span>
       </Button>
       <div class="w-full grid grid-cols-2 gap-3">
         <Dialog>
           <DialogTrigger>
             <Button variant="outline" class="w-full h-10" @click="wxLogin">
-              {{ t('siliconFlow.wechatLogin') }}
+              {{ t('wechatLogin') }}
             </Button>
           </DialogTrigger>
           <DialogContent class="max-w-sm">
             <DialogHeader>
-              <DialogTitle>{{ t('siliconFlow.wechatLogin') }}</DialogTitle>
+              <DialogTitle>{{ t('wechatLogin') }}</DialogTitle>
               <DialogClose />
             </DialogHeader>
             <div id="SF_wx_login_qr_code_f" class="w-full flex justify-center" />
           </DialogContent>
         </Dialog>
         <Button variant="outline" class="w-full h-10" @click="siliconFlowStore.isEmailLogin = !siliconFlowStore.isEmailLogin">
-          {{ siliconFlowStore.isEmailLogin ? t('siliconFlow.phoneLogin') : t('siliconFlow.emailLogin') }}
+          {{ siliconFlowStore.isEmailLogin ? t('phoneLogin') : t('emailLogin') }}
         </Button>
       </div>
       <!-- <div class="flex items-center space-x-2 text-xs text-muted-foreground">
         <input id="keep" v-model="siliconFlowStore.keepLogin" type="checkbox" class="h-3 w-3 rounded border border-input" checked>
-        <label for="keep" class="cursor-pointer">{{ t('siliconFlow.keepLoggedIn30Days') }}</label>
+        <label for="keep" class="cursor-pointer">{{ t('keepLoggedIn30Days') }}</label>
       </div> -->
     </CardFooter>
   </Card>
 </template>
+
+<i18n lang="yaml">
+en-US:
+  loginTitle: Login to SiliconFlow
+  loginDescription: Login using phone number and SMS verification code
+  emailLoginDescription: Login using email address and verification code
+  phoneNumber: Your phone number
+  emailAddressPlaceholder: Your email address
+  smsCode: SMS verification code
+  emailCode: Email verification code
+  agreeToTerms: I agree to SiliconFlow's
+  userAgreement: User Agreement
+  and: and
+  privacyPolicy: Privacy Policy
+  loggingIn: Logging in...
+  login: Login
+  registerLogin: Register/Login
+  wechatLogin: WeChat
+  phoneLogin: Phone Login
+  emailLogin: Email Login
+  keepLoggedIn30Days: Keep logged in for 30 days
+
+zh-CN:
+  loginTitle: 登录 硅基流动
+  loginDescription: 使用手机号码和短信验证码登录
+  emailLoginDescription: 使用邮箱地址和验证码登录
+  phoneNumber: 您的手机号
+  emailAddressPlaceholder: 您的邮箱地址
+  smsCode: 短信验证码
+  emailCode: 邮箱验证码
+  agreeToTerms: 我同意硅基流动的
+  userAgreement: 用户协议
+  and: 和
+  privacyPolicy: 隐私政策
+  loggingIn: 登录中...
+  login: 登录
+  registerLogin: 注册/登录
+  wechatLogin: 微信登录
+  phoneLogin: 短信登录
+  emailLogin: 邮箱登录
+  keepLoggedIn30Days: 30天内保持登录
+</i18n>

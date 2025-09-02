@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { getCurrentLocale, setLocale } from '@/locales'
+import { getCurrentLocale, setLocale } from '@/lib/locals'
 
 const props = defineProps<{
   compact?: boolean
@@ -26,7 +26,7 @@ function handleLanguageChange(value: any) {
 <template>
   <div class="space-y-2">
     <label v-if="!props.compact" class="text-sm font-medium">
-      {{ t('settings.language') }}
+      {{ t('language') }}
     </label>
     <Select
       :model-value="currentLocale"
@@ -49,3 +49,10 @@ function handleLanguageChange(value: any) {
     </Select>
   </div>
 </template>
+
+<i18n lang="yaml">
+zh-CN:
+  language: 语言
+en-US:
+  language: Language
+</i18n>

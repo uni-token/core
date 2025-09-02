@@ -74,10 +74,10 @@ function onClick() {
 }
 
 const statusText = computed(() => ({
-  loading: t('common.loading'),
-  init: t('captcha.getCode'),
-  pending: t('captcha.getCode'),
-  success: t('captcha.smsSent'),
+  loading: t('loading'),
+  init: t('getCode'),
+  pending: t('getCode'),
+  success: t('smsSent'),
 })[state.value])
 </script>
 
@@ -86,3 +86,15 @@ const statusText = computed(() => ({
     {{ statusText }}
   </button>
 </template>
+
+<i18n lang="yaml">
+en-US:
+  loading: Authenticating...
+  getCode: Get Verification Code
+  smsSent: Code Sent
+
+zh-CN:
+  loading: 加载中...
+  getCode: 获取验证码
+  smsSent: 已发送
+</i18n>

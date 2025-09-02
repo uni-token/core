@@ -21,13 +21,13 @@ const { t } = useI18n()
 const siliconFlowStore = useSiliconFlowStore()
 
 const CARD_TYPE_OPTIONS = computed(() => [
-  { value: 1, label: t('siliconFlow.realName.cardTypes.mainlandIdCard') },
-  { value: 2, label: t('siliconFlow.realName.cardTypes.hkMacaoPass') },
-  { value: 3, label: t('siliconFlow.realName.cardTypes.taiwanPass') },
-  { value: 4, label: t('siliconFlow.realName.cardTypes.hkMacaoResidence') },
-  { value: 5, label: t('siliconFlow.realName.cardTypes.taiwanResidence') },
-  { value: 6, label: t('siliconFlow.realName.cardTypes.foreignerPermit') },
-  { value: 100, label: t('siliconFlow.realName.cardTypes.otherType') },
+  { value: 1, label: t('mainlandIdCard') },
+  { value: 2, label: t('hkMacaoPass') },
+  { value: 3, label: t('taiwanPass') },
+  { value: 4, label: t('hkMacaoResidence') },
+  { value: 5, label: t('taiwanResidence') },
+  { value: 6, label: t('foreignerPermit') },
+  { value: 100, label: t('otherType') },
 ])
 
 const open = defineModel({
@@ -114,7 +114,7 @@ async function submitRealNameAuth() {
     return
 
   if (!validateIdCard(idCardNumber.value, cardType.value)) {
-    toast.error(t('siliconFlow.realName.invalidIdCard'))
+    toast.error(t('realName.invalidIdCard'))
     return
   }
 
@@ -134,15 +134,15 @@ async function submitRealNameAuth() {
       authUrl.value = result.data.authUrl
       authUrlQR.value = renderSVG(result.data.authUrl, {})
       verificationStep.value = 'qrcode'
-      toast.success(t('siliconFlow.realName.authRequestSubmitted'))
+      toast.success(t('realName.authRequestSubmitted'))
     }
     else {
-      toast.error(result.message || t('siliconFlow.realName.authRequestFailed'))
+      toast.error(result.message || t('realName.authRequestFailed'))
     }
   }
   catch (error) {
     console.error('Real name auth error:', error)
-    toast.error(t('siliconFlow.realName.authRequestFailed'))
+    toast.error(t('realName.authRequestFailed'))
   }
   finally {
     loading.value = false
@@ -156,7 +156,7 @@ async function checkAuthStatus() {
 
     if (isAuthenticated.value) {
       verificationStep.value = 'completed'
-      toast.success(t('siliconFlow.realName.authCompleted'))
+      toast.success(t('realName.authCompleted'))
       // Delay closing dialog to allow user to see success message
       setTimeout(() => {
         open.value = false
@@ -164,12 +164,12 @@ async function checkAuthStatus() {
       }, 2000)
     }
     else {
-      toast.info(t('siliconFlow.realName.authNotCompleted'))
+      toast.info(t('realName.authNotCompleted'))
     }
   }
   catch (error) {
     console.error('Check auth status error:', error)
-    toast.error(t('siliconFlow.realName.checkAuthFailed'))
+    toast.error(t('realName.checkAuthFailed'))
   }
   finally {
     checkingAuth.value = false
@@ -201,9 +201,9 @@ onMounted(() => {
   <Dialog v-model:open="open">
     <DialogContent class="sm:max-w-[425px]">
       <DialogHeader>
-        <DialogTitle>{{ t('siliconFlow.realName.realNameAuth') }}</DialogTitle>
+        <DialogTitle>{{ t('realName.realNameAuth') }}</DialogTitle>
         <DialogDescription>
-          {{ isAuthenticated ? t('siliconFlow.realName.authStatusDescription') : t('siliconFlow.realName.description') }}
+          {{ isAuthenticated ? t('realName.authStatusDescription') : t('realName.description') }}
         </DialogDescription>
       </DialogHeader>
 
@@ -212,20 +212,20 @@ onMounted(() => {
           <CardHeader class="pb-3">
             <CardTitle class="text-sm flex items-center gap-2 text-green-700">
               <div class="h-2 w-2 bg-green-500 rounded-full" />
-              {{ t('siliconFlow.realName.verified') }}
+              {{ t('realName.verified') }}
             </CardTitle>
           </CardHeader>
           <CardContent class="space-y-2">
             <div class="flex justify-between items-center text-sm">
-              <span class="text-muted-foreground">{{ t('siliconFlow.realName.realName') }}</span>
+              <span class="text-muted-foreground">{{ t('realName.realName') }}</span>
               <span class="font-medium">{{ authDisplayName }}</span>
             </div>
             <div class="flex justify-between items-center text-sm">
-              <span class="text-muted-foreground">{{ t('siliconFlow.realName.idCard') }}</span>
+              <span class="text-muted-foreground">{{ t('realName.idCard') }}</span>
               <span class="font-medium">{{ authDisplayIdCard }}</span>
             </div>
             <div v-if="siliconFlowStore.authInfo?.authTime" class="flex justify-between items-center text-sm">
-              <span class="text-muted-foreground">{{ t('siliconFlow.realName.authTime') }}</span>
+              <span class="text-muted-foreground">{{ t('realName.authTime') }}</span>
               <span class="font-medium">{{ new Date(siliconFlowStore.authInfo.authTime.seconds * 1000).toLocaleDateString() }}</span>
             </div>
           </CardContent>
@@ -234,17 +234,17 @@ onMounted(() => {
 
       <div v-else-if="verificationStep === 'form'" class="space-y-4">
         <div class="space-y-2">
-          <label for="realName" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{{ t('siliconFlow.realName.realName') }}</label>
+          <label for="realName" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{{ t('realName.realName') }}</label>
           <Input
             id="realName"
             v-model="realName"
-            :placeholder="t('siliconFlow.realName.realNamePlaceholder')"
+            :placeholder="t('realName.realNamePlaceholder')"
             :disabled="loading"
           />
         </div>
 
         <div class="space-y-2">
-          <label for="cardType" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{{ t('siliconFlow.realName.cardType') }}</label>
+          <label for="cardType" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{{ t('realName.cardType') }}</label>
           <Select
             v-model="cardType"
             :disabled="loading"
@@ -267,7 +267,7 @@ onMounted(() => {
           <Input
             id="idCardNumber"
             v-model="idCardNumber"
-            :placeholder="t('siliconFlow.realName.idCardPlaceholder')"
+            :placeholder="t('realName.idCardPlaceholder')"
             :disabled="loading"
             :maxlength="cardType === 100 ? 30 : (cardType === 6 ? 20 : 18)"
           />
@@ -280,7 +280,7 @@ onMounted(() => {
             <div class="mx-auto w-48" v-html="authUrlQR" />
           </div>
           <p class="text-sm text-muted-foreground">
-            {{ t('siliconFlow.realName.scanAlipayQR') }}
+            {{ t('realName.scanAlipayQR') }}
           </p>
         </div>
       </div>
@@ -293,10 +293,10 @@ onMounted(() => {
             </svg>
           </div>
           <p class="text-lg font-medium">
-            {{ t('siliconFlow.realName.authSuccess') }}
+            {{ t('realName.authSuccess') }}
           </p>
           <p class="text-sm text-muted-foreground">
-            {{ t('siliconFlow.realName.authSuccessDescription') }}
+            {{ t('realName.authSuccessDescription') }}
           </p>
         </div>
       </div>
@@ -304,30 +304,112 @@ onMounted(() => {
       <DialogFooter>
         <div v-if="verificationStep === 'form' && !isAuthenticated" class="flex gap-2 w-full">
           <Button variant="outline" class="flex-1" @click="closeDialog">
-            {{ t('common.cancel') }}
+            {{ t('cancel') }}
           </Button>
           <Button :disabled="!canSubmit" class="flex-1" @click="submitRealNameAuth">
-            <span v-if="loading">{{ t('siliconFlow.realName.submitting') }}</span>
-            <span v-else>{{ t('common.submit') }}</span>
+            <span v-if="loading">{{ t('realName.submitting') }}</span>
+            <span v-else>{{ t('submit') }}</span>
           </Button>
         </div>
 
         <div v-else-if="verificationStep === 'qrcode'" class="flex gap-2 w-full">
           <Button variant="outline" class="flex-1" @click="closeDialog">
-            {{ t('common.cancel') }}
+            {{ t('cancel') }}
           </Button>
           <Button :disabled="checkingAuth" class="flex-1" @click="checkAuthStatus">
-            <span v-if="checkingAuth">{{ t('siliconFlow.realName.checking') }}</span>
-            <span v-else>{{ t('siliconFlow.realName.completedFaceAuth') }}</span>
+            <span v-if="checkingAuth">{{ t('realName.checking') }}</span>
+            <span v-else>{{ t('realName.completedFaceAuth') }}</span>
           </Button>
         </div>
 
         <div v-else class="flex w-full">
           <Button class="w-full" @click="closeDialog">
-            {{ t('common.close') }}
+            {{ t('close') }}
           </Button>
         </div>
       </DialogFooter>
     </DialogContent>
   </Dialog>
 </template>
+
+<i18n lang="yaml">
+en-US:
+  # Common buttons
+  cancel: Cancel
+  submit: Submit
+  close: Close
+
+  # Card types
+  mainlandIdCard: Mainland China ID Card
+  hkMacaoPass: Hong Kong/Macau Resident Travel Permit
+  taiwanPass: Taiwan Resident Travel Permit
+  hkMacaoResidence: Hong Kong/Macau Residence Permit
+  taiwanResidence: Taiwan Residence Permit
+  foreignerPermit: Foreigner Permanent Residence Permit
+  otherType: Other Type
+
+  # Real name verification
+  realName:
+    realNameAuth: SiliconFlow Real Name Authentication
+    description: As required by SiliconFlow, please complete real name authentication before recharging
+    authStatusDescription: Your real name authentication status
+    verified: Verified
+    realName: Real Name
+    realNamePlaceholder: Please enter your real name
+    cardType: ID Type
+    idCard: ID Card
+    idCardPlaceholder: Please enter your ID card number
+    authTime: Authentication Time
+    scanAlipayQR: Please use Alipay App to scan the QR code above and complete facial recognition verification
+    authSuccess: Authentication Successful
+    authSuccessDescription: Your real name authentication has been completed, you can now use all features normally
+    submitting: Submitting...
+    checking: Checking...
+    completedFaceAuth: Completed Facial Authentication
+    invalidIdCard: Invalid ID card number format
+    authRequestSubmitted: Real name authentication request submitted
+    authRequestFailed: Real name authentication request failed
+    authCompleted: Real name authentication completed
+    authNotCompleted: Real name authentication not completed yet, please continue waiting
+    checkAuthFailed: Failed to check authentication status
+
+zh-CN:
+  # Common buttons
+  cancel: 取消
+  submit: 提交
+  close: 关闭
+
+  # Card types
+  mainlandIdCard: 中国大陆二代居民身份证
+  hkMacaoPass: 港澳居民来往内地通行证
+  taiwanPass: 台湾居民来往内地通行证
+  hkMacaoResidence: 港澳居民居住证
+  taiwanResidence: 台湾居民居住证
+  foreignerPermit: 外国人永久居留证
+  otherType: 其他类型用户
+
+  # Real name verification
+  realName:
+    realNameAuth: 硅基流动 实名认证
+    description: 应硅基流动要求，充值前需要先完成实名认证
+    authStatusDescription: 您的实名认证状态
+    verified: 已认证
+    realName: 真实姓名
+    realNamePlaceholder: 请输入您的真实姓名
+    cardType: 证件类型
+    idCard: 身份证
+    idCardPlaceholder: 请输入您的身份证号码
+    authTime: 认证时间
+    scanAlipayQR: 请使用支付宝 App 扫描以上二维码，完成人脸识别校验
+    authSuccess: 认证成功
+    authSuccessDescription: 您的实名认证已完成，可以正常使用所有功能
+    submitting: 提交中...
+    checking: 检查中...
+    completedFaceAuth: 已完成刷脸认证
+    invalidIdCard: 身份证号码格式不正确
+    authRequestSubmitted: 实名认证请求已提交
+    authRequestFailed: 实名认证请求失败
+    authCompleted: 实名认证完成
+    authNotCompleted: 实名认证尚未完成，请继续等待
+    checkAuthFailed: 检查认证状态失败
+</i18n>

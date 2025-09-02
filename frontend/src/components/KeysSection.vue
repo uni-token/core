@@ -44,7 +44,7 @@ onMounted(() => {
   <div class="space-y-6 flex-grow flex flex-col min-h-100">
     <div class="flex items-center justify-between">
       <h2 class="text-2xl font-bold">
-        {{ t('keys.title') }}
+        {{ t('title') }}
       </h2>
     </div>
 
@@ -57,7 +57,7 @@ onMounted(() => {
 
     <div v-else-if="keysStore.loadingError" class="rounded-lg border border-red-200 bg-red-50 p-4">
       <p class="text-red-800">
-        {{ t('keys.loadFailed') }}: {{ keysStore.loadingError }}
+        {{ t('loadFailed') }}: {{ keysStore.loadingError }}
       </p>
     </div>
 
@@ -69,7 +69,7 @@ onMounted(() => {
           <CardHeader>
             <div class="flex items-center justify-between">
               <CardTitle class="text-lg">
-                {{ t('providers.siliconFlow') }}
+                {{ t('siliconFlow') }}
               </CardTitle>
               <div v-show="!siliconFlowStore.isLoading" class="flex items-center gap-2">
                 <span
@@ -79,7 +79,7 @@ onMounted(() => {
                     'bg-accent': !siliconFlowStore.isLoggedIn,
                   }"
                 >
-                  {{ siliconFlowStore.isLoggedIn ? t('providers.loggedIn') : t('providers.loggedOut') }}
+                  {{ siliconFlowStore.isLoggedIn ? t('loggedIn') : t('loggedOut') }}
                 </span>
               </div>
             </div>
@@ -88,18 +88,18 @@ onMounted(() => {
           <CardContent>
             <div class="text-sm text-muted-foreground">
               <p>
-                {{ t('providers.siliconFlowDescription1') }}
+                {{ t('siliconFlowDescription1') }}
                 <a href="https://www.siliconflow.cn" target="_blank" class="text-blue-900 dark:text-blue-200 hover:underline">
-                  {{ t('providers.siliconFlow') }}
+                  {{ t('siliconFlow') }}
                 </a>
-                {{ t('providers.siliconFlowDescription2') }}
+                {{ t('siliconFlowDescription2') }}
               </p>
             </div>
           </CardContent>
 
           <CardFooter>
             <Button class="w-full" @click="showSiliconFlowConfig = true">
-              {{ t('providers.configureSiliconFlow') }}
+              {{ t('configureSiliconFlow') }}
             </Button>
           </CardFooter>
         </Card>
@@ -181,3 +181,25 @@ onMounted(() => {
   display: block;
 }
 </style>
+
+<i18n lang="yaml">
+zh-CN:
+  title: 模型供应商
+  loadFailed: 加载失败
+  siliconFlow: 硅基流动
+  siliconFlowDescription1: 通过
+  siliconFlowDescription2: 购买和配置 API
+  loggedIn: 已登录
+  loggedOut: 未登录
+  configureSiliconFlow: 配置 硅基流动
+
+en-US:
+  title: Model Providers
+  loadFailed: Failed to load
+  siliconFlow: SiliconFlow
+  siliconFlowDescription1: Purchase and configure API through
+  siliconFlowDescription2: ''
+  loggedIn: Logged In
+  loggedOut: Logged Out
+  configureSiliconFlow: Configure SiliconFlow
+</i18n>

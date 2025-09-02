@@ -98,11 +98,11 @@ onMounted(() => {
   <div class="flex flex-col flex-grow space-y-6 min-h-80">
     <div class="flex items-center justify-between">
       <h2 class="text-2xl font-bold">
-        {{ t('presets.title') }}
+        {{ t('title') }}
       </h2>
       <Button @click="presetsStore.addPreset">
         <Plus class="mr-2 h-4 w-4" />
-        {{ t('presets.addPreset') }}
+        {{ t('addPreset') }}
       </Button>
     </div>
 
@@ -115,7 +115,7 @@ onMounted(() => {
 
     <div v-else-if="presetsStore.loadError && presetsStore.presets.length === 0" class="rounded-lg border border-red-200 bg-red-50 p-4">
       <p class="text-red-800">
-        {{ t('presets.loadFailed') }}: {{ presetsStore.loadError }}
+        {{ t('loadFailed') }}: {{ presetsStore.loadError }}
       </p>
     </div>
 
@@ -124,13 +124,13 @@ onMounted(() => {
         <TableHeader>
           <TableRow>
             <TableHead class="min-w-28">
-              {{ t('presets.presetName') }}
+              {{ t('presetName') }}
             </TableHead>
             <TableHead class="w-full">
-              {{ t('presets.keys') }}
+              {{ t('keys') }}
             </TableHead>
             <TableHead>
-              {{ t('presets.actions') }}
+              {{ t('actions') }}
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -190,10 +190,10 @@ onMounted(() => {
                         class="text-sm flex items-center gap-1 cursor-move bg-gray-200 hover:bg-gray-300"
                         @click="(ev: MouseEvent) => ev.stopPropagation()"
                       >
-                        {{ keysStore.keys.find(p => p.id === keyId)?.name || t('presets.unknownKey') }}
+                        {{ keysStore.keys.find(p => p.id === keyId)?.name || t('unknownKey') }}
                         <button
                           class="ml-1 text-xs hover:text-red-600"
-                          :title="t('presets.remove')"
+                          :title="t('remove')"
                           @click="removeKeyFromPreset(preset.id, keyId)"
                         >
                           ×
@@ -209,7 +209,7 @@ onMounted(() => {
                       >
                         <Plus class="h-4 w-4" />
                         <span class="hidden sm:inline">
-                          {{ t('presets.dragKeysHere') }}
+                          {{ t('dragKeysHere') }}
                         </span>
                       </div>
                     </div>
@@ -217,14 +217,14 @@ onMounted(() => {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>{{ t('presets.addKeyToPreset') }}</AlertDialogTitle>
+                    <AlertDialogTitle>{{ t('addKeyToPreset') }}</AlertDialogTitle>
                     <AlertDialogDescription>
-                      {{ t('presets.selectKeyDescription') }} "{{ preset.name }}" {{ t('presets.selectKeyDescription2') }}
+                      {{ t('selectKeyDescription') }} "{{ preset.name }}" {{ t('selectKeyDescription2') }}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <div class="py-4">
                     <div v-if="getAvailableKeys(preset).length === 0" class="text-sm text-gray-500">
-                      {{ t('presets.noAvailableKeys') }}
+                      {{ t('noAvailableKeys') }}
                     </div>
                     <div v-else class="space-y-2 flex flex-col max-h-[50vh] overflow-y-auto">
                       <Button
@@ -245,7 +245,7 @@ onMounted(() => {
                     </div>
                   </div>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>{{ t('presets.cancel') }}</AlertDialogCancel>
+                    <AlertDialogCancel>{{ t('cancel') }}</AlertDialogCancel>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
@@ -265,15 +265,15 @@ onMounted(() => {
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>{{ t('presets.confirmDelete') }}</AlertDialogTitle>
+                      <AlertDialogTitle>{{ t('confirmDelete') }}</AlertDialogTitle>
                       <AlertDialogDescription>
-                        {{ t('presets.confirmDeleteDescription') }} "{{ preset.name }}"?
+                        {{ t('confirmDeleteDescription') }} "{{ preset.name }}"?
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>{{ t('presets.cancel') }}</AlertDialogCancel>
+                      <AlertDialogCancel>{{ t('cancel') }}</AlertDialogCancel>
                       <AlertDialogAction @click="presetsStore.deletePreset(preset)">
-                        {{ t('presets.delete') }}
+                        {{ t('delete') }}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -286,3 +286,43 @@ onMounted(() => {
     </Card>
   </div>
 </template>
+
+<i18n lang="yaml">
+en-US:
+  title: Model Presets
+  addPreset: Add Preset
+  loadFailed: Failed to load Preset list
+  presetName: Preset Name
+  keys: Providers
+  actions: Actions
+  unknownKey: Unknown Provider
+  remove: Remove
+  dragKeysHere: Drag providers here or click to add
+  addKeyToPreset: Add Provider to Preset
+  selectKeyDescription: Select providers to add to the preset
+  selectKeyDescription2: providers
+  noAvailableKeys: No available providers. Please configure providers first.
+  cancel: Cancel
+  confirmDelete: Confirm Delete
+  confirmDeleteDescription: Are you sure you want to delete this preset? This action cannot be undone.
+  delete: Delete
+
+zh-CN:
+  title: 模型预设
+  addPreset: 添加预设
+  loadFailed: 加载 Preset 列表失败
+  presetName: 预设名称
+  keys: 提供商
+  actions: 操作
+  unknownKey: 未知提供商
+  remove: 移除
+  dragKeysHere: 拖拽提供商到这里或点击添加
+  addKeyToPreset: 添加提供商到预设
+  selectKeyDescription: 选择要添加到
+  selectKeyDescription2: 的提供商
+  noAvailableKeys: 没有可用的提供商。请先配置提供商。
+  cancel: 取消
+  confirmDelete: 确认删除
+  confirmDeleteDescription: 确定要删除预设吗？此操作无法撤销。
+  delete: 删除
+</i18n>

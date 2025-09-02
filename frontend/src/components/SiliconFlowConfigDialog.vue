@@ -18,9 +18,9 @@ const { t } = useI18n()
     <DialogContent class="sm:max-w-lg p-0 border-none">
       <VisuallyHidden>
         <DialogHeader>
-          <DialogTitle>{{ t('providers.siliconFlow') }}</DialogTitle>
+          <DialogTitle>{{ t('siliconFlow') }}</DialogTitle>
           <DialogDescription>
-            {{ t('providers.siliconFlowDescription') }}
+            {{ t('siliconFlowDescription') }}
           </DialogDescription>
         </DialogHeader>
       </VisuallyHidden>
@@ -28,3 +28,13 @@ const { t } = useI18n()
     </DialogContent>
   </Dialog>
 </template>
+
+<i18n lang="yaml">
+en-US:
+  siliconFlow: SiliconFlow
+  siliconFlowDescription: Purchase and configure API through SiliconFlow
+
+zh-CN:
+  siliconFlow: 硅基流动
+  siliconFlowDescription: 通过 硅基流动 购买和配置 API
+</i18n>

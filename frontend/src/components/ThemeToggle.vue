@@ -33,13 +33,13 @@ const currentThemeIcon = computed(() => {
 const currentThemeLabel = computed(() => {
   switch (themeStore.theme) {
     case 'light':
-      return t('settings.lightMode')
+      return t('lightMode')
     case 'dark':
-      return t('settings.darkMode')
+      return t('darkMode')
     case 'system':
-      return t('settings.systemMode')
+      return t('systemMode')
     default:
-      return t('settings.lightMode')
+      return t('lightMode')
   }
 })
 </script>
@@ -47,6 +47,19 @@ const currentThemeLabel = computed(() => {
 <template>
   <Button variant="ghost" size="icon" class="h-8 w-8" :title="currentThemeLabel" @click="cycleTheme">
     <component :is="currentThemeIcon" class="h-4 w-4" />
-    <span class="sr-only">{{ t('settings.theme') }}</span>
+    <span class="sr-only">{{ t('theme') }}</span>
   </Button>
 </template>
+
+<i18n lang="yaml">
+zh-CN:
+  theme: 主题
+  lightMode: 浅色模式
+  darkMode: 深色模式
+  systemMode: 跟随系统
+en-US:
+  theme: Theme
+  lightMode: Light Mode
+  darkMode: Dark Mode
+  systemMode: System Mode
+</i18n>

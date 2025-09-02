@@ -30,7 +30,7 @@ onMounted(async () => {
 
 function handleRecharge() {
   if (!siliconFlowStore.authed) {
-    toast.error(t('siliconFlow.realNameRequired'))
+    toast.error(t('realNameRequired'))
     openRealNameDialog.value = true
   }
   else {
@@ -45,12 +45,12 @@ function handleRecharge() {
     <CardHeader>
       <CardTitle class="flex items-center gap-2">
         <div v-if="props.showTitle" class="mr-4 text-lg">
-          {{ t('providers.siliconFlow') }}
+          {{ t('siliconFlow') }}
         </div>
 
         <div class="h-2 w-2 bg-green-500 dark:bg-green-400 rounded-full" />
         <div class="text-green-700 dark:text-green-500 text-base">
-          {{ t('siliconFlow.loggedIn') }}
+          {{ t('loggedIn') }}
         </div>
 
         <div class="flex-grow" />
@@ -61,21 +61,21 @@ function handleRecharge() {
     <CardContent>
       <div v-if="siliconFlowStore.userInfo.data" class="space-y-2">
         <div class="flex justify-between items-center text-sm">
-          <span class="text-muted-foreground">{{ t('siliconFlow.realname') }}</span>
+          <span class="text-muted-foreground">{{ t('realname') }}</span>
           <button
             class="font-medium border-b border-dashed border-primary text-primary hover:bg-muted/50 transition-colors"
             @click="openRealNameDialog = true"
           >
-            {{ siliconFlowStore.authed ? t('siliconFlow.auth-success') : t('siliconFlow.not-authenticated') }}
+            {{ siliconFlowStore.authed ? t('auth-success') : t('not-authenticated') }}
           </button>
         </div>
         <div v-if="siliconFlowStore.userInfo.data.phone" class="flex justify-between items-center text-sm">
-          <span class="text-muted-foreground">{{ t('siliconFlow.phone') }}</span>
+          <span class="text-muted-foreground">{{ t('phone') }}</span>
           <span class="font-medium">{{ siliconFlowStore.userInfo.data.phone }}</span>
         </div>
         <div v-if="siliconFlowStore.userInfo.data.totalBalance" class="flex justify-between items-center text-sm">
-          <span class="text-muted-foreground">{{ t('siliconFlow.balance') }}</span>
-          <span class="font-medium">{{ siliconFlowStore.userInfo.data.totalBalance }} {{ t('siliconFlow.yuan') }}</span>
+          <span class="text-muted-foreground">{{ t('balance') }}</span>
+          <span class="font-medium">{{ siliconFlowStore.userInfo.data.totalBalance }} {{ t('yuan') }}</span>
         </div>
       </div>
     </CardContent>
@@ -83,33 +83,33 @@ function handleRecharge() {
       <!-- <AlertDialog>
         <AlertDialogTrigger as-child>
           <Button variant="default" size="sm" class="h-8">
-            {{ t('siliconFlow.createKey') }}
+            {{ t('createKey') }}
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{{ t('siliconFlow.confirmCreateKey') }}</AlertDialogTitle>
+            <AlertDialogTitle>{{ t('confirmCreateKey') }}</AlertDialogTitle>
             <AlertDialogDescription>
-              {{ t('siliconFlow.confirmCreateKeyDescription') }}
+              {{ t('confirmCreateKeyDescription') }}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{{ t('common.cancel') }}</AlertDialogCancel>
+            <AlertDialogCancel>{{ t('cancel') }}</AlertDialogCancel>
             <AlertDialogAction @click="handleCreateKey">
-              {{ t('common.confirm') }}
+              {{ t('confirm') }}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog> -->
       <Button variant="default" size="sm" class="h-8" @click="emit('configured', siliconFlowStore.keyId!)">
-        {{ t('common.confirm') }}
+        {{ t('confirm') }}
       </Button>
       <div class="flex-grow" />
       <Button variant="secondary" size="sm" class="h-8" @click="handleRecharge">
-        {{ t('siliconFlow.recharge') }}
+        {{ t('recharge') }}
       </Button>
       <Button variant="secondary" size="sm" class="h-8" @click="siliconFlowStore.logout">
-        {{ t('siliconFlow.logout') }}
+        {{ t('logout') }}
       </Button>
     </CardFooter>
 
@@ -126,3 +126,40 @@ function handleRecharge() {
   <!-- Loading state -->
   <Skeleton v-else class="h-48 w-full max-w-md mx-auto" />
 </template>
+
+<i18n lang="yaml">
+zh-CN:
+  siliconFlow: 硅基流动
+  loggedIn: 已登录硅基流动
+  realname: 实名
+  authSuccess: 已认证
+  notAuthenticated: 未认证
+  phone: 手机
+  balance: 余额
+  yuan: 元
+  createKey: 创建密钥
+  confirmCreateKey: 确认创建密钥
+  confirmCreateKeyDescription: 您确定要创建一个新的 API 密钥吗？这将为您的账户生成一个新的访问密钥。
+  recharge: 充值
+  logout: 退出登录
+  realNameRequired: 请先完成实名认证
+  cancel: 取消
+  confirm: 确认
+en-US:
+  siliconFlow: SiliconFlow
+  loggedIn: Logged in to SiliconFlow
+  realname: Real Name
+  authSuccess: Authenticated
+  notAuthenticated: Not Authenticated
+  phone: Phone
+  balance: Balance
+  yuan: Yuan
+  createKey: Create Key
+  confirmCreateKey: Confirm Create Key
+  confirmCreateKeyDescription: Are you sure you want to create a new API key? This will generate a new access key for your account.
+  recharge: Recharge
+  logout: Logout
+  realNameRequired: Please complete real-name authentication first
+  cancel: Cancel
+  confirm: Confirm
+</i18n>

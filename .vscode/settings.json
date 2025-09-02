@@ -73,10 +73,9 @@
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
   "i18n-ally.enabledFrameworks": [
-    "vue"
+    "vue-sfc"
   ],
   "i18n-ally.localesPaths": [
-    "frontend/src/locales"
-  ],
-  "i18n-ally.keystyle": "nested"
+    "frontend/src/**/*.vue"
+  ]
 }

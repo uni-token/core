@@ -36,11 +36,11 @@ onMounted(() => {
     <div class="space-y-6">
       <div class="flex items-center justify-between">
         <h2 class="text-2xl font-bold">
-          {{ t('appManagement.title') }}
+          {{ t('title') }}
         </h2>
         <Button variant="outline" :disabled="loading" @click="refreshApps">
           <RefreshCw class="mr-2 h-4 w-4" :class="{ 'animate-spin': loading }" />
-          {{ t('appManagement.refresh') }}
+          {{ t('refresh') }}
         </Button>
       </div>
 
@@ -53,13 +53,13 @@ onMounted(() => {
 
       <div v-else-if="error" class="rounded-lg border border-red-200 bg-red-50 p-4">
         <p class="text-red-800">
-          {{ t('appManagement.loadFailed') }}: {{ error }}
+          {{ t('loadFailed') }}: {{ error }}
         </p>
       </div>
 
       <div v-else-if="apps.length === 0" class="rounded-lg border p-8 text-center">
         <p class="text-muted-foreground">
-          {{ t('appManagement.noApps') }}
+          {{ t('noApps') }}
         </p>
       </div>
 
@@ -72,16 +72,16 @@ onMounted(() => {
               </CardTitle>
               <div class="flex-grow" />
               <Button variant="outline" size="sm" :disabled="loading" @click="openAppDetail(app)">
-                {{ t('appManagement.details') }}
+                {{ t('details') }}
               </Button>
             </div>
-            <CardDescription>{{ app.description || t('appManagement.noDescription') }}</CardDescription>
+            <CardDescription>{{ app.description || t('noDescription') }}</CardDescription>
           </CardHeader>
 
           <CardContent class="flex flex-col">
             <div>
               <div class="flex items-center justify-between">
-                <span class="text-sm font-medium">{{ t('appManagement.authorizationStatus') }}:</span>
+                <span class="text-sm font-medium">{{ t('authorizationStatus') }}:</span>
                 <Switch
                   v-model="app.granted"
                   :disabled="loading"
@@ -89,7 +89,7 @@ onMounted(() => {
                 />
               </div>
               <p class="text-xs text-gray-500 mt-1">
-                {{ app.granted ? t('appManagement.hasAccess') : t('appManagement.noAccess') }}
+                {{ app.granted ? t('hasAccess') : t('noAccess') }}
               </p>
             </div>
             <div :class="{ 'opacity-0 pointer-events-none select-none': !app.granted }" class="mt-4 transition-opacity duration-300">
@@ -105,3 +105,26 @@ onMounted(() => {
     />
   </div>
 </template>
+
+<i18n lang="yaml">
+zh-CN:
+  title: 应用管理
+  refresh: 刷新
+  loadFailed: 加载失败
+  noApps: 暂无应用
+  details: 详情
+  noDescription: 暂无描述
+  authorizationStatus: 授权状态
+  hasAccess: 已授权访问
+  noAccess: 未授权访问
+en-US:
+  title: App Management
+  refresh: Refresh
+  loadFailed: Load Failed
+  noApps: No Apps
+  details: Details
+  noDescription: No Description
+  authorizationStatus: Authorization Status
+  hasAccess: Has Access
+  noAccess: No Access
+</i18n>

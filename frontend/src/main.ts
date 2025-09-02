@@ -1,9 +1,8 @@
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
+import i18n from '@/lib/locals'
+import router from '@/lib/router'
 import App from './App.vue'
-
-import i18n from './locales'
-import router from './router'
 
 import './styles/globals.css'
 

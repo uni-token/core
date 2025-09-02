@@ -80,26 +80,26 @@ watch(() => props.apiKey, (newKey) => {
   <Dialog v-model:open="open">
     <DialogContent class="sm:max-w-lg">
       <DialogHeader>
-        <DialogTitle>{{ t('editKeyDialog.title') }}</DialogTitle>
+        <DialogTitle>{{ t('title') }}</DialogTitle>
         <DialogDescription>
-          {{ t('editKeyDialog.description') }}
+          {{ t('description') }}
         </DialogDescription>
       </DialogHeader>
 
       <div class="space-y-4">
         <div class="space-y-2">
-          <label class="text-sm font-medium">{{ t('editKeyDialog.keyName') }}</label>
-          <Input v-model="config.name" :placeholder="t('editKeyDialog.keyNamePlaceholder')" autocomplete="off" />
+          <label class="text-sm font-medium">{{ t('keyName') }}</label>
+          <Input v-model="config.name" :placeholder="t('keyNamePlaceholder')" autocomplete="off" />
         </div>
 
         <div class="space-y-2">
-          <label class="text-sm font-medium">{{ t('editKeyDialog.baseUrl') }}</label>
-          <Input v-model="config.baseUrl" :placeholder="t('editKeyDialog.baseUrlPlaceholder')" autocomplete="off" />
+          <label class="text-sm font-medium">{{ t('baseUrl') }}</label>
+          <Input v-model="config.baseUrl" :placeholder="t('baseUrlPlaceholder')" autocomplete="off" />
         </div>
 
         <div class="space-y-2">
-          <label class="text-sm font-medium">{{ t('editKeyDialog.apiKey') }}</label>
-          <Input v-model="config.token" type="password" :placeholder="t('editKeyDialog.apiKeyPlaceholder')" autocomplete="new-password" />
+          <label class="text-sm font-medium">{{ t('apiKey') }}</label>
+          <Input v-model="config.token" type="password" :placeholder="t('apiKeyPlaceholder')" autocomplete="new-password" />
         </div>
 
         <div class="flex gap-2 mt-6">
@@ -107,31 +107,63 @@ watch(() => props.apiKey, (newKey) => {
             <AlertDialogTrigger as-child>
               <Button variant="outline" class="text-red-600 hover:text-red-700">
                 <Trash2 class="mr-2 h-4 w-4" />
-                {{ t('editKeyDialog.delete') }}
+                {{ t('delete') }}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>{{ t('editKeyDialog.confirmDeleteTitle') }}</AlertDialogTitle>
+                <AlertDialogTitle>{{ t('confirmDeleteTitle') }}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  {{ t('editKeyDialog.confirmDeleteDescription') }}
+                  {{ t('confirmDeleteDescription') }}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel tabindex="1">
-                  {{ t('common.cancel') }}
+                  {{ t('cancel') }}
                 </AlertDialogCancel>
                 <AlertDialogAction tabindex="2" @click="handleDelete">
-                  {{ t('common.delete') }}
+                  {{ t('delete') }}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
           <Button class="flex-1" :disabled="!isConfigValid" @click="handleSave">
-            {{ t('editKeyDialog.saveChanges') }}
+            {{ t('saveChanges') }}
           </Button>
         </div>
       </div>
     </DialogContent>
   </Dialog>
 </template>
+
+<i18n lang="yaml">
+en-US:
+  title: Edit Provider
+  description: Modify Provider configuration information
+  keyName: Provider Name
+  keyNamePlaceholder: 'e.g.: OpenAI'
+  baseUrl: Base URL
+  baseUrlPlaceholder: 'https://api.openai.com/v1'
+  apiKey: API Key
+  apiKeyPlaceholder: sk-...
+  delete: Delete
+  confirmDeleteTitle: Confirm Delete
+  confirmDeleteDescription: Are you sure you want to delete this Provider? This action cannot be undone.
+  cancel: Cancel
+  saveChanges: Save Changes
+
+zh-CN:
+  title: 编辑 Provider
+  description: 修改 Provider 的配置信息
+  keyName: Provider 名称
+  keyNamePlaceholder: '例如: OpenAI'
+  baseUrl: Base URL
+  baseUrlPlaceholder: 'https://api.openai.com/v1'
+  apiKey: API Key
+  apiKeyPlaceholder: sk-...
+  delete: 删除
+  confirmDeleteTitle: 确认删除
+  confirmDeleteDescription: 确定要删除 Provider 吗？此操作无法撤销。
+  cancel: 取消
+  saveChanges: 保存更改
+</i18n>

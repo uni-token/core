@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
+import { useI18n } from '@/lib/locals'
 import { useServiceStore } from './service'
 
 export interface App {
@@ -16,7 +16,20 @@ export interface App {
 
 export const useAppStore = defineStore('app', () => {
   const { fetch } = useServiceStore()
-  const { t } = useI18n()
+  const { t } = useI18n({
+    'zh-CN': {
+      appDeleted: '应用已删除',
+      allAppsDeleted: '所有应用已删除',
+      appAuthorized: '应用已授权',
+      appAuthorizationRevoked: '应用授权已撤销',
+    },
+    'en-US': {
+      appDeleted: 'Application deleted',
+      allAppsDeleted: 'All applications deleted',
+      appAuthorized: 'Application authorized',
+      appAuthorizationRevoked: 'Application authorization revoked',
+    },
+  })
 
   // State
   const apps = ref<App[]>([])
@@ -80,7 +93,7 @@ export const useAppStore = defineStore('app', () => {
           apps.value[appIndex].granted = granted
         }
 
-        toast.success(granted ? t('stores.app.appAuthorized') : t('stores.app.appAuthorizationRevoked'))
+        toast.success(granted ? t('appAuthorized') : t('appAuthorizationRevoked'))
       }
       else {
         const errorData = await response.json()
@@ -107,7 +120,7 @@ export const useAppStore = defineStore('app', () => {
           apps.value.splice(appIndex, 1)
         }
 
-        toast.success(t('stores.app.appDeleted'))
+        toast.success(t('appDeleted'))
       }
       else {
         const errorData = await response.json()
@@ -130,7 +143,7 @@ export const useAppStore = defineStore('app', () => {
 
       if (response.ok) {
         apps.value = []
-        toast.success(t('stores.app.allAppsDeleted'))
+        toast.success(t('allAppsDeleted'))
       }
       else {
         const errorData = await response.json()

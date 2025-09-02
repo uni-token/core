@@ -19,12 +19,12 @@ import {
 const { t } = useI18n()
 
 const buildVersion = computed(() => {
-  return import.meta.env.VITE_BUILD_VERSION || t('about.unknown')
+  return import.meta.env.VITE_BUILD_VERSION || t('unknown')
 })
 
 const releaseDate = computed(() => {
   const timestamp = import.meta.env.VITE_RELEASE_TIMESTAMP
-  return timestamp ? new Date(Number(timestamp)).toLocaleDateString() : t('about.unknown')
+  return timestamp ? new Date(Number(timestamp)).toLocaleDateString() : t('unknown')
 })
 </script>
 
@@ -33,7 +33,7 @@ const releaseDate = computed(() => {
     <div class="space-y-6 max-w-3xl">
       <div class="flex items-center justify-between">
         <h2 class="text-2xl font-bold">
-          {{ t('about.title') }}
+          {{ t('title') }}
         </h2>
       </div>
 
@@ -41,21 +41,21 @@ const releaseDate = computed(() => {
         <CardHeader>
           <CardTitle class="flex items-center gap-2">
             <Zap class="h-5 w-5 text-primary" />
-            {{ t('about.introduction') }}
+            {{ t('introduction') }}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div class="space-y-4">
             <p class="text-muted-foreground">
-              {{ t('about.description') }}
+              {{ t('description') }}
             </p>
             <p class="text-muted-foreground">
-              {{ t('about.features') }}
+              {{ t('features') }}
             </p>
             <ul class="list-disc list-inside space-y-2 text-muted-foreground ml-4">
-              <li>{{ t('about.feature1') }}</li>
-              <li>{{ t('about.feature2') }}</li>
-              <li>{{ t('about.feature3') }}</li>
+              <li>{{ t('feature1') }}</li>
+              <li>{{ t('feature2') }}</li>
+              <li>{{ t('feature3') }}</li>
             </ul>
           </div>
         </CardContent>
@@ -65,20 +65,20 @@ const releaseDate = computed(() => {
         <CardHeader>
           <CardTitle class="flex items-center gap-2">
             <InfoIcon class="h-5 w-5 text-primary" />
-            {{ t('about.versionInfo') }}
+            {{ t('versionInfo') }}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div class="space-y-2">
               <div class="flex justify-between">
-                <span class="font-medium">{{ t('about.version') }}: </span>
+                <span class="font-medium">{{ t('version') }}: </span>
                 <span class="text-muted-foreground">{{ buildVersion }}</span>
               </div>
             </div>
             <div class="space-y-2">
               <div class="flex justify-between">
-                <span class="font-medium">{{ t('about.releaseDate') }}: </span>
+                <span class="font-medium">{{ t('releaseDate') }}: </span>
                 <span class="text-muted-foreground">{{ releaseDate }}</span>
               </div>
             </div>
@@ -90,7 +90,7 @@ const releaseDate = computed(() => {
         <CardHeader>
           <CardTitle class="flex items-center gap-2">
             <Mail class="h-5 w-5 text-primary" />
-            {{ t('about.contact') }}
+            {{ t('contact') }}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -104,7 +104,7 @@ const releaseDate = computed(() => {
             </div>
             <div class="flex items-center gap-3">
               <Globe class="h-4 w-4 text-muted-foreground" />
-              <span class="text-sm">{{ t('about.website') }}: </span>
+              <span class="text-sm">{{ t('website') }}: </span>
               <a href="https://uni-token.app" class="text-primary hover:underline text-sm">
                 uni-token.app
               </a>
@@ -117,20 +117,57 @@ const releaseDate = computed(() => {
         <CardHeader>
           <CardTitle class="flex items-center gap-2">
             <FileText class="h-5 w-5 text-primary" />
-            {{ t('about.license') }}
+            {{ t('license') }}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p class="text-sm text-muted-foreground">
-            {{ t('about.licenseText') }}
+            {{ t('licenseText') }}
             <a
               href="https://github.com/uni-token/core/blob/main/LICENSE"
               class="text-primary hover:underline text-sm"
             >LICENSE</a>
-            {{ t('about.licenseFile') }}
+            {{ t('licenseFile') }}
           </p>
         </CardContent>
       </Card>
     </div>
   </div>
 </template>
+
+<i18n lang="yaml">
+zh-CN:
+  title: 关于
+  introduction: 关于 UniToken
+  description: UniToken 是一个高效的 AI Token 聚合服务，为开发者提供统一的 API 接口来访问各种 AI 模型。
+  features: 主要特性：
+  feature1: 统一的 API 接口访问多个 AI 提供商
+  feature2: 智能负载均衡和故障转移
+  feature3: 实时用量统计和成本分析
+  versionInfo: 版本信息
+  version: 版本
+  releaseDate: 发布日期
+  unknown: 未知
+  contact: 联系方式
+  website: 网站
+  license: 许可证
+  licenseText: 本项目使用 MIT 许可证开源。
+  licenseFile: 查看完整的许可证文件
+en-US:
+  title: About
+  introduction: About UniToken
+  description: UniToken is an efficient AI Token aggregation service that provides developers with a unified API interface to access various AI models.
+  features: Key Features：
+  feature1: Unified API interface to access multiple AI providers
+  feature2: Intelligent load balancing and failover
+  feature3: Real-time usage statistics and cost analysis
+  versionInfo: Version Information
+  version: Version
+  releaseDate: Release Date
+  unknown: Unknown
+  contact: Contact
+  website: Website
+  license: License
+  licenseText: This project is open sourced under the MIT license.
+  licenseFile: View complete license file
+</i18n>

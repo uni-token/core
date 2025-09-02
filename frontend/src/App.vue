@@ -75,7 +75,7 @@ onUIOpened()
       <div class="text-center space-y-4">
         <div class="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
         <p class="text-muted-foreground">
-          {{ t('common.loading') }}
+          {{ t('loading') }}
         </p>
       </div>
     </div>
@@ -94,7 +94,7 @@ onUIOpened()
                   <Zap class="h-3 w-3" />
                 </div>
                 <h1 class="text-base font-semibold">
-                  {{ t('app.name') }}
+                  {{ t('appName') }}
                 </h1>
               </div>
             </div>
@@ -108,6 +108,15 @@ onUIOpened()
     <ActionHandler />
   </div>
 </template>
+
+<i18n lang="yaml">
+zh-CN:
+  loading: 加载中...
+  appName: UniToken
+en-US:
+  loading: Loading...
+  appName: UniToken
+</i18n>
 
 <style>
 /* Global styles using UnoCSS */

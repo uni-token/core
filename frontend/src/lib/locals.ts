@@ -1,7 +1,5 @@
 import { computed } from 'vue'
 import { createI18n } from 'vue-i18n'
-import enUS from './en-US.json'
-import zhCN from './zh-CN.json'
 
 function getBrowserLocale(): string {
   const browserLocale = navigator.language || navigator.languages[0]
@@ -28,27 +26,30 @@ function getInitialLocale(): string {
   return getBrowserLocale()
 }
 
-const i18n = createI18n<[typeof zhCN], 'zh-CN' | 'en-US'>({
+const i18n = createI18n({
   legacy: false,
   locale: getInitialLocale(),
   fallbackLocale: 'zh-CN',
-  messages: {
-    'zh-CN': zhCN,
-    'en-US': enUS,
-  },
 })
 
 export function setLocale(locale: string) {
   if (['zh-CN', 'en-US'].includes(locale)) {
-    i18n.global.locale = locale as 'zh-CN' | 'en-US'
+    i18n.global.locale.value = locale as 'zh-CN' | 'en-US'
     localStorage.setItem('locale', locale)
     document.documentElement.lang = locale
   }
 }
 
 export function getCurrentLocale() {
-  return computed(() => i18n.global.locale)
+  return computed(() => i18n.global.locale.value as 'zh-CN' | 'en-US')
 }
 
 export default i18n
-export const t = i18n.global.t
+
+export function useI18n<T extends Record<string, string>>(messages: {
+  [L in 'zh-CN' | 'en-US']: T
+}) {
+  return {
+    t: (key: keyof T) => messages[getCurrentLocale().value][key],
+  }
+}

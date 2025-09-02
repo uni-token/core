@@ -35,16 +35,16 @@ watchEffect(() => {
 <template>
   <div class="space-y-2">
     <div v-if="keysStore.loading" class="text-sm text-muted-foreground">
-      {{ t('keys.loadingKeys') }}
+      {{ t('loadingKeys') }}
     </div>
     <div v-else-if="keysStore.keys.length === 0" class="text-sm text-muted-foreground">
       <template v-if="props.compact">
         <span class="text-red-500 dark:text-red-600">
-          {{ t('keys.noKeysAvailable') }}
+          {{ t('noKeysAvailable') }}
         </span>
 
         <Button variant="link" class="text-blue-600 dark:text-blue-400 underline hover:opacity-80" @click="openAddKeyDialog = true">
-          {{ t('keys.addNewKey') }}
+          {{ t('addNewKey') }}
         </Button>
       </template>
       <template v-else>
@@ -54,7 +54,7 @@ watchEffect(() => {
             <CardHeader>
               <div class="flex items-center justify-between">
                 <CardTitle class="text-lg">
-                  {{ t('keys.siliconFlow') }}
+                  {{ t('siliconFlow') }}
                 </CardTitle>
               </div>
             </CardHeader>
@@ -62,18 +62,18 @@ watchEffect(() => {
             <CardContent>
               <div class="text-sm text-muted-foreground">
                 <p>
-                  {{ t('keys.siliconFlowDescription1') }}
+                  {{ t('siliconFlowDescription1') }}
                   <a href="https://www.siliconflow.cn" target="_blank" class="text-blue-900 dark:text-blue-200 hover:underline">
-                    {{ t('keys.siliconFlow') }}
+                    {{ t('siliconFlow') }}
                   </a>
-                  {{ t('keys.siliconFlowDescription2') }}
+                  {{ t('siliconFlowDescription2') }}
                 </p>
               </div>
             </CardContent>
 
             <CardFooter>
               <Button class="w-full" @click="showSiliconFlowConfig = true">
-                {{ t('keys.configureSiliconFlow') }}
+                {{ t('configureSiliconFlow') }}
               </Button>
             </CardFooter>
           </Card>
@@ -84,7 +84,7 @@ watchEffect(() => {
     </div>
     <div v-else class="flex gap-4">
       <div :class="compact ? 'text-sm font-medium mb-1' : 'text-base font-bold mb-1'">
-        {{ t('keys.selectKey') }}
+        {{ t('selectKey') }}
       </div>
       <div class="w-0 flex-grow flex flex-wrap gap-2 h-fit">
         <Badge
@@ -108,7 +108,7 @@ watchEffect(() => {
           @click="openAddKeyDialog = true"
         >
           <Plus class="inline h-4 w-4" />
-          {{ t('keys.addNewKey') }}
+          {{ t('addNewKey') }}
         </Badge>
       </div>
     </div>
@@ -120,3 +120,25 @@ watchEffect(() => {
     <AddKeyDialog v-model:open="openAddKeyDialog" @configured="selectedKeyId = $event" />
   </div>
 </template>
+
+<i18n lang="yaml">
+en-US:
+  loadingKeys: Loading...
+  noKeysAvailable: No providers configured
+  addNewKey: Add Provider
+  siliconFlow: SiliconFlow
+  siliconFlowDescription1: Purchase and configure API through
+  siliconFlowDescription2: ' '
+  configureSiliconFlow: Configure SiliconFlow
+  selectKey: Provider
+
+zh-CN:
+  loadingKeys: 加载中
+  noKeysAvailable: 未配置提供商
+  addNewKey: 添加提供商
+  siliconFlow: 硅基流动
+  siliconFlowDescription1: 通过
+  siliconFlowDescription2: 购买和配置 API
+  configureSiliconFlow: 配置 硅基流动
+  selectKey: 提供商
+</i18n>

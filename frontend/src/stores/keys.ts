@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
+import { useI18n } from '@/lib/locals'
 import { useServiceStore } from './service'
 
 export interface APIKey {
@@ -15,7 +15,18 @@ export interface APIKey {
 
 export const useKeysStore = defineStore('keys', () => {
   const { fetch } = useServiceStore()
-  const { t } = useI18n()
+  const { t } = useI18n({
+    'en-US': {
+      addKeyFailed: 'Failed to add key',
+      updateKeyFailed: 'Failed to update key',
+      deleteKeyFailed: 'Failed to delete key',
+    },
+    'zh-CN': {
+      addKeyFailed: '添加密钥失败',
+      updateKeyFailed: '更新密钥失败',
+      deleteKeyFailed: '删除密钥失败',
+    },
+  })
 
   // State
   const keys = ref<APIKey[]>([])
@@ -59,7 +70,7 @@ export const useKeysStore = defineStore('keys', () => {
         return (await response.json()).data
       }
       else {
-        toast.error(t('stores.keys.addKeyFailed'))
+        toast.error(t('addKeyFailed'))
         throw new Error(`HTTP ${response.status}: ${response.statusText}`)
       }
     }
@@ -84,7 +95,7 @@ export const useKeysStore = defineStore('keys', () => {
         return true
       }
       else {
-        toast.error(t('stores.keys.updateKeyFailed'))
+        toast.error(t('updateKeyFailed'))
         return false
       }
     }
@@ -105,7 +116,7 @@ export const useKeysStore = defineStore('keys', () => {
         return true
       }
       else {
-        toast.error(t('stores.keys.deleteKeyFailed'))
+        toast.error(t('deleteKeyFailed'))
         return false
       }
     }

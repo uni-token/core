@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { toast } from 'vue-sonner'
-import { t } from '@/locales'
+import { useI18n } from '@/lib/locals'
 import { useServiceStore } from './service'
 
 export interface AppPreset {
@@ -14,6 +14,26 @@ export interface AppPreset {
 
 export const usePresetsStore = defineStore('presets', () => {
   const { fetch } = useServiceStore()
+  const { t } = useI18n({
+    'en-US': {
+      preset: 'Preset',
+      addPresetFailed: 'Failed to add preset',
+      deletePresetFailed: 'Failed to delete preset',
+      presetNotFound: 'Preset not found',
+      updatePresetFailed: 'Failed to update preset',
+      presetNameEmpty: 'Preset name cannot be empty',
+      presetNameExists: 'Preset name already exists',
+    },
+    'zh-CN': {
+      preset: '预设',
+      addPresetFailed: '添加 Preset 失败',
+      deletePresetFailed: '删除 Preset 失败',
+      presetNotFound: '找不到指定的预设',
+      updatePresetFailed: '更新 Preset 失败',
+      presetNameEmpty: '预设名称不能为空',
+      presetNameExists: '预设名称已存在',
+    },
+  })
 
   // State
   const presets = ref<AppPreset[]>([])
@@ -64,11 +84,11 @@ export const usePresetsStore = defineStore('presets', () => {
   async function addPreset() {
     const existingNames = presets.value.map(p => p.name)
     let counter = 1
-    let defaultName = `${t('presets.preset')} ${counter}`
+    let defaultName = `${t('preset')} ${counter}`
 
     while (existingNames.includes(defaultName)) {
       counter++
-      defaultName = `${t('presets.preset')} ${counter}`
+      defaultName = `${t('preset')} ${counter}`
     }
 
     try {
@@ -88,7 +108,7 @@ export const usePresetsStore = defineStore('presets', () => {
         return true
       }
       else {
-        toast.error(t('stores.presets.addPresetFailed'))
+        toast.error(t('addPresetFailed'))
         return false
       }
     }
@@ -109,7 +129,7 @@ export const usePresetsStore = defineStore('presets', () => {
         return true
       }
       else {
-        toast.error(`${t('stores.presets.deletePresetFailed')}, ${response.status} ${response.statusText}`)
+        toast.error(`${t('deletePresetFailed')}, ${response.status} ${response.statusText}`)
         return false
       }
     }
@@ -122,7 +142,7 @@ export const usePresetsStore = defineStore('presets', () => {
   async function updatePreset(presetId: string, updates: Partial<Pick<AppPreset, 'name' | 'keys'>>) {
     const preset = presets.value.find(p => p.id === presetId)
     if (!preset) {
-      toast.error(t('stores.presets.presetNotFound'))
+      toast.error(t('presetNotFound'))
       return false
     }
 
@@ -152,7 +172,7 @@ export const usePresetsStore = defineStore('presets', () => {
       }
       else {
         const errorData = await response.json().catch(() => ({}))
-        toast.error(errorData.error || t('stores.presets.updatePresetFailed'))
+        toast.error(errorData.error || t('updatePresetFailed'))
         return false
       }
     }
@@ -172,13 +192,13 @@ export const usePresetsStore = defineStore('presets', () => {
     nameValidationError.value = null
 
     if (!newName.trim()) {
-      nameValidationError.value = t('stores.presets.presetNameEmpty')
+      nameValidationError.value = t('presetNameEmpty')
       return false
     }
 
     const existingPreset = presets.value.find(p => p.name === newName && p.id !== currentPresetId)
     if (existingPreset) {
-      nameValidationError.value = t('stores.presets.presetNameExists')
+      nameValidationError.value = t('presetNameExists')
       return false
     }
 
@@ -246,7 +266,7 @@ export const usePresetsStore = defineStore('presets', () => {
   async function addKeyToPreset(presetId: string, keyId: string) {
     const preset = presets.value.find(p => p.id === presetId)
     if (!preset) {
-      toast.error(t('stores.presets.presetNotFound'))
+      toast.error(t('presetNotFound'))
       return false
     }
 
@@ -272,7 +292,7 @@ export const usePresetsStore = defineStore('presets', () => {
   async function removeKeyFromPreset(presetId: string, keyId: string) {
     const preset = presets.value.find(p => p.id === presetId)
     if (!preset) {
-      toast.error(t('stores.presets.presetNotFound'))
+      toast.error(t('presetNotFound'))
       return false
     }
 

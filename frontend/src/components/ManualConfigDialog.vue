@@ -56,18 +56,18 @@ watch(open, (newValue) => {
   <Dialog v-model:open="open">
     <DialogContent class="sm:max-w-lg">
       <DialogHeader>
-        <DialogTitle>{{ t('manualConfigDialog.title') }}</DialogTitle>
+        <DialogTitle>{{ t('title') }}</DialogTitle>
         <DialogDescription>
-          {{ t('manualConfigDialog.description') }}
+          {{ t('description') }}
         </DialogDescription>
       </DialogHeader>
 
       <div class="mt-6 space-y-4">
         <div class="space-y-2">
-          <label class="text-sm font-medium">{{ t('manualConfigDialog.providerName') }}</label>
+          <label class="text-sm font-medium">{{ t('providerName') }}</label>
           <Input
             v-model="config.name"
-            :placeholder="t('manualConfigDialog.providerNamePlaceholder')"
+            :placeholder="t('providerNamePlaceholder')"
             autocomplete="off"
             data-lpignore="true"
             data-form-type="other"
@@ -75,10 +75,10 @@ watch(open, (newValue) => {
         </div>
 
         <div class="space-y-2">
-          <label class="text-sm font-medium">{{ t('manualConfigDialog.baseUrl') }}</label>
+          <label class="text-sm font-medium">{{ t('baseUrl') }}</label>
           <Input
             v-model="config.baseUrl"
-            :placeholder="t('manualConfigDialog.baseUrlPlaceholder')"
+            :placeholder="t('baseUrlPlaceholder')"
             autocomplete="off"
             data-lpignore="true"
             data-form-type="other"
@@ -86,11 +86,11 @@ watch(open, (newValue) => {
         </div>
 
         <div class="space-y-2">
-          <label class="text-sm font-medium">{{ t('manualConfigDialog.apiKey') }}</label>
+          <label class="text-sm font-medium">{{ t('apiKey') }}</label>
           <Input
             v-model="config.token"
             type="password"
-            :placeholder="t('manualConfigDialog.apiKeyPlaceholder')"
+            :placeholder="t('apiKeyPlaceholder')"
             autocomplete="off"
             data-form-type="other"
             data-lpignore="true"
@@ -98,9 +98,32 @@ watch(open, (newValue) => {
         </div>
 
         <Button class="w-full" :disabled="!isConfigValid" @click="handleSave">
-          {{ t('manualConfigDialog.saveProvider') }}
+          {{ t('save') }}
         </Button>
       </div>
     </DialogContent>
   </Dialog>
 </template>
+
+<i18n lang="yaml">
+zh-CN:
+  title: 手动配置 API
+  description: 请输入您的 API 配置信息
+  providerName: 提供商名称
+  providerNamePlaceholder: 例如：OpenAI、Claude 等
+  baseUrl: Base URL
+  baseUrlPlaceholder: 例如：https://api.openai.com/v1
+  apiKey: API Key
+  apiKeyPlaceholder: 输入您的 API Key
+  save: 保存配置
+en-US:
+  title: Manual API Configuration
+  description: Please enter your API configuration information
+  providerName: Provider Name
+  providerNamePlaceholder: e.g., OpenAI, Claude, etc.
+  baseUrl: Base URL
+  baseUrlPlaceholder: e.g., https://api.openai.com/v1
+  apiKey: API Key
+  apiKeyPlaceholder: Enter your API Key
+  save: Save Configuration
+</i18n>

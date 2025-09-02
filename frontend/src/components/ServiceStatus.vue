@@ -26,13 +26,13 @@ const serviceStore = useServiceStore()
           <AlertTriangle class="h-4 w-4 text-orange-600 dark:text-orange-400 mt-0.5 flex-shrink-0" />
           <div class="space-y-1">
             <p class="text-xs font-medium text-orange-800 dark:text-orange-200">
-              {{ t('service.connectionFailed') }}
+              {{ t('connectionFailed') }}
             </p>
             <p class="text-xs text-orange-700 dark:text-orange-300">
-              {{ t('service.reconnecting') }}
+              {{ t('reconnecting') }}
             </p>
             <p class="text-xs text-orange-700 dark:text-orange-300">
-              {{ t('service.restartAgent') }}<br>{{ t('common.or') }}
+              {{ t('restartAgent') }}<br>{{ t('or') }}
               <StartServiceButton class="text-xs!" />
             </p>
           </div>
@@ -48,7 +48,7 @@ const serviceStore = useServiceStore()
               class="mx-1 h-2 w-2 rounded-full mb-[2px]"
               :class="serviceStore.serverConnected ? 'bg-green-500' : 'bg-red-500'"
             />
-            <span class="text-sm select-none">{{ serviceStore.serverConnected ? t('service.connected') : t('service.disconnected') }}</span>
+            <span class="text-sm select-none">{{ serviceStore.serverConnected ? t('connected') : t('disconnected') }}</span>
           </div>
         </HoverCardTrigger>
         <HoverCardContent v-if="serviceStore.serverConnected" :side-offset="0" class="pt-2 py-1">
@@ -69,16 +69,62 @@ const serviceStore = useServiceStore()
         :class="serviceStore.serverConnected ? 'bg-green-500' : 'bg-red-500'"
       />
       <span :class="serviceStore.serverConnected ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'">
-        {{ serviceStore.serverConnected ? t('service.connected') : t('service.disconnected') }}
+        {{ serviceStore.serverConnected ? t('connected') : t('disconnected') }}
       </span>
     </div>
 
     <!-- Permanent troubleshooting message when disconnected -->
     <div v-if="!serviceStore.serverConnected" class="text-center space-y-2">
       <p class="text-sm text-orange-800 dark:text-orange-200">
-        {{ t('service.troubleshooting') }}
+        {{ t('troubleshooting') }}
         <StartServiceButton />
       </p>
     </div>
   </div>
 </template>
+
+<i18n lang="yaml">
+zh-CN:
+  connected: 本地服务已连接
+  disconnected: 本地服务未连接
+  connectionFailed: 服务连接失败
+  reconnecting: 正在重新连接...
+  restartAgent: 可能是本地服务未能正常启动，请重新启动相关 Agent 软件，
+  troubleshooting: 请重新启动 AI Agent，或
+  tryStart: 启动服务
+  startSuccess: 服务已成功启动！
+  startLocalService: 启动本地服务
+  browserPrompt: 在浏览器弹出的提示框中，请选择允许打开 UniToken 应用。
+  adminPermission: 首次启动时，UniToken 会请求管理员权限，请允许。
+  troubleshootingPrefix: 若服务未能正常启动，请尝试重新启动相关 Agent 软件，或
+  manualDownload: 手动下载
+  downloadService: 下载 UniToken 服务
+  selectOS: 请选择你的操作系统。
+  afterDownload: 下载后，请运行它以启动服务。
+
+en-US:
+  connected: Local Service Connected
+  disconnected: Service Disconnected
+  connectionFailed: Service Connection Failed
+  reconnecting: Reconnecting...
+  restartAgent: |
+    Local service may not have started properly. Please restart the related
+    Agent software.
+  troubleshooting: 'Please restart the AI agent, or'
+  tryStart: Start Service
+  startSuccess: Service started successfully!
+  startLocalService: Start Local Service
+  browserPrompt: |
+    In the browser prompt that appears, please select to allow opening the
+    UniToken application.
+  adminPermission: |
+    When starting for the first time, UniToken will request administrator
+    permissions. Please allow.
+  troubleshootingPrefix: |
+    If the service fails to start properly, please try restarting the related
+    Agent software, or
+  manualDownload: download manually
+  downloadService: Download UniToken Service
+  selectOS: Please select your operating system.
+  afterDownload: 'After downloading, please run it to start the service.'
+</i18n>

@@ -64,7 +64,7 @@ async function loadStats() {
     }
   }
   catch (err) {
-    error.value = err instanceof Error ? err.message : t('common.error')
+    error.value = err instanceof Error ? err.message : t('error')
   }
   finally {
     loading.value = false
@@ -92,7 +92,7 @@ function formatTime(timestamp: string) {
     return new Date(timestamp).toLocaleString('zh-CN')
   }
   catch {
-    return t('common.invalidTime')
+    return t('invalidTime')
   }
 }
 
@@ -106,30 +106,30 @@ onMounted(() => {
     <div class="space-y-6">
       <div class="flex items-center justify-between">
         <h2 class="text-2xl font-bold">
-          {{ t('usage.title') }}
+          {{ t('title') }}
         </h2>
         <div class="flex items-center gap-2">
           <Select v-model="selectedDays" @update:model-value="loadStats">
             <SelectTrigger class="w-[180px]">
               <SelectValue>
-                {{ selectedDays === '7' ? t('usage.last7Days') : selectedDays === '30' ? t('usage.last30Days') : t('usage.last90Days') }}
+                {{ selectedDays === '7' ? t('last7Days') : selectedDays === '30' ? t('last30Days') : t('last90Days') }}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="7">
-                {{ t('usage.last7Days') }}
+                {{ t('last7Days') }}
               </SelectItem>
               <SelectItem value="30">
-                {{ t('usage.last30Days') }}
+                {{ t('last30Days') }}
               </SelectItem>
               <SelectItem value="90">
-                {{ t('usage.last90Days') }}
+                {{ t('last90Days') }}
               </SelectItem>
             </SelectContent>
           </Select>
           <Button variant="outline" :disabled="loading" @click="refreshStats">
             <RefreshCw class="mr-2 h-4 w-4" :class="{ 'animate-spin': loading }" />
-            {{ t('usage.refresh') }}
+            {{ t('refresh') }}
           </Button>
         </div>
       </div>
@@ -139,7 +139,7 @@ onMounted(() => {
         <Card>
           <CardHeader class="pb-2">
             <CardTitle class="text-sm font-medium text-muted-foreground">
-              {{ t('usage.totalTokens') }}
+              {{ t('totalTokens') }}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -152,7 +152,7 @@ onMounted(() => {
         <Card>
           <CardHeader class="pb-2">
             <CardTitle class="text-sm font-medium text-muted-foreground">
-              {{ t('usage.totalCost') }}
+              {{ t('totalCost') }}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -165,7 +165,7 @@ onMounted(() => {
         <Card>
           <CardHeader class="pb-2">
             <CardTitle class="text-sm font-medium text-muted-foreground">
-              {{ t('usage.totalRequests') }}
+              {{ t('totalRequests') }}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -178,7 +178,7 @@ onMounted(() => {
         <Card>
           <CardHeader class="pb-2">
             <CardTitle class="text-sm font-medium text-muted-foreground">
-              {{ t('usage.averageTokensPerRequest') }}
+              {{ t('averageTokensPerRequest') }}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -202,7 +202,7 @@ onMounted(() => {
       <!-- Error State -->
       <div v-else-if="error" class="rounded-lg border border-red-200 bg-red-50 p-4">
         <p class="text-red-800">
-          {{ t('usage.loadFailed') }}: {{ error }}
+          {{ t('loadFailed') }}: {{ error }}
         </p>
       </div>
 
@@ -212,13 +212,13 @@ onMounted(() => {
         <Card>
           <CardHeader>
             <CardTitle class="text-lg">
-              {{ t('usage.byApp') }}
+              {{ t('byApp') }}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div class="space-y-2">
               <div v-if="Object.keys(stats.byApp).length === 0" class="text-sm text-muted-foreground text-center py-4">
-                {{ t('usage.noData') }}
+                {{ t('noData') }}
               </div>
               <div
                 v-for="(app, appId) in stats.byApp" v-else :key="appId"
@@ -226,10 +226,10 @@ onMounted(() => {
               >
                 <div>
                   <div class="font-medium text-sm">
-                    {{ app.appName || t('usage.unknownApp') }}
+                    {{ app.appName || t('unknownApp') }}
                   </div>
                   <div class="text-xs text-muted-foreground">
-                    {{ app.requestCount }} {{ t('usage.requests') }}
+                    {{ app.requestCount }} {{ t('requests') }}
                   </div>
                 </div>
                 <div class="text-right">
@@ -249,13 +249,13 @@ onMounted(() => {
         <Card>
           <CardHeader>
             <CardTitle class="text-lg">
-              {{ t('usage.byProvider') }}
+              {{ t('byProvider') }}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div class="space-y-2">
               <div v-if="Object.keys(stats.byKey).length === 0" class="text-sm text-muted-foreground text-center py-4">
-                {{ t('usage.noData') }}
+                {{ t('noData') }}
               </div>
               <div
                 v-for="(provider, name) in stats.byKey" v-else :key="name"
@@ -266,7 +266,7 @@ onMounted(() => {
                     {{ name }}
                   </div>
                   <div class="text-xs text-muted-foreground">
-                    {{ provider.requestCount }} {{ t('usage.requests') }}
+                    {{ provider.requestCount }} {{ t('requests') }}
                   </div>
                 </div>
                 <div class="text-right">
@@ -286,13 +286,13 @@ onMounted(() => {
         <Card>
           <CardHeader>
             <CardTitle class="text-lg">
-              {{ t('usage.byModel') }}
+              {{ t('byModel') }}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div class="space-y-2">
               <div v-if="Object.keys(stats.byModel).length === 0" class="text-sm text-muted-foreground text-center py-4">
-                {{ t('usage.noData') }}
+                {{ t('noData') }}
               </div>
               <div
                 v-for="(model, name) in stats.byModel" v-else :key="name"
@@ -303,7 +303,7 @@ onMounted(() => {
                     {{ name.split('/')[1] || name }}
                   </div>
                   <div class="text-xs text-muted-foreground">
-                    {{ model.key }} · {{ model.requestCount }} {{ t('usage.times') }}
+                    {{ model.key }} · {{ model.requestCount }} {{ t('times') }}
                   </div>
                 </div>
                 <div class="text-right">
@@ -324,12 +324,12 @@ onMounted(() => {
       <Card v-if="stats">
         <CardHeader>
           <CardTitle class="text-lg">
-            {{ t('usage.recentUsageRecords') }}
+            {{ t('recentUsageRecords') }}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div v-if="stats.recentUsages.length === 0" class="text-center py-8 text-muted-foreground">
-            {{ t('usage.noUsageRecords') }}
+            {{ t('noUsageRecords') }}
           </div>
           <div v-else class="space-y-2 max-h-96 overflow-y-auto">
             <div
@@ -338,7 +338,7 @@ onMounted(() => {
             >
               <div class="flex-1">
                 <div class="flex items-center gap-2">
-                  <span class="font-medium text-sm">{{ usage.appName || t('usage.unknownApp') }}</span>
+                  <span class="font-medium text-sm">{{ usage.appName || t('unknownApp') }}</span>
                   <span class="text-xs px-2 py-1 bg-muted rounded">{{ usage.key }}</span>
                   <span class="text-xs text-muted-foreground">{{ usage.model }}</span>
                 </div>
@@ -348,7 +348,7 @@ onMounted(() => {
               </div>
               <div class="text-right">
                 <div class="font-mono text-sm">
-                  {{ formatNumber(usage.totalTokens) }} {{ t('usage.tokensUnit') }}
+                  {{ formatNumber(usage.totalTokens) }} {{ t('tokensUnit') }}
                 </div>
                 <div class="text-xs text-muted-foreground">
                   ¥{{ usage.cost.toFixed(4) }}
@@ -364,3 +364,52 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<i18n lang="yaml">
+zh-CN:
+  title: Token 用量统计
+  last7Days: 最近 7 天
+  last30Days: 最近 30 天
+  last90Days: 最近 90 天
+  refresh: 刷新
+  totalTokens: 总 Token 消耗
+  totalCost: 总费用
+  totalRequests: 总请求数
+  averageTokensPerRequest: 平均每请求 Token
+  loadFailed: 加载用量统计失败
+  byApp: 按应用统计
+  byProvider: 按提供商统计
+  byModel: 按模型统计
+  noData: 暂无数据
+  unknownApp: 未知应用
+  requests: 次请求
+  times: 次
+  recentUsageRecords: 最近使用记录
+  noUsageRecords: 暂无使用记录
+  tokensUnit: tokens
+  error: 未知错误
+  invalidTime: 无效时间
+en-US:
+  title: Token Usage Statistics
+  last7Days: Last 7 Days
+  last30Days: Last 30 Days
+  last90Days: Last 90 Days
+  refresh: Refresh
+  totalTokens: Total Token Consumption
+  totalCost: Total Cost
+  totalRequests: Total Requests
+  averageTokensPerRequest: Average Tokens per Request
+  loadFailed: Failed to load usage statistics
+  byApp: By Application
+  byProvider: By Provider
+  byModel: By Model
+  noData: No data available
+  unknownApp: Unknown App
+  requests: requests
+  times: times
+  recentUsageRecords: Recent Usage Records
+  noUsageRecords: No usage records
+  tokensUnit: tokens
+  error: Unknown error
+  invalidTime: Invalid time
+</i18n>

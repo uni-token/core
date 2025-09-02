@@ -15,9 +15,9 @@ const { t } = useI18n()
 const themeStore = useThemeStore()
 
 const themeOptions = [
-  { value: 'light' as const, label: t('settings.lightMode'), icon: Sun },
-  { value: 'dark' as const, label: t('settings.darkMode'), icon: Moon },
-  // { value: 'system' as const, label: t('settings.systemMode'), icon: Monitor },
+  { value: 'light' as const, label: t('lightMode'), icon: Sun },
+  { value: 'dark' as const, label: t('darkMode'), icon: Moon },
+  // { value: 'system' as const, label: t('systemMode'), icon: Monitor },
 ]
 
 function handleThemeChange(newTheme: unknown) {
@@ -31,10 +31,10 @@ function handleThemeChange(newTheme: unknown) {
   <div class="flex items-center justify-between">
     <div>
       <h4 class="text-sm font-medium">
-        {{ t('settings.theme') }}
+        {{ t('theme') }}
       </h4>
       <p class="text-sm text-muted-foreground">
-        {{ t('settings.themeDescription') }}
+        {{ t('themeDescription') }}
       </p>
     </div>
     <Select :model-value="themeStore.theme" @update:model-value="handleThemeChange">
@@ -56,3 +56,18 @@ function handleThemeChange(newTheme: unknown) {
     </Select>
   </div>
 </template>
+
+<i18n lang="yaml">
+zh-CN:
+  theme: 主题
+  themeDescription: 选择您偏好的颜色主题
+  lightMode: 浅色模式
+  darkMode: 深色模式
+  systemMode: 跟随系统
+en-US:
+  theme: Theme
+  themeDescription: Choose your preferred color theme
+  lightMode: Light Mode
+  darkMode: Dark Mode
+  systemMode: System Mode
+</i18n>

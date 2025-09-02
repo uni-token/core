@@ -53,13 +53,13 @@ if (presetsStore.presets.length === 0 && !presetsStore.loading) {
 <template>
   <div class="space-y-1 max-h-20">
     <div class="text-sm font-medium text-gray-700">
-      {{ t('presets.selectPreset') }}:
+      {{ t('selectPreset') }}:
     </div>
     <div v-if="presetsStore.loading" class="text-sm text-gray-500">
-      {{ t('presets.loadingPresets') }}
+      {{ t('loadingPresets') }}
     </div>
     <div v-else-if="presetsStore.presets.length === 0" class="text-sm text-gray-500">
-      {{ t('presets.noPresetsAvailable') }}
+      {{ t('noPresetsAvailable') }}
     </div>
     <div v-else class="flex flex-wrap gap-2">
       <Badge
@@ -87,9 +87,23 @@ if (presetsStore.presets.length === 0 && !presetsStore.loading) {
           class="text-xs cursor-pointer transition-colors hover:bg-gray-300 h-6"
         >
           <Plus class="inline h-4 w-4" />
-          {{ t('presets.addNewPreset') }}
+          {{ t('addNewPreset') }}
         </Badge>
       </RouterLink>
     </div>
   </div>
 </template>
+
+<i18n lang="yaml">
+en-US:
+  selectPreset: Select Preset
+  loadingPresets: loading...
+  noPresetsAvailable: No presets available
+  addNewPreset: New
+
+zh-CN:
+  selectPreset: 选择预设
+  loadingPresets: 加载中...
+  noPresetsAvailable: 没有可用的预设
+  addNewPreset: 添加预设
+</i18n>

@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { renderSVG } from 'uqr'
 import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
+import { useI18n } from '@/lib/locals'
 import { useKeysStore } from './keys'
 import { useServiceStore } from './service'
 
@@ -73,7 +73,52 @@ export interface PaymentInfo {
 export const useSiliconFlowStore = defineStore('siliconflow', () => {
   const { fetch } = useServiceStore()
   const keysStore = useKeysStore()
-  const { t } = useI18n()
+  const { t } = useI18n({
+    'en-US': {
+      loginSuccess: 'Login successful',
+      invalidCode: 'Invalid verification code, please get a new one',
+      loginFailed: 'Login failed, please try again later',
+      networkError: 'Network error, please check your connection and try again',
+      logoutSuccess: 'Successfully logged out',
+      logoutFailed: 'Failed to logout',
+      logoutFailedRetry: 'Failed to logout, please try again later',
+      apiKeyCreated: 'API Key automatically created and applied',
+      apiKeyCreateFailed: 'Failed to create API Key',
+      providerName: 'SiliconFlow',
+      qrCodeGenerated: 'Payment QR code generated',
+      qrCodeGenerationFailed: 'Failed to generate payment QR code',
+      networkErrorRetry: 'Network error, please try again later',
+      paymentSuccess: 'Payment successful!',
+      qrCodeExpired: 'QR code has expired, please regenerate',
+      paymentNotCompleted: 'Payment not yet completed, please continue waiting',
+      checkPaymentFailed: 'Failed to check payment status',
+      getRealNameInfoFailed: 'Failed to get real-name authentication info, please try again later',
+      realNameAuthSubmitFailed: 'Real-name authentication submission failed',
+      keyName: 'SiliconFlow',
+    },
+    'zh-CN': {
+      loginSuccess: '登录成功',
+      invalidCode: '验证码无效，请重新获取验证码',
+      loginFailed: '登录失败，请稍后重试',
+      networkError: '网络错误，请检查网络连接后重试',
+      logoutSuccess: '已成功退出登录',
+      logoutFailed: '退出登录失败',
+      logoutFailedRetry: '退出登录失败，请稍后重试',
+      apiKeyCreated: 'API Key 已自动创建并使用',
+      apiKeyCreateFailed: 'API Key 创建失败',
+      providerName: '硅基流动',
+      qrCodeGenerated: '支付二维码已生成',
+      qrCodeGenerationFailed: '支付二维码生成失败',
+      networkErrorRetry: '网络错误，请稍后重试',
+      paymentSuccess: '支付成功！',
+      qrCodeExpired: '二维码已过期，请重新生成',
+      paymentNotCompleted: '支付尚未完成，请继续等待',
+      checkPaymentFailed: '检查支付状态失败',
+      getRealNameInfoFailed: '获取实名认证信息失败，请稍后重试',
+      realNameAuthSubmitFailed: '实名认证提交失败',
+      keyName: '硅基流动',
+    },
+  })
 
   // User related state
   const userInfo = ref<SiliconFlowUserInfo | null>(null)
@@ -222,7 +267,7 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
         phoneNumber.value = ''
         email.value = ''
         smsCode.value = ''
-        toast.success(t('stores.siliconflow.loginSuccess'))
+        toast.success(t('loginSuccess'))
 
         // Automatically create API key after successful login
         await createApiKeyAndApply()
@@ -230,16 +275,16 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
       else {
         const errorData = await res.json()
         if (res.status === 401) {
-          toast.error(errorData.message || t('stores.siliconflow.invalidCode'))
+          toast.error(errorData.message || t('invalidCode'))
         }
         else {
-          toast.error(errorData.message || t('stores.siliconflow.loginFailed'))
+          toast.error(errorData.message || t('loginFailed'))
         }
       }
     }
     catch (error) {
       console.error('Login error:', error)
-      toast.error(t('stores.siliconflow.networkError'))
+      toast.error(t('networkError'))
     }
     finally {
       isLoading.value = false
@@ -254,15 +299,15 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
 
       if (res.ok) {
         userInfo.value = { isLoggedIn: false }
-        toast.success(t('stores.siliconflow.logoutSuccess'))
+        toast.success(t('logoutSuccess'))
       }
       else {
-        toast.error(t('stores.siliconflow.logoutFailed'))
+        toast.error(t('logoutFailed'))
       }
     }
     catch (error) {
       console.error('Failed to logout:', error)
-      toast.error(t('stores.siliconflow.logoutFailedRetry'))
+      toast.error(t('logoutFailedRetry'))
     }
   }
 
@@ -278,23 +323,23 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
       if (res.ok) {
         const data = await res.json()
         const result = await saveApiKey(data.data.secretKey)
-        toast.success(t('stores.siliconflow.apiKeyCreated'))
+        toast.success(t('apiKeyCreated'))
         return result
       }
       else {
         const errorData = await res.json()
-        toast.error(errorData.message || t('stores.siliconflow.apiKeyCreateFailed'))
+        toast.error(errorData.message || t('apiKeyCreateFailed'))
       }
     }
     catch (error) {
       console.error('Failed to create API key:', error)
-      toast.error(t('stores.siliconflow.apiKeyCreateFailed'))
+      toast.error(t('apiKeyCreateFailed'))
     }
   }
 
   async function saveApiKey(apiKey: string) {
     function getName(index: number): string {
-      return `${t('stores.siliconflow.keyName')}${index > 0 ? ` ${index}` : ''}`
+      return `${t('keyName')}${index > 0 ? ` ${index}` : ''}`
     }
 
     let count = 0
@@ -369,20 +414,20 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
           startPaymentCheck()
           startQRCountdown()
 
-          toast.success(t('stores.siliconflow.qrCodeGenerated'))
+          toast.success(t('qrCodeGenerated'))
         }
         else {
-          toast.error(data.message || t('stores.siliconflow.qrCodeGenerationFailed'))
+          toast.error(data.message || t('qrCodeGenerationFailed'))
         }
       }
       else {
         const errorData = await res.json()
-        toast.error(errorData.message || t('stores.siliconflow.qrCodeGenerationFailed'))
+        toast.error(errorData.message || t('qrCodeGenerationFailed'))
       }
     }
     catch (error) {
       console.error('Payment creation error:', error)
-      toast.error(t('stores.siliconflow.networkErrorRetry'))
+      toast.error(t('networkErrorRetry'))
     }
     finally {
       payment.value.loading = false
@@ -410,7 +455,7 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
           if (data.code === 20000 && data.status && data.data) {
             const payStatus = data.data.payStatus
             if (payStatus === 1) {
-              toast.success(t('stores.siliconflow.paymentSuccess'))
+              toast.success(t('paymentSuccess'))
               await checkLoginStatus()
               closePaymentDialog()
             }
@@ -444,7 +489,7 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
         payment.value.expired = true
         stopQRCountdown()
         stopPaymentCheck()
-        toast.warning(t('stores.siliconflow.qrCodeExpired'))
+        toast.warning(t('qrCodeExpired'))
       }
     }, 1000)
   }
@@ -471,22 +516,22 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
         if (data.code === 20000 && data.status && data.data) {
           const payStatus = data.data.payStatus
           if (payStatus === 1) {
-            toast.success(t('stores.siliconflow.paymentSuccess'))
+            toast.success(t('paymentSuccess'))
             await checkLoginStatus()
             closePaymentDialog()
           }
           else {
-            toast.info(t('stores.siliconflow.paymentNotCompleted'))
+            toast.info(t('paymentNotCompleted'))
           }
         }
         else {
-          toast.error(t('stores.siliconflow.checkPaymentFailed'))
+          toast.error(t('checkPaymentFailed'))
         }
       }
     }
     catch (error) {
       console.error('Manual payment check error:', error)
-      toast.error(t('stores.siliconflow.checkPaymentFailed'))
+      toast.error(t('checkPaymentFailed'))
     }
     finally {
       payment.value.checking = false
@@ -525,7 +570,7 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
     }
     catch (error) {
       console.error('Failed to check auth info:', error)
-      toast.error(t('stores.siliconflow.getRealNameInfoFailed'))
+      toast.error(t('getRealNameInfoFailed'))
       authInfo.value = null
     }
   }
@@ -548,7 +593,7 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
         else {
           return {
             success: false,
-            message: data.message || t('stores.siliconflow.realNameAuthSubmitFailed'),
+            message: data.message || t('realNameAuthSubmitFailed'),
           }
         }
       }
@@ -556,13 +601,13 @@ export const useSiliconFlowStore = defineStore('siliconflow', () => {
         const errorData = await res.json()
         return {
           success: false,
-          message: errorData.message || t('stores.siliconflow.realNameAuthSubmitFailed'),
+          message: errorData.message || t('realNameAuthSubmitFailed'),
         }
       }
     }
     catch (error) {
       console.error('Real name auth error:', error)
-      toast.error(t('stores.siliconflow.networkErrorRetry'))
+      toast.error(t('networkErrorRetry'))
       return {
         success: false,
         message: 'Network error, please try again later',

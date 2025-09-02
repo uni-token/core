@@ -28,7 +28,7 @@ async function handleManualConfigSave(config: ManualConfig) {
 
   emit('configured', key.id)
   showEditDialog.value = false
-  toast.success(t('keys.manualConfigSuccess'))
+  toast.success(t('success'))
 }
 </script>
 
@@ -37,20 +37,20 @@ async function handleManualConfigSave(config: ManualConfig) {
     <CardHeader>
       <div class="flex items-center justify-between">
         <CardTitle class="text-lg">
-          {{ t('keys.manualConfig') }}
+          {{ t('title') }}
         </CardTitle>
       </div>
     </CardHeader>
 
     <CardContent class="flex-grow">
       <div class="text-sm text-muted-foreground">
-        <p>{{ t('keys.manualConfigDescription') }}</p>
+        <p>{{ t('description') }}</p>
       </div>
     </CardContent>
 
     <CardFooter>
       <Button class="w-full" @click="showEditDialog = true">
-        {{ t('keys.addManualConfig') }}
+        {{ t('add') }}
       </Button>
     </CardFooter>
 
@@ -60,3 +60,16 @@ async function handleManualConfigSave(config: ManualConfig) {
     />
   </Card>
 </template>
+
+<i18n lang="yaml">
+zh-CN:
+  title: 手动配置
+  description: 手动输入 Base URL 和 API Key
+  add: 添加手动配置
+  success: 配置成功
+en-US:
+  title: Manual Configuration
+  description: Manually enter Base URL and API Key
+  add: Add Manual Configuration
+  success: Configuration Successful
+</i18n>

@@ -22,9 +22,9 @@ async function handleConfigured(key: string) {
   <Dialog v-model:open="open">
     <DialogContent class="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
       <DialogHeader>
-        <DialogTitle>{{ t('keys.addKeyDialog.title') }}</DialogTitle>
+        <DialogTitle>{{ t('title') }}</DialogTitle>
         <DialogDescription>
-          {{ t('keys.addKeyDialog.description') }}
+          {{ t('description') }}
         </DialogDescription>
       </DialogHeader>
 
@@ -35,3 +35,12 @@ async function handleConfigured(key: string) {
     </DialogContent>
   </Dialog>
 </template>
+
+<i18n lang="yaml">
+zh-CN:
+  title: 添加 API Key
+  description: 选择一个提供商来添加 API Key
+en-US:
+  title: Add API Key
+  description: Choose a provider to add API Key
+</i18n>
