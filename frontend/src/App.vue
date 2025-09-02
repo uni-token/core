@@ -17,7 +17,7 @@ import 'vue-sonner/style.css'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
-const { replace, currentRoute } = useRouter()
+const { currentRoute } = useRouter()
 const themeStore = useThemeStore()
 const serviceStore = useServiceStore()
 
@@ -31,7 +31,7 @@ onMounted(async () => {
 
   authState.value = await authStore.checkAuth()
   isCheckingAuth.value = false
-  setTimeout(() => replace(currentRoute.value.path), 100)
+  setTimeout(() => currentRoute.value.query = {}, 100)
   Clarity.init('sx60zbxtfz')
 })
 
@@ -40,6 +40,18 @@ watch(() => serviceStore.serverConnected, async (connected) => {
     authState.value = await authStore.checkAuth()
   }
 })
+
+async function onUIOpened() {
+  const params = new URLSearchParams(window.location.search)
+  const session = params.get('session')
+  if (!session)
+    return
+  await serviceStore.fetch('ui/opened', {
+    method: 'POST',
+    body: JSON.stringify({ session }),
+  })
+}
+onUIOpened()
 </script>
 
 <template>

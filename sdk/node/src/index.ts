@@ -143,7 +143,7 @@ export async function requestUniTokenOpenAI(options: UniTokenOptions): Promise<U
   const abortController = new AbortController()
   setTimeout(() => {
     abortController.abort()
-  }, 10000) // 10 seconds timeout
+  }, 100000) // 100 seconds timeout
 
   const response = await fetch(`${serverUrl}app/register`, {
     method: 'POST',

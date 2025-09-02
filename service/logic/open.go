@@ -1,12 +1,20 @@
 package logic
 
 import (
+	"fmt"
 	"net/url"
+	"strconv"
+	"time"
 
 	"uni-token-service/constants"
 	"uni-token-service/logic/open_browser"
 	"uni-token-service/store"
+
+	"github.com/google/uuid"
 )
+
+var openingUI = make(map[string](chan struct{}))
+var ServerPort = -1
 
 func OpenUI(params url.Values, auth bool) error {
 	if auth {
@@ -30,5 +38,32 @@ func OpenUI(params url.Values, auth bool) error {
 		params.Set("token", token)
 	}
 
-	return openBrowser.OpenBrowser(constants.GetUserName(), constants.GetAppBaseUrl()+"?"+params.Encode())
+	sessionId := uuid.New().String()
+	params.Set("session", sessionId)
+	params.Set("port", strconv.Itoa(ServerPort))
+
+	err := openBrowser.OpenBrowser(constants.GetUserName(), constants.GetAppBaseUrl()+"?"+params.Encode())
+	if err != nil {
+		return err
+	}
+
+	channel := make(chan struct{})
+	openingUI[sessionId] = channel
+	defer delete(openingUI, sessionId)
+
+	select {
+	case <-channel:
+		return nil
+	case <-time.After(5 * time.Second):
+		return fmt.Errorf("failed to open UI: timeout")
+	}
+}
+
+func OnUIOpened(sessionId string) {
+	channel, ok := openingUI[sessionId]
+	if !ok {
+		return
+	}
+	channel <- struct{}{}
+	close(channel)
 }

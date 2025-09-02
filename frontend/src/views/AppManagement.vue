@@ -93,7 +93,7 @@ onMounted(() => {
               </p>
             </div>
             <div :class="{ 'opacity-0 pointer-events-none select-none': !app.granted }" class="mt-4 transition-opacity duration-300">
-              <ProviderSelector v-model="app.provider" compact @update:model-value="appStore.toggleAppAuthorization(app.id, true, app.provider)" />
+              <ProviderSelector v-model="app.provider" compact @update:model-value="app.granted && appStore.toggleAppAuthorization(app.id, app.granted, app.provider)" />
             </div>
           </CardContent>
         </Card>

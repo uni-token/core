@@ -177,7 +177,7 @@
       "manualConfigSuccess": "手动配置提供商保存成功",
       "manualConfigError": "手动配置提供商保存失败"
     },
-    "manualConfigSuccess": "配置成果"
+    "manualConfigSuccess": "配置成功"
   },
   "siliconFlow": {
     "loggedIn": "已登录",

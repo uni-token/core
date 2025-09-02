@@ -7,6 +7,9 @@ import { useAuthStore } from '@/stores/auth'
 export const useServiceStore = defineStore('service', () => {
   const authStore = useAuthStore()
 
+  const params = new URLSearchParams(window.location.search)
+  const token = ref<string | null>(params.get('token') || null)
+
   const serverConnected = ref(true)
   const servicePort = ref<number | null>(null)
   const serviceHost = computed(() => {
@@ -23,8 +26,11 @@ export const useServiceStore = defineStore('service', () => {
   })
   let requireFindService = true
 
-  const params = new URLSearchParams(window.location.search)
-  const token = ref<string | null>(params.get('token') || null)
+  const givenServerPort = Number.parseInt(params.get('port') || '')
+  if (givenServerPort > 0 && givenServerPort < 65535) {
+    servicePort.value = givenServerPort
+    requireFindService = false
+  }
 
   const initialLoad = new Promise<void>((resolve) => {
     useIntervalFn(

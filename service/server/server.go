@@ -42,6 +42,7 @@ func SetupAPIServer() (int, error) {
 
 	// Get a random available port
 	port := getPort()
+	logic.ServerPort = port
 
 	// Start server in a goroutine
 	go func() {
