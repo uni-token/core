@@ -53,7 +53,7 @@ class UniTokenClient:
             self.download_service(exec_path)
 
         subprocess.run(
-            [exec_path, "sudo", "setup"],
+            [exec_path, "setup"],
             check=True,
         )
 

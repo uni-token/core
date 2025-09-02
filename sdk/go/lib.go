@@ -135,9 +135,6 @@ func startService(rootPath string) (string, error) {
 		return "", fmt.Errorf("failed to start service: %w", err)
 	}
 
-	// Wait a moment for the service to start and write the URL file
-	time.Sleep(2 * time.Second)
-
 	serverURL, err := detectRunningURLFromFile(rootPath)
 	if err != nil || serverURL == "" {
 		return "", fmt.Errorf("service started but URL not detected")
@@ -211,7 +208,7 @@ func RequestUniTokenOpenAI(options UniTokenOptions) (UniTokenResult, error) {
 		return UniTokenResult{}, fmt.Errorf("failed to marshal request: %w", err)
 	}
 
-	client := &http.Client{Timeout: 30 * time.Second}
+	client := &http.Client{}
 	resp, err := client.Post(
 		fmt.Sprintf("%sapp/register", serverURL),
 		"application/json",

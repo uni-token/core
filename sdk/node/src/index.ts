@@ -55,7 +55,7 @@ async function startService(rootPath: string): Promise<string> {
     await downloadService(execPath)
   }
 
-  const result = spawnSync(execPath, ['start'], {
+  const result = spawnSync(execPath, ['setup'], {
     stdio: 'inherit',
     timeout: 10000,
     encoding: 'utf8',
@@ -140,11 +140,6 @@ export async function requestUniTokenOpenAI(options: UniTokenOptions): Promise<U
   const serverUrl = await detectRunningUrlFromFile(rootPath) || await startService(rootPath)
   const baseURL = `${serverUrl}openai/`
 
-  const abortController = new AbortController()
-  setTimeout(() => {
-    abortController.abort()
-  }, 100000) // 100 seconds timeout
-
   const response = await fetch(`${serverUrl}app/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -153,7 +148,6 @@ export async function requestUniTokenOpenAI(options: UniTokenOptions): Promise<U
       description: options.description,
       uid: options.savedApiKey,
     }),
-    signal: abortController.signal,
   })
 
   if (response.status === 403) {
