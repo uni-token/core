@@ -59,7 +59,7 @@ watch(open, (open) => {
             <strong class="mr-4">{{ t('actionHandler.appDescription') }}</strong>
             <span class="text-lg">{{ params.get('appDescription') }}</span>
           </div>
-          <ProviderSelector v-model="selectedProvider" class="pt-1"/>
+          <ProviderSelector v-model="selectedProvider" class="pt-1" />
         </div>
 
         <div v-if="providersStore.providers.length > 0" class="flex justify-end mt-6 gap-2">
