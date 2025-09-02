@@ -15,7 +15,7 @@ func OpenBrowser(targetUser string, url string) error {
 	for _, provider := range providers {
 		if _, err := exec.LookPath(provider); err == nil {
 			var cmd *exec.Cmd
-			if constants.ShouldChangeUser() {
+			if constants.ShouldChangeUser {
 				cmd = exec.Command("sudo", "-i", "-u", targetUser, provider, url)
 			} else {
 				cmd = exec.Command(provider, url)

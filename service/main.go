@@ -69,7 +69,7 @@ func (p *program) Stop(s service.Service) error {
 }
 
 func main() {
-	username := constants.GetUserName()
+	username := constants.UserName
 	serviceName := serviceNamePrefix + "-" + url.PathEscape(username)
 
 	svcConfig := &service.Config{
@@ -112,7 +112,7 @@ func main() {
 	}
 
 	if command == "version" {
-		fmt.Printf("Service Version: %d\n", constants.GetVersion())
+		fmt.Println(constants.Version)
 		return
 	}
 
@@ -205,7 +205,7 @@ func handleSudo(useInstalled bool, args []string) {
 		&logic.SudoOptions{
 			Name: serviceDisplayName,
 			Env: map[string]string{
-				"UNI_TOKEN_SERVICE_USER": constants.GetUserName(),
+				"UNI_TOKEN_SERVICE_USER": constants.UserName,
 				"UNI_TOKEN_SERVICE_ROOT": discovery.GetServiceRootPath(),
 			},
 		},

@@ -12,25 +12,22 @@ var version string
 // -X 'logic.appBaseUrl=http://uni-token.app'
 var appBaseUrl string
 
-func GetVersion() int {
-	if version == "" {
-		return 0
-	}
+var Version = func() int {
 	v, err := strconv.Atoi(version)
 	if err != nil {
 		return 0
 	}
 	return v
-}
+}()
 
-func GetAppBaseUrl() string {
+var AppBaseUrl = func() string {
 	if appBaseUrl == "" {
 		return "http://localhost:5173"
 	}
 	return appBaseUrl
-}
+}()
 
-func GetUserName() string {
+var UserName = func() string {
 	if userName := os.Getenv("UNI_TOKEN_SERVICE_USER"); userName != "" {
 		return userName
 	}
@@ -39,12 +36,12 @@ func GetUserName() string {
 		panic(err)
 	}
 	return currentUser.Username
-}
+}()
 
-func ShouldChangeUser() bool {
+var ShouldChangeUser = func() bool {
 	currentUser, err := user.Current()
 	if err != nil {
 		panic(err)
 	}
-	return currentUser.Username != GetUserName()
-}
+	return currentUser.Username != UserName
+}()

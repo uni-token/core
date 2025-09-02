@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"uni-token-service/constants"
-	"uni-token-service/logic/open_browser"
+	openBrowser "uni-token-service/logic/open_browser"
 	"uni-token-service/store"
 
 	"github.com/google/uuid"
@@ -25,7 +25,7 @@ func OpenUI(params url.Values, auth bool) error {
 
 		var userName string
 		if len(allUsers) == 0 {
-			userName = constants.GetUserName()
+			userName = constants.UserName
 		} else {
 			userName = allUsers[0].Username
 		}
@@ -42,7 +42,7 @@ func OpenUI(params url.Values, auth bool) error {
 	params.Set("session", sessionId)
 	params.Set("port", strconv.Itoa(ServerPort))
 
-	err := openBrowser.OpenBrowser(constants.GetUserName(), constants.GetAppBaseUrl()+"?"+params.Encode())
+	err := openBrowser.OpenBrowser(constants.UserName, constants.AppBaseUrl+"?"+params.Encode())
 	if err != nil {
 		return err
 	}

@@ -19,7 +19,7 @@ func SetupActionAPI(router *gin.Engine) {
 func handleCheck(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"__uni_token": true,
-		"version":     constants.GetVersion(),
+		"version":     constants.Version,
 	})
 }
 
