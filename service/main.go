@@ -95,64 +95,42 @@ func main() {
 	}
 
 	if len(os.Args) < 2 {
-		// Directly run the executable
 		handleSetup()
 		logic.OpenUI(url.Values{}, false)
 		return
 	}
 
 	command := os.Args[1]
-
-	if command == "run" || command == "debug" {
-		err := s.Run()
-		if err != nil {
-			panic(err)
-		}
-		return
+	commandHandlers := map[string]func(){
+		"run":               func() { mustRun(s.Run()) },
+		"debug":             func() { mustRun(s.Run()) },
+		"version":           func() { fmt.Println(constants.Version) },
+		"url":               func() { handleUrlScheme(os.Args[2]) },
+		"setup":             handleSetup,
+		"install-and-start": func() { handleInstallAndStart(&s, serviceName) },
+		"uninstall":         func() { handleSudo(false, []string{"uninstall-impl"}) },
+		"uninstall-impl":    func() { handleUninstall(s, serviceName) },
+		"sudo":              func() { handleSudoCommand() },
 	}
 
-	if command == "version" {
-		fmt.Println(constants.Version)
-		return
-	}
-
-	if command == "url" {
-		handleUrlScheme(os.Args[2])
-		return
-	}
-
-	if command == "setup" {
-		handleSetup()
-		return
-	}
-
-	if command == "install-and-start" {
-		handleInstallAndStart(&s, serviceName)
-		return
-	}
-
-	if command == "uninstall" {
-		handleSudo(false, []string{"uninstall-impl"})
-		return
-	}
-
-	if command == "uninstall-impl" {
-		handleUninstall(s, serviceName)
-		return
-	}
-
-	if command == "sudo" {
-		if len(os.Args) < 3 {
-			fmt.Println("Usage: sudo <command>")
-			return
-		}
-		handleSudo(false, os.Args[2:])
+	if handler, exists := commandHandlers[command]; exists {
+		handler()
 		return
 	}
 
 	prg.logger.Infof("Executing command: %s\n", command)
+	mustRun(service.Control(s, command))
+}
 
-	err = service.Control(s, command)
+func handleSudoCommand() {
+	if len(os.Args) < 3 {
+		fmt.Println("Usage: sudo <command>")
+		return
+	}
+	handleSudo(false, os.Args[2:])
+}
+
+func mustRun(err error) {
 	if err != nil {
 		panic(err)
 	}
@@ -222,10 +200,6 @@ func handleSudo(useInstalled bool, args []string) {
 }
 
 func handleUrlScheme(url string) {
-	if !strings.HasPrefix(url, "uni-token://") {
-		fmt.Println("Invalid URL scheme. Expected 'uni-token://'.")
-		return
-	}
 	url = strings.TrimPrefix(url, "uni-token://")
 
 	switch url {

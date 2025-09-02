@@ -30,7 +30,16 @@ func SetupAPIServer() (int, error) {
 		MaxAge:              240 * time.Hour,
 	}))
 
-	// Setup routes
+	setupRoutes(router)
+
+	port := findAvailablePort()
+	logic.ServerPort = port
+
+	go router.Run(":" + strconv.Itoa(port))
+	return port, nil
+}
+
+func setupRoutes(router *gin.Engine) {
 	SetupActionAPI(router)
 	SetupGatewayAPI(router)
 	SetupAppAPI(router)
@@ -39,33 +48,21 @@ func SetupAPIServer() (int, error) {
 	SetupUsageAPI(router)
 	SetupSiliconFlowAPI(router)
 	SetupAuthAPI(router)
-
-	// Get a random available port
-	port := getPort()
-	logic.ServerPort = port
-
-	// Start server in a goroutine
-	go func() {
-		router.Run(":" + strconv.Itoa(port))
-	}()
-
-	return port, nil
 }
 
-func checkPortAvailability(port int) bool {
+func isPortAvailable(port int) bool {
 	_, err := net.Dial("tcp", "localhost:"+strconv.Itoa(port))
 	return err != nil
 }
 
-const PORT_RANGE_START = 18760
+const portRangeStart = 18760
 
-func getPort() int {
-	for i := PORT_RANGE_START; i < PORT_RANGE_START+10; i++ {
-		if checkPortAvailability(i) {
-			return i
-		} else {
-			log.Printf("Port %d is not available", i)
+func findAvailablePort() int {
+	for port := portRangeStart; port < portRangeStart+10; port++ {
+		if isPortAvailable(port) {
+			return port
 		}
+		log.Printf("Port %d is not available", port)
 	}
-	panic(fmt.Sprintf("No available port found in the range %d-%d", PORT_RANGE_START, PORT_RANGE_START+10))
+	panic(fmt.Sprintf("No available port found in range %d-%d", portRangeStart, portRangeStart+10))
 }
