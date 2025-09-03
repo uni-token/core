@@ -70,7 +70,7 @@ onMounted(() => {
           <CardHeader>
             <div class="flex items-center justify-between">
               <CardTitle class="text-lg">
-                {{ t('siliconFlow') }}
+                {{ provider.name }}
               </CardTitle>
               <div v-show="provider.user !== undefined" class="flex items-center gap-2">
                 <span
@@ -89,18 +89,18 @@ onMounted(() => {
           <CardContent>
             <div class="text-sm text-muted-foreground">
               <p>
-                {{ t('siliconFlowDescription1') }}
+                {{ t('description1') }}
                 <a href="https://www.siliconflow.cn" target="_blank" class="text-blue-900 dark:text-blue-200 hover:underline">
-                  {{ t('siliconFlow') }}
+                  {{ provider.name }}
                 </a>
-                {{ t('siliconFlowDescription2') }}
+                {{ t('description2') }}
               </p>
             </div>
           </CardContent>
 
           <CardFooter>
             <Button class="w-full" @click="showProviderDialog = provider">
-              {{ t('configureSiliconFlow') }}
+              {{ t('configure', [provider.name]) }}
             </Button>
           </CardFooter>
         </Card>
@@ -188,20 +188,18 @@ onMounted(() => {
 zh-CN:
   title: 模型供应商
   loadFailed: 加载失败
-  siliconFlow: 硅基流动
-  siliconFlowDescription1: 通过
-  siliconFlowDescription2: 购买和配置 API
+  description1: 通过
+  description2: 购买和配置 API
   loggedIn: 已登录
   loggedOut: 未登录
-  configureSiliconFlow: 配置 硅基流动
+  configure: 配置 {0}
 
 en-US:
   title: Model Providers
   loadFailed: Failed to load
-  siliconFlow: SiliconFlow
-  siliconFlowDescription1: Purchase and configure API through
-  siliconFlowDescription2: ''
+  description1: Purchase and configure API through
+  description2: ''
   loggedIn: Logged In
   loggedOut: Logged Out
-  configureSiliconFlow: Configure SiliconFlow
+  configure: Configure {0}
 </i18n>

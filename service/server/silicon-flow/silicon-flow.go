@@ -1,4 +1,4 @@
-package server
+package siliconFlow
 
 import (
 	"bytes"
@@ -38,22 +38,18 @@ func saveSession(s session) error {
 	return nil
 }
 
-// SetupSiliconFlowAPI sets up SiliconFlow API endpoints
-func SetupSiliconFlowAPI(router gin.IRouter) {
-	api := router.Group("/siliconflow").Use(RequireUserLogin())
-	{
-		api.GET("/status", handleGetStatus)
-		api.POST("/sms", handleSendSMS)
-		api.POST("/email", handleSendEmail)
-		api.POST("/login", handleSiliconLogin)
-		api.POST("/login/email", handleSiliconLoginEmail)
-		api.POST("/logout", handleLogout)
-		api.POST("/apikey/create", handleCreateAPIKey)
-		api.POST("/payment/create", handleCreatePayment)
-		api.GET("/payment/status", handleCheckPaymentStatus)
-		api.GET("/auth/info", handleGetAuthInfo)
-		api.POST("/auth/save", handleSaveAuth)
-	}
+func SetupAPI(routes gin.IRoutes) {
+	routes.GET("/status", handleGetStatus)
+	routes.POST("/sms", handleSendSMS)
+	routes.POST("/email", handleSendEmail)
+	routes.POST("/login", handleSiliconLogin)
+	routes.POST("/login/email", handleSiliconLoginEmail)
+	routes.POST("/logout", handleLogout)
+	routes.POST("/apikey/create", handleCreateAPIKey)
+	routes.POST("/payment/create", handleCreatePayment)
+	routes.GET("/payment/status", handleCheckPaymentStatus)
+	routes.GET("/auth/info", handleGetAuthInfo)
+	routes.POST("/auth/save", handleSaveAuth)
 }
 
 // setCommonHeaders sets common HTTP headers for SiliconFlow requests
@@ -609,7 +605,7 @@ func handleGetStatus(c *gin.Context) {
 // handleLogout handles user logout request
 func handleLogout(c *gin.Context) {
 	// Remove the stored session
-	err := store.Providers.Delete("latest")
+	err := store.Providers.Delete("siliconFlow")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to clear session"})
 		return

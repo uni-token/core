@@ -1,6 +1,6 @@
 import type { Provider, ProviderUserInfo } from './index'
 import { createSharedComposable } from '@vueuse/core'
-import { ref } from 'vue'
+import { markRaw, ref } from 'vue'
 import SiliconFlowLoginCard from '@/components/SiliconFlowLoginCard.vue'
 import { useServiceStore } from '@/stores'
 import { useI18n } from '../locals'
@@ -62,7 +62,7 @@ export const useSiliconFlowProvider = createSharedComposable((): Provider => {
       user.value = null
     },
 
-    Login: SiliconFlowLoginCard,
+    Login: markRaw(SiliconFlowLoginCard),
     async logout() {
       const res = await fetch('siliconflow/logout', {
         method: 'POST',

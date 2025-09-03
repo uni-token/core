@@ -90,9 +90,14 @@ export const useServiceStore = defineStore('service', () => {
         )
 
         if (resp.status === 401) {
-          console.error('Unauthorized access, please check your token')
-          authStore.currentUser = null
-          token.value = null
+          try {
+            if ((await resp.json()).__uni_token) {
+              console.error('Unauthorized access, please check your token')
+              authStore.currentUser = null
+              token.value = null
+            }
+          }
+          catch {}
         }
 
         return resp

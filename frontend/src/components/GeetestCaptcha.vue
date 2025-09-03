@@ -89,8 +89,8 @@ const statusText = computed(() => ({
 
 <i18n lang="yaml">
 en-US:
-  loading: Authenticating...
-  getCode: Get Verification Code
+  loading: Loading...
+  getCode: Get Code
   smsSent: Code Sent
 
 zh-CN:

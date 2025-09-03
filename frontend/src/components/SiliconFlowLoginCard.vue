@@ -3,7 +3,7 @@ import { useScriptTag } from '@vueuse/core'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
-import Captcha from '@/components/Captcha.vue'
+import GeetestCaptcha from '@/components/GeetestCaptcha.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
@@ -177,7 +177,7 @@ function wxLogin() {
           class="w-fit flex-grow border-0 rounded-r-none focus-visible:ring-0 focus-visible:ring-offset-0 h-10"
         />
         <div class="border-l border-input">
-          <Captcha
+          <GeetestCaptcha
             :enabled="isEmailLogin ? email.length > 0 : phoneNumber.length > 0"
             :config="captchaConfig"
             class="h-10 px-4 bg-muted/50 rounded-r-md border-0 text-xs text-primary hover:bg-muted/70 transition-colors disabled:opacity-50"
