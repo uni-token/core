@@ -2,6 +2,7 @@ package server
 
 import (
 	"bytes"
+	"encoding/json"
 	"io"
 	"net/http"
 	"strings"
@@ -11,6 +12,31 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+type session struct {
+	Cookie    string    `json:"cookie"`
+	SubjectID string    `json:"subjectId"`
+	CreatedAt time.Time `json:"createdAt"`
+}
+
+func loadSession() (session, error) {
+	var s session
+	data, err := store.Providers.Get("siliconFlow")
+	if err != nil {
+		return session{}, err
+	}
+	json.Unmarshal(data, &s)
+	return s, nil
+}
+
+func saveSession(s session) error {
+	jsonData, err := json.Marshal(s)
+	if err != nil {
+		return err
+	}
+	store.Providers.Put("siliconFlow", jsonData)
+	return nil
+}
 
 // SetupSiliconFlowAPI sets up SiliconFlow API endpoints
 func SetupSiliconFlowAPI(router gin.IRouter) {
@@ -208,13 +234,14 @@ func handleSiliconLogin(c *gin.Context) {
 				}
 			}
 
-			session := store.SiliconFlowSession{
+			err = saveSession(session{
 				Cookie:    cookieStr,
 				SubjectID: subjectID,
 				CreatedAt: time.Now(),
+			})
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save session"})
 			}
-			// Use a simple key for storage
-			store.SiliconFlowSessions.Put("latest", session)
 		}
 	}
 
@@ -306,13 +333,15 @@ func handleSiliconLoginEmail(c *gin.Context) {
 				}
 			}
 
-			session := store.SiliconFlowSession{
+			err = saveSession(session{
 				Cookie:    cookieStr,
 				SubjectID: subjectID,
 				CreatedAt: time.Now(),
+			})
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save session"})
+				return
 			}
-			// Use a simple key for storage
-			store.SiliconFlowSessions.Put("latest", session)
 		}
 	}
 
@@ -322,7 +351,7 @@ func handleSiliconLoginEmail(c *gin.Context) {
 // handleCreateAPIKey handles API key creation request
 func handleCreateAPIKey(c *gin.Context) {
 	// Retrieve the latest stored session
-	session, err := store.SiliconFlowSessions.Get("latest")
+	session, err := loadSession()
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "No session found. Please login first."})
 		return
@@ -377,7 +406,7 @@ func handleCreateAPIKey(c *gin.Context) {
 // handleCreatePayment handles payment QR code creation request
 func handleCreatePayment(c *gin.Context) {
 	// Retrieve the latest stored session
-	session, err := store.SiliconFlowSessions.Get("latest")
+	session, err := loadSession()
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "No session found. Please login first."})
 		return
@@ -432,7 +461,7 @@ func handleCreatePayment(c *gin.Context) {
 // handleCheckPaymentStatus handles payment status checking request
 func handleCheckPaymentStatus(c *gin.Context) {
 	// Retrieve the latest stored session
-	session, err := store.SiliconFlowSessions.Get("latest")
+	session, err := loadSession()
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "No session found. Please login first."})
 		return
@@ -488,7 +517,7 @@ func handleCheckPaymentStatus(c *gin.Context) {
 // handleGetStatus handles getting current login status and user info
 func handleGetStatus(c *gin.Context) {
 	// Retrieve the latest stored session
-	session, err := store.SiliconFlowSessions.Get("latest")
+	session, err := loadSession()
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    40001,
@@ -580,7 +609,7 @@ func handleGetStatus(c *gin.Context) {
 // handleLogout handles user logout request
 func handleLogout(c *gin.Context) {
 	// Remove the stored session
-	err := store.SiliconFlowSessions.Delete("latest")
+	err := store.Providers.Delete("latest")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to clear session"})
 		return
@@ -595,7 +624,7 @@ func handleLogout(c *gin.Context) {
 // handleGetAuthInfo handles getting real name authentication info
 func handleGetAuthInfo(c *gin.Context) {
 	// Retrieve the latest stored session
-	session, err := store.SiliconFlowSessions.Get("latest")
+	session, err := loadSession()
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "No session found. Please login first."})
 		return
@@ -643,7 +672,7 @@ func handleGetAuthInfo(c *gin.Context) {
 // handleSaveAuth handles saving real name authentication
 func handleSaveAuth(c *gin.Context) {
 	// Retrieve the latest stored session
-	session, err := store.SiliconFlowSessions.Get("latest")
+	session, err := loadSession()
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "No session found. Please login first."})
 		return

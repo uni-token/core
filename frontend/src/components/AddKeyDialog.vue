@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { useProvidersStore } from '@/stores'
 import ManualConfigCard from './ManualConfigCard.vue'
-import SiliconFlowCard from './SiliconFlowCard.vue'
+import ProviderCard from './ProviderCard.vue'
 
 const emit = defineEmits<{
   configured: [key: string]
@@ -11,6 +12,7 @@ const emit = defineEmits<{
 const open = defineModel<boolean>('open')
 
 const { t } = useI18n()
+const providersStore = useProvidersStore()
 
 async function handleConfigured(key: string) {
   emit('configured', key)
@@ -29,7 +31,7 @@ async function handleConfigured(key: string) {
       </DialogHeader>
 
       <div class="mt-6 space-y-6">
-        <SiliconFlowCard show-title @configured="handleConfigured" />
+        <ProviderCard v-for="provider in providersStore.list" :key="provider.id" :provider="provider" @configured="handleConfigured" />
         <ManualConfigCard @configured="handleConfigured" />
       </div>
     </DialogContent>

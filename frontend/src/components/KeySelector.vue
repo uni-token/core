@@ -1,24 +1,27 @@
 <script setup lang="ts">
+import type { Provider } from '@/lib/providers'
 import { Plus } from 'lucide-vue-next'
-import { onMounted, ref, watchEffect } from 'vue'
+import { onMounted, ref, shallowRef, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { useKeysStore } from '@/stores'
+import { useKeysStore, useProvidersStore } from '@/stores'
 import AddKeyDialog from './AddKeyDialog.vue'
 import ManualConfigCard from './ManualConfigCard.vue'
-import SiliconFlowConfigDialog from './SiliconFlowConfigDialog.vue'
+import ProviderConfigDialog from './ProviderConfigDialog.vue'
 import Button from './ui/button/Button.vue'
 
 const props = defineProps<{
   compact?: boolean
 }>()
 const selectedKeyId = defineModel<string>()
-const { t } = useI18n()
+
+const providersStore = useProvidersStore()
 const keysStore = useKeysStore()
+const { t } = useI18n()
 
 const openAddKeyDialog = ref(false)
-const showSiliconFlowConfig = ref(false)
+const showProviderDialog = shallowRef<Provider | null>(null)
 
 onMounted(() => keysStore.loadKeys())
 
@@ -50,11 +53,11 @@ watchEffect(() => {
       <template v-else>
         <div class="grid gap-4 grid-cols-2 mb-4">
           <!-- SiliconFlow configuration card (if not configured) -->
-          <Card class="relative gap-2">
+          <Card v-for="provider in providersStore.list" :key="provider.id" class="relative gap-2">
             <CardHeader>
               <div class="flex items-center justify-between">
                 <CardTitle class="text-lg">
-                  {{ t('siliconFlow') }}
+                  {{ provider.name }}
                 </CardTitle>
               </div>
             </CardHeader>
@@ -72,8 +75,8 @@ watchEffect(() => {
             </CardContent>
 
             <CardFooter>
-              <Button class="w-full" @click="showSiliconFlowConfig = true">
-                {{ t('configureSiliconFlow') }}
+              <Button class="w-full" @click="showProviderDialog = provider">
+                {{ t('configure', [provider.name]) }}
               </Button>
             </CardFooter>
           </Card>
@@ -113,9 +116,10 @@ watchEffect(() => {
       </div>
     </div>
 
-    <SiliconFlowConfigDialog
-      v-model:open="showSiliconFlowConfig"
-      @configured="selectedKeyId = $event"
+    <ProviderConfigDialog
+      v-if="showProviderDialog != null"
+      :provider="showProviderDialog"
+      @close="showProviderDialog = null"
     />
     <AddKeyDialog v-model:open="openAddKeyDialog" @configured="selectedKeyId = $event" />
   </div>
@@ -126,19 +130,17 @@ en-US:
   loadingKeys: Loading...
   noKeysAvailable: No providers configured
   addNewKey: Add Provider
-  siliconFlow: SiliconFlow
   siliconFlowDescription1: Purchase and configure API through
   siliconFlowDescription2: ' '
-  configureSiliconFlow: Configure SiliconFlow
+  configure: Configure {0}
   selectKey: Provider
 
 zh-CN:
   loadingKeys: 加载中
   noKeysAvailable: 未配置提供商
   addNewKey: 添加提供商
-  siliconFlow: 硅基流动
   siliconFlowDescription1: 通过
   siliconFlowDescription2: 购买和配置 API
-  configureSiliconFlow: 配置 硅基流动
+  configure: 配置 {0}
   selectKey: 提供商
 </i18n>

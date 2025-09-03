@@ -1,3 +1,4 @@
+import type { Provider } from '@/lib/providers'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { toast } from 'vue-sonner'
@@ -53,6 +54,17 @@ export const useKeysStore = defineStore('keys', () => {
     finally {
       loading.value = false
     }
+  }
+
+  async function createAndAddKey(provider: Provider) {
+    const key = await provider.createKey()
+    await addKey({
+      name: provider.name,
+      type: provider.id,
+      protocol: 'openai',
+      baseUrl: provider.baseURL,
+      token: key,
+    })
   }
 
   async function addKey(key: Omit<APIKey, 'id' | 'name'> & { name?: string }): Promise<APIKey> {
@@ -133,6 +145,7 @@ export const useKeysStore = defineStore('keys', () => {
     loadingError,
     // Actions
     loadKeys,
+    createAndAddKey,
     addKey,
     updateKey,
     deleteKey,

@@ -97,12 +97,12 @@ func (b *Bucket[T]) Count() (int, error) {
 var (
 	db *bbolt.DB
 
-	Users               Bucket[UserInfo]
-	Apps                Bucket[AppInfo]
-	LLMKeys             Bucket[LLMKey]
-	AppPresets          Bucket[AppPreset]
-	Usage               Bucket[TokenUsage]
-	SiliconFlowSessions Bucket[SiliconFlowSession]
+	Users      Bucket[UserInfo]
+	Apps       Bucket[AppInfo]
+	LLMKeys    Bucket[LLMKey]
+	AppPresets Bucket[AppPreset]
+	Usage      Bucket[TokenUsage]
+	Providers  Bucket[[]byte]
 )
 
 func Init(dbPath string) {
@@ -117,7 +117,7 @@ func Init(dbPath string) {
 	Apps = NewBucket[AppInfo]("apps", db)
 	LLMKeys = NewBucket[LLMKey]("llm_keys", db)
 	AppPresets = NewBucket[AppPreset]("app_presets", db)
-	SiliconFlowSessions = NewBucket[SiliconFlowSession]("silicon_flow_sessions", db)
+	Providers = NewBucket[[]byte]("providers", db)
 
 	count, err := AppPresets.Count()
 	if err != nil {

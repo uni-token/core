@@ -1,28 +1,30 @@
 <script setup lang="ts">
+import type { Provider } from '@/lib/providers'
 import type { APIKey } from '@/stores'
 import { Edit } from 'lucide-vue-next'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, shallowRef } from 'vue'
 import { VueDraggable } from 'vue-draggable-plus'
 import { useI18n } from 'vue-i18n'
 import EditKeyDialog from '@/components/EditKeyDialog.vue'
 import ManualConfigCard from '@/components/ManualConfigCard.vue'
-import SiliconFlowConfigDialog from '@/components/SiliconFlowConfigDialog.vue'
+import ProviderConfigDialog from '@/components/ProviderConfigDialog.vue'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useKeysStore, useSiliconFlowStore } from '@/stores'
+import { useKeysStore, useProvidersStore } from '@/stores'
 
 const { t } = useI18n()
 const keysStore = useKeysStore()
-const siliconFlowStore = useSiliconFlowStore()
-const showSiliconFlowConfig = ref(false)
+const providersStore = useProvidersStore()
+
+const showProviderDialog = shallowRef<Provider | null>(null)
 const showEditDialog = ref(false)
 const editingKey = ref<APIKey | null>(null)
 
 function editKey(key: APIKey) {
-  if (key.type === 'siliconflow') {
-    showSiliconFlowConfig.value = true
+  if (providersStore.map[key.type]) {
+    showProviderDialog.value = providersStore.map[key.type]
     return
   }
   editingKey.value = key
@@ -36,7 +38,6 @@ function formatUrl(url: string): string {
 
 onMounted(() => {
   keysStore.loadKeys()
-  siliconFlowStore.checkLoginStatus()
 })
 </script>
 
@@ -65,21 +66,21 @@ onMounted(() => {
       <!-- Static cards for configuration (not draggable) -->
       <div class="grid gap-4 grid-cols-2 mb-4">
         <!-- SiliconFlow configuration card (if not configured) -->
-        <Card class="relative gap-2">
+        <Card v-for="provider in providersStore.list" :key="provider.id" class="relative gap-2">
           <CardHeader>
             <div class="flex items-center justify-between">
               <CardTitle class="text-lg">
                 {{ t('siliconFlow') }}
               </CardTitle>
-              <div v-show="!siliconFlowStore.isLoading" class="flex items-center gap-2">
+              <div v-show="provider.user !== undefined" class="flex items-center gap-2">
                 <span
                   class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium text-accent-foreground"
                   :class="{
-                    'bg-emerald-200 dark:bg-green-500/60': siliconFlowStore.isLoggedIn,
-                    'bg-accent': !siliconFlowStore.isLoggedIn,
+                    'bg-emerald-200 dark:bg-green-500/60': !!provider.user,
+                    'bg-accent': !provider.user,
                   }"
                 >
-                  {{ siliconFlowStore.isLoggedIn ? t('loggedIn') : t('loggedOut') }}
+                  {{ provider.user ? t('loggedIn') : t('loggedOut') }}
                 </span>
               </div>
             </div>
@@ -98,7 +99,7 @@ onMounted(() => {
           </CardContent>
 
           <CardFooter>
-            <Button class="w-full" @click="showSiliconFlowConfig = true">
+            <Button class="w-full" @click="showProviderDialog = provider">
               {{ t('configureSiliconFlow') }}
             </Button>
           </CardFooter>
@@ -158,9 +159,10 @@ onMounted(() => {
       </VueDraggable>
     </div>
 
-    <!-- Dialog Components -->
-    <SiliconFlowConfigDialog
-      v-model:open="showSiliconFlowConfig"
+    <ProviderConfigDialog
+      v-if="showProviderDialog != null"
+      :provider="showProviderDialog"
+      @close="showProviderDialog = null"
     />
 
     <EditKeyDialog

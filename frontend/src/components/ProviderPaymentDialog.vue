@@ -1,0 +1,255 @@
+<script setup lang="ts">
+import type { Provider } from '@/lib/providers'
+import { renderSVG } from 'uqr'
+import { computed, onUnmounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { toast } from 'vue-sonner'
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+
+const props = defineProps<{
+  provider: Provider
+}>()
+
+const open = defineModel<boolean>()
+
+const { t } = useI18n()
+
+const payment = computed(() => props.provider.payment!)
+const quickAmounts = [10, 50, 100, 200, 500, 1000]
+const formAmount = ref('')
+const creating = ref(false)
+const canCreatePayment = computed(() =>
+  !creating.value
+  && formAmount.value
+  && Number.parseFloat(formAmount.value) > 0,
+)
+const qrcSvg = ref('')
+const orderId = ref('')
+const expired = ref(false)
+const checking = ref(false)
+let intervalId: any = null
+let timeoutId: any = null
+
+async function createPayment() {
+  if (!canCreatePayment.value)
+    return
+
+  creating.value = true
+
+  try {
+    const { orderId: newOrderId, qrcUrl, interval, timeout } = await payment.value.createWeChatPay({
+      amount: formAmount.value,
+    })
+    qrcSvg.value = renderSVG(qrcUrl, {})
+    orderId.value = newOrderId
+    expired.value = false
+
+    if (interval) {
+      intervalId = setInterval(() => {
+        checkPayment()
+      }, interval)
+    }
+
+    if (timeout) {
+      timeoutId = setTimeout(() => {
+        expired.value = true
+        clearTimers()
+      }, timeout)
+    }
+  }
+  catch (error) {
+    console.error(error)
+  }
+  finally {
+    creating.value = false
+  }
+}
+
+async function checkPayment(manual?: boolean) {
+  if (manual) {
+    checking.value = true
+  }
+  try {
+    const result = await payment.value.checkWeChatPay({ orderId: orderId.value })
+
+    if (result === 'success') {
+      toast.success(t('paymentCompleted'))
+      open.value = false
+    }
+    else if (result === 'canceled') {
+      toast.error(t('paymentCanceled'))
+      open.value = false
+    }
+    else if (result === 'wait') {
+      if (manual) {
+        toast.info(t('paymentPending'))
+      }
+    }
+  }
+  catch (error) {
+    console.error('Payment status check error:', error)
+  }
+  finally {
+    if (manual) {
+      checking.value = false
+    }
+  }
+}
+
+function clearTimers() {
+  if (intervalId) {
+    clearInterval(intervalId)
+    intervalId = null
+  }
+  if (timeoutId) {
+    clearTimeout(timeoutId)
+    timeoutId = null
+  }
+}
+
+onUnmounted(() => {
+  clearTimers()
+})
+
+function clear() {
+  clearTimers()
+  formAmount.value = ''
+  qrcSvg.value = ''
+  orderId.value = ''
+  expired.value = false
+  checking.value = false
+}
+</script>
+
+<template>
+  <Dialog v-model:open="open" @update:open="open => !open && clear()">
+    <DialogContent class="max-w-sm">
+      <DialogHeader>
+        <DialogTitle>{{ t('accountRecharge') }}</DialogTitle>
+        <DialogDescription class="flex">
+          {{ t('accountRechargeDescription', [provider.name]) }}
+          <div class="flex-grow" />
+          <div v-if="qrcSvg" class="text-sm text-muted-foreground">
+            {{ formAmount }} {{ t('currency') }}
+          </div>
+        </DialogDescription>
+        <DialogClose />
+      </DialogHeader>
+      <div class="space-y-4">
+        <div v-if="!qrcSvg" class="space-y-2">
+          <label for="modal-amount" class="text-sm font-medium">{{ t('rechargeAmount') }}</label>
+          <div class="flex items-center space-x-2">
+            <Input
+              id="modal-amount"
+              v-model="formAmount"
+              :placeholder="t('rechargeAmountPlaceholder')"
+              type="number"
+              step="0.01"
+              min="0.01"
+              class="flex-1"
+            />
+            <span class="text-sm text-muted-foreground">{{ t('currency') }}</span>
+          </div>
+        </div>
+
+        <!-- Quick Amount Buttons -->
+        <div v-if="!qrcSvg" class="grid grid-cols-3 gap-2">
+          <Button
+            v-for="amount in quickAmounts"
+            :key="amount"
+            variant="outline"
+            size="sm"
+            class="h-8"
+            @click="formAmount = amount.toString()"
+          >
+            {{ amount }}{{ t('currency') }}
+          </Button>
+        </div>
+
+        <!-- Payment QR Code -->
+        <div v-if="qrcSvg" class="space-y-3">
+          <div class="text-center">
+            <div class="inline-block p-4 bg-white rounded-lg border-2 border-dashed border-gray-300">
+              <div class="mx-auto w-40" v-html="qrcSvg" />
+            </div>
+          </div>
+          <div class="text-center space-y-2">
+            <p class="text-sm text-muted-foreground">
+              {{ t('scanQRCodeMessage') }}
+            </p>
+            <div v-if="expired" class="text-center text-sm text-red-500">
+              {{ t('qrCodeExpired') }}
+            </div>
+          </div>
+          <div class="flex gap-2 justify-center">
+            <Button v-if="expired" variant="default" @click="createPayment">
+              {{ t('regenerateQRCode') }}
+            </Button>
+
+            <Button v-else variant="default" :disabled="checking" @click="checkPayment(true)">
+              <span v-if="checking">{{ t('checking') }}</span>
+              <span v-else>{{ t('check') }}</span>
+            </Button>
+          </div>
+        </div>
+
+        <!-- Generate Payment Button -->
+        <div v-else class="space-y-3">
+          <Button
+            :disabled="!canCreatePayment"
+            class="w-full"
+            @click="createPayment"
+          >
+            <span v-if="creating">{{ t('generating') }}</span>
+            <span v-else>{{ t('generatePaymentQRCode') }}</span>
+          </Button>
+        </div>
+      </div>
+    </DialogContent>
+  </Dialog>
+</template>
+
+<i18n lang="yaml">
+en-US:
+  accountRecharge: Account Recharge
+  accountRechargeDescription: Recharge to your {0} account
+  rechargeAmount: Recharge Amount
+  rechargeAmountPlaceholder: Please enter recharge amount
+  currency: Yuan
+  scanQRCodeMessage: Please use your phone to open WeChat and scan the QR code to complete payment
+  qrCodeExpired: QR code has expired, please regenerate
+  regenerateQRCode: Regenerate QR Code
+  checking: Checking...
+  check: Complete
+  paymentCompleted: Payment Completed
+  paymentCanceled: Payment Canceled
+  paymentPending: Payment Not Completed
+  generating: Generating...
+  generatePaymentQRCode: Generate Payment QR Code
+
+zh-CN:
+  accountRecharge: 账户充值
+  accountRechargeDescription: 向{0}账户充值
+  rechargeAmount: 充值金额
+  rechargeAmountPlaceholder: 请输入充值金额
+  currency: 元
+  scanQRCodeMessage: 请使用手机打开微信扫描二维码完成支付
+  qrCodeExpired: 二维码已过期，请重新生成
+  regenerateQRCode: 重新生成二维码
+  checking: 检查中...
+  check: 我已支付
+  paymentCompleted: 已完成
+  paymentCanceled: 已取消支付
+  paymentPending: 支付未完成
+  generating: 生成中...
+  generatePaymentQRCode: 生成支付二维码
+</i18n>

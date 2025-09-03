@@ -1,16 +1,121 @@
 <script setup lang="ts">
 import { useScriptTag } from '@vueuse/core'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { toast } from 'vue-sonner'
 import Captcha from '@/components/Captcha.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { useSiliconFlowStore, useThemeStore } from '@/stores'
+import { useSiliconFlowProvider } from '@/lib/providers/siliconflow'
+import { useKeysStore, useThemeStore } from '@/stores'
 
 const { t, locale } = useI18n()
-const siliconFlowStore = useSiliconFlowStore()
 const themeStore = useThemeStore()
+const keysStore = useKeysStore()
+const provider = useSiliconFlowProvider()
+
+const isEmailLogin = ref(false)
+const phoneNumber = ref('')
+const email = ref('')
+const smsCode = ref('')
+const agreed = ref(true)
+const isLoading = ref(true)
+const canLogin = computed(() => {
+  const hasContact = isEmailLogin.value ? email.value : phoneNumber.value
+  return hasContact && smsCode.value && agreed.value && !isLoading.value
+})
+const captchaConfig = {
+  captchaId: '592ad182314270f0c1442d9aa82d3ac2',
+  product: 'bind',
+  language: 'zho',
+  riskType: 'nine',
+  protocol: 'https://',
+}
+
+async function sendSMS(result: any) {
+  if (isEmailLogin.value) {
+    // Send email verification code
+    await fetch('siliconflow/email', {
+      body: JSON.stringify({
+        email: email.value,
+        ...result,
+      }),
+      method: 'POST',
+    })
+  }
+  else {
+    // Send SMS verification code
+    await fetch('siliconflow/sms', {
+      body: JSON.stringify({
+        area: '+86',
+        phone: phoneNumber.value,
+        ...result,
+      }),
+      method: 'POST',
+    })
+  }
+}
+
+async function login() {
+  if (isLoading.value)
+    return
+
+  try {
+    isLoading.value = true
+    const res = isEmailLogin.value
+      ? await fetch('siliconflow/login/email', {
+          body: JSON.stringify({
+            email: email.value,
+            code: smsCode.value,
+            agree: agreed.value,
+            keep: true,
+            area: '+86',
+          }),
+          method: 'POST',
+        })
+      : await fetch('siliconflow/login', {
+          body: JSON.stringify({
+            phone: phoneNumber.value,
+            code: smsCode.value,
+            shareCode: '',
+            agree: agreed.value,
+            keep: true,
+            area: '+86',
+          }),
+          method: 'POST',
+        })
+
+    if (res.ok) {
+      await provider.refreshUser()
+      // Clear login form
+      phoneNumber.value = ''
+      email.value = ''
+      smsCode.value = ''
+      toast.success(t('loginSuccess'))
+
+      // Automatically create API key after successful login
+      await keysStore.createAndAddKey(provider)
+    }
+    else {
+      const errorData = await res.json()
+      if (res.status === 401) {
+        toast.error(errorData.message || t('invalidCode'))
+      }
+      else {
+        toast.error(errorData.message || t('loginFailed'))
+      }
+    }
+  }
+  catch (error) {
+    console.error('Login error:', error)
+    toast.error(t('networkError'))
+  }
+  finally {
+    isLoading.value = false
+  }
+}
 
 useScriptTag('http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js')
 
@@ -40,25 +145,25 @@ function wxLogin() {
         {{ t('loginTitle') }}
       </CardTitle>
       <CardDescription class="text-sm">
-        {{ siliconFlowStore.isEmailLogin ? t('emailLoginDescription') : t('loginDescription') }}
+        {{ isEmailLogin ? t('emailLoginDescription') : t('loginDescription') }}
       </CardDescription>
     </CardHeader>
     <CardContent class="space-y-4">
       <!-- Phone Number Input -->
-      <div v-if="!siliconFlowStore.isEmailLogin" class="flex rounded-md border border-input bg-background">
+      <div v-if="!isEmailLogin" class="flex rounded-md border border-input bg-background">
         <div class="flex items-center px-3 border-r border-input bg-muted/50 rounded-l-md">
           <span class="text-sm font-medium text-muted-foreground">+86</span>
         </div>
         <Input
-          id="phone" v-model="siliconFlowStore.phoneNumber" :placeholder="t('phoneNumber')" type="tel"
+          id="phone" v-model="phoneNumber" :placeholder="t('phoneNumber')" type="tel"
           class="border-0 rounded-l-none focus-visible:ring-0 focus-visible:ring-offset-0 h-10"
         />
       </div>
 
       <!-- Email Input -->
-      <div v-if="siliconFlowStore.isEmailLogin" class="flex rounded-md border border-input bg-background">
+      <div v-if="isEmailLogin" class="flex rounded-md border border-input bg-background">
         <Input
-          id="email" v-model="siliconFlowStore.email" :placeholder="t('emailAddressPlaceholder')" type="email"
+          id="email" v-model="email" :placeholder="t('emailAddressPlaceholder')" type="email"
           class="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-10"
         />
       </div>
@@ -66,24 +171,24 @@ function wxLogin() {
       <!-- SMS/Email Code Input -->
       <div class="flex rounded-md border border-input bg-background">
         <Input
-          id="sms" v-model="siliconFlowStore.smsCode"
-          :placeholder="siliconFlowStore.isEmailLogin ? t('emailCode') : t('smsCode')"
+          id="sms" v-model="smsCode"
+          :placeholder="isEmailLogin ? t('emailCode') : t('smsCode')"
           type="text" maxlength="6"
           class="w-fit flex-grow border-0 rounded-r-none focus-visible:ring-0 focus-visible:ring-offset-0 h-10"
         />
         <div class="border-l border-input">
           <Captcha
-            :enabled="siliconFlowStore.isEmailLogin ? siliconFlowStore.email.length > 0 : siliconFlowStore.phoneNumber.length > 0"
-            :config="siliconFlowStore.captchaConfig"
+            :enabled="isEmailLogin ? email.length > 0 : phoneNumber.length > 0"
+            :config="captchaConfig"
             class="h-10 px-4 bg-muted/50 rounded-r-md border-0 text-xs text-primary hover:bg-muted/70 transition-colors disabled:opacity-50"
-            @next="siliconFlowStore.sendSMS"
+            @next="sendSMS"
           />
         </div>
       </div>
     </CardContent>
     <CardFooter class="flex flex-col space-y-3 pt-3 items-start">
       <div class="flex items-center space-x-2 text-xs text-muted-foreground">
-        <input id="agree" v-model="siliconFlowStore.agreed" type="checkbox" class="h-3 w-3 rounded border border-input">
+        <input id="agree" v-model="agreed" type="checkbox" class="h-3 w-3 rounded border border-input">
         <label for="agree" class="flex items-center gap-1 cursor-pointer">
           <span>{{ t('agreeToTerms') }}</span>
           <a
@@ -97,9 +202,9 @@ function wxLogin() {
           >{{ t('privacyPolicy') }}</a>
         </label>
       </div>
-      <Button class="w-full h-10" :disabled="!siliconFlowStore.canLogin" @click="siliconFlowStore.login()">
-        <span v-if="siliconFlowStore.isLoading">{{ t('loggingIn') }}</span>
-        <span v-else>{{ siliconFlowStore.isEmailLogin ? t('login') : t('registerLogin') }}</span>
+      <Button class="w-full h-10" :disabled="!canLogin" @click="login()">
+        <span v-if="isLoading">{{ t('loggingIn') }}</span>
+        <span v-else>{{ isEmailLogin ? t('login') : t('registerLogin') }}</span>
       </Button>
       <div class="w-full grid grid-cols-2 gap-3">
         <Dialog>
@@ -116,12 +221,12 @@ function wxLogin() {
             <div id="SF_wx_login_qr_code_f" class="w-full flex justify-center" />
           </DialogContent>
         </Dialog>
-        <Button variant="outline" class="w-full h-10" @click="siliconFlowStore.isEmailLogin = !siliconFlowStore.isEmailLogin">
-          {{ siliconFlowStore.isEmailLogin ? t('phoneLogin') : t('emailLogin') }}
+        <Button variant="outline" class="w-full h-10" @click="isEmailLogin = !isEmailLogin">
+          {{ isEmailLogin ? t('phoneLogin') : t('emailLogin') }}
         </Button>
       </div>
       <!-- <div class="flex items-center space-x-2 text-xs text-muted-foreground">
-        <input id="keep" v-model="siliconFlowStore.keepLogin" type="checkbox" class="h-3 w-3 rounded border border-input" checked>
+        <input id="keep" v-model="keepLogin" type="checkbox" class="h-3 w-3 rounded border border-input" checked>
         <label for="keep" class="cursor-pointer">{{ t('keepLoggedIn30Days') }}</label>
       </div> -->
     </CardFooter>

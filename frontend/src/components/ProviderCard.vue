@@ -1,0 +1,134 @@
+<script setup lang="ts">
+import type { Provider } from '@/lib/providers'
+import { computed, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { toast } from 'vue-sonner'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import ProviderPaymentDialog from './ProviderPaymentDialog.vue'
+import ProviderRealNameDialog from './ProviderRealNameDialog.vue'
+
+const props = defineProps<{
+  provider: Provider
+}>()
+
+const emit = defineEmits<{
+  configured: [key: string]
+}>()
+
+const { t } = useI18n()
+
+const userInfo = computed(() => props.provider.user)
+const openPaymentDialog = ref(false)
+const openRealNameDialog = ref(false)
+
+// Check login status on component mount
+onMounted(async () => {
+  await props.provider.refreshUser()
+})
+
+function handleRecharge() {
+  if (!userInfo.value?.verified) {
+    toast.error(t('realNameRequired'))
+    openRealNameDialog.value = true
+  }
+  else {
+    openPaymentDialog.value = true
+  }
+}
+</script>
+
+<template>
+  <Skeleton v-if="userInfo === undefined" class="h-48 w-full max-w-md mx-auto" />
+  <component :is="provider.Login" v-else-if="userInfo === null" />
+  <Card v-else>
+    <CardHeader>
+      <CardTitle class="flex items-center gap-2">
+        <div class="mr-4 text-lg">
+          {{ provider.name }}
+        </div>
+
+        <div class="h-2 w-2 bg-green-500 dark:bg-green-400 rounded-full" />
+        <div class="text-green-700 dark:text-green-500 text-base">
+          {{ t('loggedIn', [provider.name]) }}
+        </div>
+
+        <div class="flex-grow" />
+
+        <span class="font-medium text-black">{{ userInfo.name }}</span>
+      </CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div class="space-y-2">
+        <div class="flex justify-between items-center text-sm">
+          <span class="text-muted-foreground">{{ t('realname') }}</span>
+          <button
+            class="font-medium border-b border-dashed border-primary text-primary hover:bg-muted/50 transition-colors"
+            @click="openRealNameDialog = true"
+          >
+            {{ userInfo.verified ? t('verified') : t('unverified') }}
+          </button>
+        </div>
+        <div v-if="userInfo.phone" class="flex justify-between items-center text-sm">
+          <span class="text-muted-foreground">{{ t('phone') }}</span>
+          <span class="font-medium">{{ userInfo.phone }}</span>
+        </div>
+        <div v-if="userInfo.balance != null" class="flex justify-between items-center text-sm">
+          <span class="text-muted-foreground">{{ t('balance') }}</span>
+          <span class="font-medium">{{ userInfo.balance }} {{ t('yuan') }}</span>
+        </div>
+      </div>
+    </CardContent>
+    <CardFooter class="pt-2 flex gap-2">
+      <Button variant="default" size="sm" class="h-8" @click="emit('configured', provider.id!)">
+        {{ t('confirm') }}
+      </Button>
+      <div class="flex-grow" />
+      <Button variant="secondary" size="sm" class="h-8" @click="handleRecharge">
+        {{ t('recharge') }}
+      </Button>
+      <Button variant="secondary" size="sm" class="h-8" @click="provider.logout">
+        {{ t('logout') }}
+      </Button>
+    </CardFooter>
+
+    <ProviderRealNameDialog v-model="openRealNameDialog" :provider />
+    <ProviderPaymentDialog v-model="openPaymentDialog" :provider />
+  </Card>
+</template>
+
+<i18n lang="yaml">
+zh-CN:
+  loggedIn: 已登录
+  realname: 实名
+  verified: 已认证
+  unverified: 未认证
+  phone: 手机
+  balance: 余额
+  yuan: 元
+  createKey: 创建密钥
+  confirmCreateKey: 确认创建密钥
+  confirmCreateKeyDescription: 您确定要创建一个新的 API 密钥吗？这将为您的账户生成一个新的访问密钥。
+  recharge: 充值
+  logout: 退出登录
+  realNameRequired: 请先完成实名认证
+  cancel: 取消
+  confirm: 确认
+en-US:
+  loggedIn: Logged in
+  realname: Real Name
+  verified: Verified
+  unverified: Unverified
+  phone: Phone
+  balance: Balance
+  yuan: Yuan
+  createKey: Create Key
+  confirmCreateKey: Confirm Create Key
+  confirmCreateKeyDescription: Are you sure you want to create a new API key? This will generate a new access key for your account.
+  recharge: Recharge
+  logout: Logout
+  realNameRequired: Please complete real-name authentication first
+  cancel: Cancel
+  confirm: Confirm
+</i18n>

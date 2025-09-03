@@ -24,12 +24,6 @@ type AppPreset struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-type SiliconFlowSession struct {
-	Cookie    string    `json:"cookie"`
-	SubjectID string    `json:"subjectId"`
-	CreatedAt time.Time `json:"createdAt"`
-}
-
 type AppInfo struct {
 	ID           string    `json:"id"`
 	Name         string    `json:"name"`
