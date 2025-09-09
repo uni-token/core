@@ -42,4 +42,4 @@ For users, you can visit the [UniToken App](https://uni-token.app) to manage you
 ## License
 
 - `sdk/*` is licensed under the **MIT License**, which allows for free use, modification, and distribution for both commercial and non-commercial purposes.
-- `frontend/` and `service/` are licensed under the **Non-Commercial Use License (NCUL)**, which allows free use for non-commercial purposes, including modification and distribution, as long as it is not used for commercial gain. Commercial use is strictly prohibited.
+- `ui/` and `service/` are licensed under the **Non-Commercial Use License (NCUL)**, which allows free use for non-commercial purposes, including modification and distribution, as long as it is not used for commercial gain. Commercial use is strictly prohibited.

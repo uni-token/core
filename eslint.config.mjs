@@ -14,7 +14,7 @@ export default antfu({
     },
   },
   ignores: [
-    'frontend/public/**',
+    'ui/public/**',
     '**/.venv/**',
     '**/node_modules/**',
     '**/dist/**',

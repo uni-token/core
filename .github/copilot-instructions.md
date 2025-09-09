@@ -5,7 +5,7 @@
 UniToken is a multi-component monorepo consisting of:
 
 - **Go Service** (`service/`): Local API server providing token management and gateway functionality
-- **Vue.js Frontend** (`frontend/`): Web UI for configuration and management
+- **Vue.js Frontend** (`ui/`): Web UI for configuration and management
 - **SDKs** (`sdk/`): Node.js and Python client libraries for service integration
 
 ## Technology Stack
@@ -20,7 +20,7 @@ UniToken is a multi-component monorepo consisting of:
 ## i18n
 
 - Always use English in the codebase.
-- Use Vue I18n for frontend localization, with locale files in `locales/` (`en-US.json`, `zh-CN.json`)
+- Use Vue I18n for UI localization, with locale files in `locales/` (`en-US.json`, `zh-CN.json`)
 
 ## Code Style
 

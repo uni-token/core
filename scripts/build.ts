@@ -7,7 +7,7 @@ await setupUPX()
 
 console.log('Building Go service...')
 const ldflags = `-s -w -X 'logic.version=${new Date().toISOString().slice(0, 10).replace(/-/g, '')}' -X 'logic.appBaseUrl=http://uni-token.app'`
-const releaseDir = 'frontend/public/release'
+const releaseDir = 'ui/public/release'
 
 await $`rm -rf ${releaseDir}`
 await $`mkdir -p ${releaseDir}`
@@ -22,11 +22,11 @@ console.log('Compressing binaries...')
 await $`upx --best --lzma ${releaseDir}/service-linux-amd64`
 await $`upx --best --lzma ${releaseDir}/service-windows-amd64.exe`
 
-// Build frontend
-console.log('Building frontend...')
-await $`pnpm -C frontend build`
+// Build UI
+console.log('Building UI...')
+await $`pnpm -C ui build`
 
-console.log('Build complete! Files are in frontend/dist/')
+console.log('Build complete! Files are in ui/dist/')
 
 async function setupGo() {
   try {

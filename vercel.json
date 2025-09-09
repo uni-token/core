@@ -5,5 +5,5 @@
   ],
   "installCommand": "pnpm install",
   "buildCommand": "pnpm build",
-  "outputDirectory": "frontend/dist"
+  "outputDirectory": "ui/dist"
 }

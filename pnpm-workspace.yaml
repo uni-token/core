@@ -1,5 +1,5 @@
 packages:
-  - frontend
+  - ui
   - sdk/node
   - sdk/browser
   - docs

@@ -5,7 +5,7 @@ import { defineConfig } from 'bumpp'
 import { $ } from 'zx'
 
 export default defineConfig({
-  files: ['frontend/package.json', 'sdk/*/package.json'],
+  files: ['ui/package.json', 'sdk/*/package.json'],
   all: true,
   async execute(config) {
     const projectToml = resolve(import.meta.dirname, './sdk/python/pyproject.toml')

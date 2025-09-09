@@ -18,7 +18,7 @@ uv --directory sdk/python sync
 ### Start
 
 ```sh
-pnpm -C frontend dev
+pnpm -C ui dev
 pnpm -C docs dev
 go -C service run main.go
 uv --directory sdk/python run example.py
@@ -27,7 +27,7 @@ uv --directory sdk/python run example.py
 ### Build
 
 ```sh
-pnpm -C frontend build
+pnpm -C ui build
 pnpm -C docs build
 go -C service build
 ```

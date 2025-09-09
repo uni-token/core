@@ -76,6 +76,6 @@
     "vue-sfc"
   ],
   "i18n-ally.localesPaths": [
-    "frontend/src/**/*.vue"
+    "ui/src/**/*.vue"
   ]
 }

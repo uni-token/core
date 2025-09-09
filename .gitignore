@@ -7,10 +7,11 @@ target
 service/uni-token-service
 service/uni-token-service.exe
 service/data.db
-frontend/public/release
+ui/public/release
 .eslintcache
 docs/.vitepress/cache
 .fuse_hidden*
 sdk/go/example/uni-token-example
 sdk/go/example/uni-token-example.exe
 docs/slides/*-impl.md
+temp
