@@ -37,6 +37,7 @@ export const useSiliconFlowProvider = createSharedComposable((): Provider => {
     get name() {
       return t('providerName')
     },
+    homepage: 'https://www.siliconflow.cn/',
 
     get user() {
       return user.value

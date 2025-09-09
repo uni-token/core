@@ -90,7 +90,7 @@ onMounted(() => {
             <div class="text-sm text-muted-foreground">
               <p>
                 {{ t('description1') }}
-                <a href="https://www.siliconflow.cn" target="_blank" class="text-blue-900 dark:text-blue-200 hover:underline">
+                <a :href="provider.homepage" target="_blank" class="text-blue-900 dark:text-blue-200 hover:underline">
                   {{ provider.name }}
                 </a>
                 {{ t('description2') }}

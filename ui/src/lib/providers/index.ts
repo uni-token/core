@@ -18,6 +18,7 @@ export interface ProviderVerificationInfo {
 export interface Provider {
   readonly id: string
   readonly name: string
+  readonly homepage: string
 
   readonly user: undefined | null | ProviderUserInfo
   readonly refreshUser: () => Promise<void>

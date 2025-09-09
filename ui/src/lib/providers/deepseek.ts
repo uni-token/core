@@ -25,6 +25,7 @@ export const useDeepSeekProvider = createSharedComposable((): Provider => {
     get name() {
       return t('providerName')
     },
+    homepage: 'https://www.deepseek.com/',
 
     get user() {
       return user.value

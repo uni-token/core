@@ -52,7 +52,6 @@ watchEffect(() => {
       </template>
       <template v-else>
         <div class="grid gap-4 grid-cols-2 mb-4">
-          <!-- SiliconFlow configuration card (if not configured) -->
           <Card v-for="provider in providersStore.list" :key="provider.id" class="relative gap-2">
             <CardHeader>
               <div class="flex items-center justify-between">
@@ -65,11 +64,11 @@ watchEffect(() => {
             <CardContent>
               <div class="text-sm text-muted-foreground">
                 <p>
-                  {{ t('siliconFlowDescription1') }}
-                  <a href="https://www.siliconflow.cn" target="_blank" class="text-blue-900 dark:text-blue-200 hover:underline">
-                    {{ t('siliconFlow') }}
+                  {{ t('description1') }}
+                  <a :href="provider.homepage" target="_blank" class="text-blue-900 dark:text-blue-200 hover:underline">
+                    {{ provider.name }}
                   </a>
-                  {{ t('siliconFlowDescription2') }}
+                  {{ t('description2') }}
                 </p>
               </div>
             </CardContent>
@@ -130,8 +129,8 @@ en-US:
   loadingKeys: Loading...
   noKeysAvailable: No providers configured
   addNewKey: Add Provider
-  siliconFlowDescription1: Purchase and configure API through
-  siliconFlowDescription2: ' '
+  description1: Purchase and configure API through
+  description2: ' '
   configure: Configure {0}
   selectKey: Provider
 
@@ -139,8 +138,8 @@ zh-CN:
   loadingKeys: 加载中
   noKeysAvailable: 未配置提供商
   addNewKey: 添加提供商
-  siliconFlowDescription1: 通过
-  siliconFlowDescription2: 购买和配置 API
+  description1: 通过
+  description2: 购买和配置 API
   configure: 配置 {0}
   selectKey: 提供商
 </i18n>
