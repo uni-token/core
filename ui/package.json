@@ -40,7 +40,7 @@
     "@vitejs/plugin-vue-jsx": "^5.0.1",
     "@vue/tsconfig": "^0.7.0",
     "typescript": "~5.8.0",
-    "vite": "npm:rolldown-vite@latest",
+    "vite": "^7.1.5",
     "vite-plugin-vue-devtools": "^8.0.0",
     "vitest": "^3.2.4",
     "vue-tsc": "^3.0.4"
