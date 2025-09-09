@@ -81,7 +81,7 @@ func OpenURLInUserSession(url string) error {
 }
 
 func OpenBrowser(targetUser string, url string) error {
-	if constants.ShouldChangeUser() {
+	if constants.ShouldChangeUser {
 		return OpenURLInUserSession(url)
 	} else {
 		return windows.ShellExecute(0, nil, windows.StringToUTF16Ptr(url), nil, nil, windows.SW_SHOWNORMAL)
