@@ -17,7 +17,11 @@ var ServerPort = -1
 
 var sessionActive = make(map[string]chan<- struct{})
 
-func OpenUI(params url.Values, auth bool) (<-chan struct{}, func(), error) {
+func OpenAction(actionType string, params url.Values) (<-chan struct{}, func(), error) {
+	return OpenUI("/action/"+actionType, params, true)
+}
+
+func OpenUI(path string, params url.Values, auth bool) (<-chan struct{}, func(), error) {
 	if auth {
 		allUsers, err := store.Users.List()
 		if err != nil {
@@ -43,7 +47,7 @@ func OpenUI(params url.Values, auth bool) (<-chan struct{}, func(), error) {
 	params.Set("session", sessionId)
 	params.Set("port", strconv.Itoa(ServerPort))
 
-	openBrowser.OpenBrowser(constants.UserName, constants.AppBaseUrl+"?"+params.Encode())
+	openBrowser.OpenBrowser(constants.UserName, constants.AppBaseUrl+path+"?"+params.Encode())
 
 	channel := make(chan struct{})
 	sessionActive[sessionId] = channel

@@ -96,7 +96,7 @@ func main() {
 
 	if len(os.Args) < 2 {
 		handleSetup()
-		logic.OpenUI(url.Values{}, false)
+		logic.OpenUI("/", url.Values{}, false)
 		return
 	}
 

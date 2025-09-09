@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
 import KeySelector from '@/components/KeySelector.vue'
 import { Button } from '@/components/ui/button'
@@ -9,8 +10,11 @@ import { useKeysStore } from '@/stores'
 import { useAppStore } from '@/stores/app'
 
 const { t } = useI18n()
-const params = new URLSearchParams(window.location.search)
-let actionType = params.get('action')
+const route = useRoute()
+const router = useRouter()
+
+const actionType = route.params.actionType
+const query = new URLSearchParams(window.location.search)
 
 const open = ref(!!actionType)
 const selectedKey = ref<string>('')
@@ -18,7 +22,7 @@ const appStore = useAppStore()
 const keysStore = useKeysStore()
 
 async function registerAction(granted: boolean) {
-  const appId = params.get('appId')
+  const appId = query.get('appId')
 
   if (!appId) {
     toast.error(t('missingAppId'))
@@ -26,21 +30,28 @@ async function registerAction(granted: boolean) {
   }
 
   await appStore.toggleAppAuthorization(appId, granted, selectedKey.value)
-  actionType = null
   open.value = false
+  router.replace('/')
 }
 
-watch(open, (open) => {
-  if (!open) {
-    if (actionType === 'register') {
-      registerAction(false)
-    }
+function manuallyClose() {
+  if (actionType === 'register') {
+    registerAction(false)
+    router.replace('/')
   }
-})
+}
+
+if (actionType === 'openrouter-auth') {
+  const bc = new BroadcastChannel('openrouter-auth')
+  bc.postMessage({ code: query.get('code') })
+  setTimeout(() => {
+    window.close()
+  }, 100)
+}
 </script>
 
 <template>
-  <Dialog v-model:open="open">
+  <Dialog v-model:open="open" @update:open="v => { if (!v) manuallyClose() }">
     <DialogContent v-if="actionType === 'register'" class="sm:max-w-xl">
       <DialogHeader>
         <DialogTitle>{{ t('appPermissionRequest') }}</DialogTitle>
@@ -53,11 +64,11 @@ watch(open, (open) => {
         <div class="space-y-2">
           <div>
             <strong class="mr-4">{{ t('appName') }}</strong>
-            <span class="text-lg">{{ params.get('appName') }}</span>
+            <span class="text-lg">{{ query.get('appName') }}</span>
           </div>
           <div>
             <strong class="mr-4">{{ t('appDescription') }}</strong>
-            <span class="text-lg">{{ params.get('appDescription') }}</span>
+            <span class="text-lg">{{ query.get('appDescription') }}</span>
           </div>
           <KeySelector v-model="selectedKey" class="pt-1" />
         </div>
@@ -79,6 +90,19 @@ watch(open, (open) => {
             </Button>
           </div>
         </div>
+      </div>
+    </DialogContent>
+    <DialogContent v-else-if="actionType === 'openrouter-auth'">
+      <DialogHeader>
+        <DialogTitle>{{ t('authorizationSuccessful') }}</DialogTitle>
+        <DialogDescription>
+          {{ t('authorizationSuccessfulDescription') }}
+        </DialogDescription>
+      </DialogHeader>
+      <div class="flex justify-center mt-6">
+        <Button @click="open = false">
+          {{ t('close') }}
+        </Button>
       </div>
     </DialogContent>
     <DialogContent v-else-if="actionType">
@@ -104,6 +128,9 @@ en-US:
   approve: Approve
   unrecognizedAction: Unrecognized Action
   unrecognizedActionDescription: 'The current action type "{actionType}" is not supported or recognized.'
+  authorizationSuccessful: Authorization Successful
+  authorizationSuccessfulDescription: Authorization completed successfully. Please close this page.
+  close: Close
 
 zh-CN:
   missingAppId: 缺少应用ID
@@ -116,4 +143,7 @@ zh-CN:
   approve: 同意
   unrecognizedAction: 无法识别的操作
   unrecognizedActionDescription: '当前操作类型 "{actionType}" 未被支持或识别。'
+  authorizationSuccessful: 授权成功
+  authorizationSuccessfulDescription: 授权成功。请关闭该页面。
+  close: 关闭
 </i18n>

@@ -141,21 +141,24 @@ func RequireUserLogin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"__uni_token": true})
+			c.Header("X-Uni-Token-Error", "missing_authorization_header")
+			c.Status(http.StatusUnauthorized)
 			c.Abort()
 			return
 		}
 
 		tokenParts := strings.Split(authHeader, " ")
 		if len(tokenParts) != 2 || tokenParts[0] != "Bearer" {
-			c.JSON(http.StatusUnauthorized, gin.H{"__uni_token": true})
+			c.Header("X-Uni-Token-Error", "missing_authorization_header")
+			c.Status(http.StatusUnauthorized)
 			c.Abort()
 			return
 		}
 
 		claims, err := logic.ValidateJWT(tokenParts[1])
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"__uni_token": true})
+			c.Header("X-Uni-Token-Error", "invalid_token")
+			c.Status(http.StatusUnauthorized)
 			c.Abort()
 			return
 		}

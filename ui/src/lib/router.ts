@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import About from '@/views/About.vue'
+import ActionHandler from '@/views/ActionHandler.vue'
 import AppManagement from '@/views/AppManagement.vue'
 import Models from '@/views/Models.vue'
 import NotFound from '@/views/NotFound.vue'
@@ -35,6 +36,11 @@ const routes = [
     path: '/about',
     name: 'About',
     component: About,
+  },
+  {
+    path: '/action/:actionType',
+    name: 'ActionHandler',
+    component: ActionHandler,
   },
   {
     path: '/:pathMatch(.*)*',

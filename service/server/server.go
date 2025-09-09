@@ -9,6 +9,7 @@ import (
 	"uni-token-service/logic"
 	deepSeek "uni-token-service/server/deep-seek"
 	siliconFlow "uni-token-service/server/silicon-flow"
+	openRouter "uni-token-service/server/open-router"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -52,6 +53,7 @@ func setupRoutes(router *gin.Engine) {
 
 	siliconFlow.SetupAPI(router.Group("/siliconflow").Use(RequireUserLogin()))
 	deepSeek.SetupAPI(router.Group("/deepseek").Use(RequireUserLogin()))
+	openRouter.SetupAPI(router.Group("/openrouter").Use(RequireUserLogin()))
 }
 
 func isPortAvailable(port int) bool {

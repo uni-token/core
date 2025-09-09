@@ -101,12 +101,11 @@ func handleAppRegister(c *gin.Context) {
 	defer delete(waitForGrant, uid)
 
 	params := url.Values{
-		"action":         {"register"},
 		"appId":          {uid},
 		"appName":        {req.Name},
 		"appDescription": {req.Description},
 	}
-	uiActive, cleanup, err := logic.OpenUI(params, true)
+	uiActive, cleanup, err := logic.OpenAction("register", params)
 	if cleanup != nil {
 		defer cleanup()
 	}

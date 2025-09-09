@@ -11,7 +11,6 @@ import ThemeToggle from '@/components/ThemeToggle.vue'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { Toaster } from '@/components/ui/sonner'
 import { useThemeStore } from '@/stores/theme'
-import ActionHandler from '@/views/ActionHandler.vue'
 import { useAuthStore, useServiceStore } from './stores'
 import 'vue-sonner/style.css'
 
@@ -104,8 +103,6 @@ onUIOpened()
         <RouterView />
       </SidebarInset>
     </SidebarProvider>
-
-    <ActionHandler />
   </div>
 </template>
 

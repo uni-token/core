@@ -64,7 +64,7 @@ onMounted(() => {
 
     <div v-else class="flex-grow flex flex-col">
       <!-- Static cards for configuration (not draggable) -->
-      <div class="grid gap-4 grid-cols-2 mb-4">
+      <div class="grid gap-4 grid-cols-2 lg:grid-cols-3 mb-4">
         <!-- SiliconFlow configuration card (if not configured) -->
         <Card v-for="provider in providersStore.list" :key="provider.id" class="relative gap-2">
           <CardHeader>

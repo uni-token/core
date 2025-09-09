@@ -3,7 +3,7 @@ import type { Component } from 'vue'
 export interface ProviderUserInfo {
   name: string
   // Real-name verification status
-  verified: boolean
+  verified?: boolean
   phone?: string
   email?: string
   balance?: number
@@ -40,7 +40,7 @@ export interface Provider {
     }>
   }
 
-  readonly payment: {
+  readonly payment?: {
     createWeChatPay: (options: {
       amount: string
     }) => Promise<{

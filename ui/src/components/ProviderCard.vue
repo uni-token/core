@@ -53,15 +53,15 @@ function handleRecharge() {
         <div class="text-green-700 dark:text-green-500 text-base">
           {{ t('loggedIn', [provider.name]) }}
         </div>
-
-        <div class="flex-grow" />
-
-        <span class="font-medium text-black">{{ userInfo.name }}</span>
       </CardTitle>
     </CardHeader>
-    <CardContent>
+    <CardContent class="flex-grow">
       <div class="space-y-2">
-        <div class="flex justify-between items-center text-sm">
+        <div v-if="userInfo.name" class="flex justify-between items-center text-sm">
+          <span class="text-muted-foreground">{{ t('userName') }}</span>
+          <span class="font-medium text-ellipsis max-w-24 text-nowrap overflow-hidden" :title="userInfo.name">{{ userInfo.name }}</span>
+        </div>
+        <div v-if="userInfo.verified != null" class="flex justify-between items-center text-sm">
           <span class="text-muted-foreground">{{ t('realname') }}</span>
           <button
             class="font-medium border-b border-dashed border-primary text-primary hover:bg-muted/50 transition-colors"
@@ -85,7 +85,7 @@ function handleRecharge() {
         {{ t('confirm') }}
       </Button>
       <div class="flex-grow" />
-      <Button variant="secondary" size="sm" class="h-8" @click="handleRecharge">
+      <Button v-if="!!provider.payment" variant="secondary" size="sm" class="h-8" @click="handleRecharge">
         {{ t('recharge') }}
       </Button>
       <Button variant="secondary" size="sm" class="h-8" @click="provider.logout">
@@ -93,8 +93,8 @@ function handleRecharge() {
       </Button>
     </CardFooter>
 
-    <ProviderRealNameDialog v-model="openRealNameDialog" :provider />
-    <ProviderPaymentDialog v-model="openPaymentDialog" :provider />
+    <ProviderRealNameDialog v-if="!!provider.verification" v-model="openRealNameDialog" :provider="provider" />
+    <ProviderPaymentDialog v-if="!!provider.payment" v-model="openPaymentDialog" :provider="provider" />
   </Card>
 </template>
 
@@ -115,6 +115,7 @@ zh-CN:
   realNameRequired: 请先完成实名认证
   cancel: 取消
   confirm: 确认
+  userName: 用户名
 en-US:
   loggedIn: Logged in
   realname: Real Name
@@ -131,4 +132,5 @@ en-US:
   realNameRequired: Please complete real-name authentication first
   cancel: Cancel
   confirm: Confirm
+  userName: User Name
 </i18n>

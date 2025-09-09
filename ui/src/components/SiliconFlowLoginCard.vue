@@ -9,19 +9,20 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { useSiliconFlowProvider } from '@/lib/providers/siliconflow'
-import { useKeysStore, useThemeStore } from '@/stores'
+import { useKeysStore, useServiceStore, useThemeStore } from '@/stores'
 
 const { t, locale } = useI18n()
 const themeStore = useThemeStore()
 const keysStore = useKeysStore()
 const provider = useSiliconFlowProvider()
+const { fetch } = useServiceStore()
 
 const isEmailLogin = ref(false)
 const phoneNumber = ref('')
 const email = ref('')
 const smsCode = ref('')
 const agreed = ref(true)
-const isLoading = ref(true)
+const isLoading = ref(false)
 const canLogin = computed(() => {
   const hasContact = isEmailLogin.value ? email.value : phoneNumber.value
   return hasContact && smsCode.value && agreed.value && !isLoading.value

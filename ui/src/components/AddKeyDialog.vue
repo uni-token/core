@@ -22,7 +22,7 @@ async function handleConfigured(key: string) {
 
 <template>
   <Dialog v-model:open="open">
-    <DialogContent class="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+    <DialogContent class="sm:max-w-2xl md:max-w-4xl max-h-[90vh] overflow-y-auto">
       <DialogHeader>
         <DialogTitle>{{ t('title') }}</DialogTitle>
         <DialogDescription>
@@ -30,7 +30,7 @@ async function handleConfigured(key: string) {
         </DialogDescription>
       </DialogHeader>
 
-      <div class="mt-6 space-y-6">
+      <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         <ProviderCard v-for="provider in providersStore.list" :key="provider.id" :provider="provider" @configured="handleConfigured" />
         <ManualConfigCard @configured="handleConfigured" />
       </div>
