@@ -30,7 +30,7 @@ const releaseDate = computed(() => {
 
 <template>
   <div class="p-6">
-    <div class="space-y-6 max-w-3xl">
+    <div class="space-y-6">
       <div class="flex items-center justify-between">
         <h2 class="text-2xl font-bold">
           {{ t('title') }}

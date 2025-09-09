@@ -88,8 +88,8 @@ watch(() => props.apiKey, (newKey) => {
 
       <div class="space-y-4">
         <div class="space-y-2">
-          <label class="text-sm font-medium">{{ t('keyName') }}</label>
-          <Input v-model="config.name" :placeholder="t('keyNamePlaceholder')" autocomplete="off" />
+          <label class="text-sm font-medium">{{ t('name') }}</label>
+          <Input v-model="config.name" :placeholder="t('namePlaceholder')" autocomplete="off" />
         </div>
 
         <div class="space-y-2">
@@ -127,8 +127,9 @@ watch(() => props.apiKey, (newKey) => {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-          <Button class="flex-1" :disabled="!isConfigValid" @click="handleSave">
-            {{ t('saveChanges') }}
+          <div class="flex-1" />
+          <Button :disabled="!isConfigValid" @click="handleSave">
+            {{ t('save') }}
           </Button>
         </div>
       </div>
@@ -138,10 +139,10 @@ watch(() => props.apiKey, (newKey) => {
 
 <i18n lang="yaml">
 en-US:
-  title: Edit Provider
-  description: Modify Provider configuration information
-  keyName: Provider Name
-  keyNamePlaceholder: 'e.g.: OpenAI'
+  title: Edit API Key
+  description: Modify API Key configuration information
+  name: Name
+  namePlaceholder: 'e.g.: OpenAI'
   baseUrl: Base URL
   baseUrlPlaceholder: 'https://api.openai.com/v1'
   apiKey: API Key
@@ -150,13 +151,13 @@ en-US:
   confirmDeleteTitle: Confirm Delete
   confirmDeleteDescription: Are you sure you want to delete this Provider? This action cannot be undone.
   cancel: Cancel
-  saveChanges: Save Changes
+  save: Save
 
 zh-CN:
-  title: 编辑 Provider
-  description: 修改 Provider 的配置信息
-  keyName: Provider 名称
-  keyNamePlaceholder: '例如: OpenAI'
+  title: 编辑 API Key
+  description: 修改 API Key 的配置信息
+  name: 名称
+  namePlaceholder: '例如: OpenAI'
   baseUrl: Base URL
   baseUrlPlaceholder: 'https://api.openai.com/v1'
   apiKey: API Key
@@ -165,5 +166,5 @@ zh-CN:
   confirmDeleteTitle: 确认删除
   confirmDeleteDescription: 确定要删除 Provider 吗？此操作无法撤销。
   cancel: 取消
-  saveChanges: 保存更改
+  save: 保存
 </i18n>
