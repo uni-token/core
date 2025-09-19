@@ -10,13 +10,7 @@ import (
 	"golang.org/x/sys/windows/registry"
 )
 
-// Stub for Linux function when building on Windows
-func registerURLSchemeLinux(options UrlSchemeRegisterOption) error {
-	return fmt.Errorf("Linux URL scheme registration not available on Windows")
-}
-
-// registerURLSchemeForWindows registers URL scheme on Windows
-func registerURLSchemeWindows(options UrlSchemeRegisterOption) error {
+func RegisterURLScheme(options UrlSchemeRegisterOption) error {
 	exePath := filepath.ToSlash(options.ExecutablePath)
 
 	// Build registry path

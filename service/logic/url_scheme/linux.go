@@ -9,13 +9,7 @@ import (
 	"path/filepath"
 )
 
-// Stub for Windows function when building on Linux
-func registerURLSchemeWindows(options UrlSchemeRegisterOption) error {
-	return fmt.Errorf("windows URL scheme registration not available on linux")
-}
-
-// registerURLSchemeForLinux registers URL scheme on Linux
-func registerURLSchemeLinux(options UrlSchemeRegisterOption) error {
+func RegisterURLScheme(options UrlSchemeRegisterOption) error {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return fmt.Errorf("failed to get user home directory: %w", err)
