@@ -5,19 +5,19 @@ import { useOpenRouterProvider } from '@/lib/providers/openrouter'
 import { useSiliconFlowProvider } from '@/lib/providers/siliconflow'
 
 export const useProvidersStore = defineStore('providers', () => {
-  const map = {
-    siliconFlow: useSiliconFlowProvider(),
-    deepSeek: useDeepSeekProvider(),
-    openRouter: useOpenRouterProvider(),
-  } as Record<string, Provider>
-  const list = Object.values(map)
+  const list = [
+    useSiliconFlowProvider(),
+    useDeepSeekProvider(),
+    useOpenRouterProvider(),
+  ]
+  const map = Object.fromEntries(list.map(p => [p.id, p])) as Record<string, Provider>
 
   for (const provider of list) {
     provider.refreshUser()
   }
 
   return {
-    map,
     list,
+    map,
   }
 })
