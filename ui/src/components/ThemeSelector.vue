@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Theme } from '@/stores/theme'
-import { Moon, Sun } from 'lucide-vue-next'
+import { Monitor, Moon, Sun } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import {
   Select,
@@ -15,9 +15,9 @@ const { t } = useI18n()
 const themeStore = useThemeStore()
 
 const themeOptions = [
+  { value: 'system' as const, label: t('systemMode'), icon: Monitor },
   { value: 'light' as const, label: t('lightMode'), icon: Sun },
   { value: 'dark' as const, label: t('darkMode'), icon: Moon },
-  // { value: 'system' as const, label: t('systemMode'), icon: Monitor },
 ]
 
 function handleThemeChange(newTheme: unknown) {
@@ -61,13 +61,13 @@ function handleThemeChange(newTheme: unknown) {
 zh-CN:
   theme: 主题
   themeDescription: 选择您偏好的颜色主题
+  systemMode: 跟随系统
   lightMode: 浅色模式
   darkMode: 深色模式
-  systemMode: 跟随系统
 en-US:
   theme: Theme
   themeDescription: Choose your preferred color theme
+  systemMode: System Mode
   lightMode: Light Mode
   darkMode: Dark Mode
-  systemMode: System Mode
 </i18n>

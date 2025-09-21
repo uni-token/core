@@ -2,7 +2,6 @@
 import { BarChart3, Brain, Grid3X3, InfoIcon, Settings } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import ServiceStatus from '@/components/ServiceStatus.vue'
-import ThemeToggle from '@/components/ThemeToggle.vue'
 import {
   Sidebar,
   SidebarContent,
@@ -101,11 +100,7 @@ const { t } = useI18n()
 
     <SidebarFooter>
       <div class="px-2">
-        <ServiceStatus variant="full">
-          <template #actions>
-            <ThemeToggle />
-          </template>
-        </ServiceStatus>
+        <ServiceStatus variant="full" />
       </div>
     </SidebarFooter>
   </Sidebar>

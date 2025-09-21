@@ -7,7 +7,6 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import AppSidebar from '@/components/AppSidebar.vue'
 import LoginForm from '@/components/LoginForm.vue'
-import ThemeToggle from '@/components/ThemeToggle.vue'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { Toaster } from '@/components/ui/sonner'
 import { useThemeStore } from '@/stores/theme'
@@ -85,19 +84,16 @@ onUIOpened()
       <AppSidebar />
       <SidebarInset>
         <div class="md:hidden bg-background border-b border-border sticky top-0 z-50">
-          <div class="flex items-center justify-between h-14 px-4">
-            <div class="flex items-center gap-3">
-              <SidebarTrigger class="h-8 w-8" />
-              <div class="flex items-center gap-2">
-                <div class="rounded-lg bg-primary p-1.5 text-primary-foreground">
-                  <Zap class="h-3 w-3" />
-                </div>
-                <h1 class="text-base font-semibold">
-                  {{ t('appName') }}
-                </h1>
+          <div class="flex items-center gap-3 h-14 px-4">
+            <SidebarTrigger class="h-8 w-8" />
+            <div class="flex items-center gap-2">
+              <div class="rounded-lg bg-primary p-1.5 text-primary-foreground">
+                <Zap class="h-3 w-3" />
               </div>
+              <h1 class="text-base font-semibold">
+                {{ t('appName') }}
+              </h1>
             </div>
-            <ThemeToggle />
           </div>
         </div>
         <RouterView />

@@ -40,25 +40,22 @@ const serviceStore = useServiceStore()
       </div>
     </div>
 
-    <div class="flex items-center justify-between">
-      <HoverCard :open-delay="400">
-        <HoverCardTrigger>
-          <div class="h-8 flex items-center gap-1 text-xs text-sidebar-foreground/70">
-            <div
-              class="mx-1 h-2 w-2 rounded-full mb-[2px]"
-              :class="serviceStore.serverConnected ? 'bg-green-500' : 'bg-red-500'"
-            />
-            <span class="text-sm select-none">{{ serviceStore.serverConnected ? t('connected') : t('disconnected') }}</span>
-          </div>
-        </HoverCardTrigger>
-        <HoverCardContent v-if="serviceStore.serverConnected" :side-offset="0" class="pt-2 py-1">
-          <div class="font-mono text-sm text-center mt-1">
-            {{ serviceStore.serviceHost }}
-          </div>
-        </HoverCardContent>
-      </HoverCard>
-      <slot name="actions" />
-    </div>
+    <HoverCard :open-delay="400">
+      <HoverCardTrigger>
+        <div class="h-8 flex items-center justify-center gap-2 text-xs text-sidebar-foreground/70">
+          <div
+            class="h-2 w-2 rounded-full mb-[2px]"
+            :class="serviceStore.serverConnected ? 'bg-green-500' : 'bg-red-500'"
+          />
+          <span class="text-sm select-none">{{ serviceStore.serverConnected ? t('connected') : t('disconnected') }}</span>
+        </div>
+      </HoverCardTrigger>
+      <HoverCardContent v-if="serviceStore.serverConnected" :side-offset="0" class="pt-2 py-1">
+        <div class="font-mono text-sm text-center mt-1">
+          {{ serviceStore.serviceHost }}
+        </div>
+      </HoverCardContent>
+    </HoverCard>
   </div>
 
   <!-- Compact variant (used in login form) -->

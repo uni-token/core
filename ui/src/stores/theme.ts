@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 
-export type Theme = 'light' | 'dark' | 'system'
+export type Theme = 'system' | 'light' | 'dark'
 
 export const useThemeStore = defineStore('theme', () => {
   const theme = ref<Theme>('system')
@@ -10,7 +10,7 @@ export const useThemeStore = defineStore('theme', () => {
   // Initialize theme from localStorage or default to system
   function initTheme() {
     const savedTheme = localStorage.getItem('theme') as Theme | null
-    if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
+    if (savedTheme && ['system', 'light', 'dark'].includes(savedTheme)) {
       theme.value = savedTheme
     }
     updateTheme()

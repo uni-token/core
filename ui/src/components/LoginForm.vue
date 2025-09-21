@@ -4,7 +4,6 @@ import { useI18n } from 'vue-i18n'
 import LanguageSelector from '@/components/LanguageSelector.vue'
 import ServiceStatus from '@/components/ServiceStatus.vue'
 import StartServiceButton from '@/components/StartServiceButton.vue'
-import ThemeToggle from '@/components/ThemeToggle.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -159,9 +158,8 @@ async function handleSubmit() {
       </CardContent>
     </Card>
 
-    <div class="flex gap-2 fixed right-4 bottom-4">
+    <div class="fixed right-4 bottom-4">
       <LanguageSelector compact />
-      <ThemeToggle />
     </div>
   </div>
 </template>
