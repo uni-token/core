@@ -175,7 +175,7 @@ onMounted(() => {
             </SelectContent>
           </Select>
           <Button variant="outline" size="icon" :disabled="loading" @click="refreshStats">
-            <RefreshCw :class="['h-4 w-4', loading ? 'animate-spin' : '']" />
+            <RefreshCw class="h-4 w-4" :class="[loading ? 'animate-spin' : '']" />
           </Button>
         </div>
       </div>
@@ -185,8 +185,12 @@ onMounted(() => {
       </div>
 
       <div v-else-if="error" class="p-6 bg-destructive/5 border border-destructive/50 rounded-2xl">
-        <p class="text-destructive font-medium">{{ t('loadFailed') }}</p>
-        <p class="text-sm text-destructive/80">{{ error }}</p>
+        <p class="text-destructive font-medium">
+          {{ t('loadFailed') }}
+        </p>
+        <p class="text-sm text-destructive/80">
+          {{ error }}
+        </p>
       </div>
 
       <div v-else-if="stats" class="space-y-6">
@@ -194,7 +198,9 @@ onMounted(() => {
           <CardContent class="p-6 space-y-6 text-foreground">
             <div class="flex flex-wrap items-center justify-between gap-4">
               <div>
-                <p class="text-sm text-muted-foreground">{{ t('totalTokens') }}</p>
+                <p class="text-sm text-muted-foreground">
+                  {{ t('totalTokens') }}
+                </p>
                 <h3 class="text-4xl font-semibold text-foreground">
                   {{ formatNumber(totalTokens) }}
                   <span class="text-xl font-normal text-muted-foreground">{{ t('tokensUnit') }}</span>
@@ -206,16 +212,28 @@ onMounted(() => {
             </div>
             <div class="grid gap-4 md:grid-cols-3">
               <div class="rounded-2xl border bg-muted/30 p-4">
-                <p class="text-sm text-muted-foreground">{{ t('totalCost') }}</p>
-                <p class="text-2xl font-semibold mt-1 text-foreground">{{ formatCurrency(totalCost) }}</p>
+                <p class="text-sm text-muted-foreground">
+                  {{ t('totalCost') }}
+                </p>
+                <p class="text-2xl font-semibold mt-1 text-foreground">
+                  {{ formatCurrency(totalCost) }}
+                </p>
               </div>
               <div class="rounded-2xl border bg-muted/30 p-4">
-                <p class="text-sm text-muted-foreground">{{ t('totalRequests') }}</p>
-                <p class="text-2xl font-semibold mt-1 text-foreground">{{ formatNumber(totalRequests) }}</p>
+                <p class="text-sm text-muted-foreground">
+                  {{ t('totalRequests') }}
+                </p>
+                <p class="text-2xl font-semibold mt-1 text-foreground">
+                  {{ formatNumber(totalRequests) }}
+                </p>
               </div>
               <div class="rounded-2xl border bg-muted/30 p-4">
-                <p class="text-sm text-muted-foreground">{{ t('averageTokensPerRequest') }}</p>
-                <p class="text-2xl font-semibold mt-1 text-foreground">{{ formatNumber(avgTokens) }}</p>
+                <p class="text-sm text-muted-foreground">
+                  {{ t('averageTokensPerRequest') }}
+                </p>
+                <p class="text-2xl font-semibold mt-1 text-foreground">
+                  {{ formatNumber(avgTokens) }}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -248,12 +266,16 @@ onMounted(() => {
                 >
                   <div class="flex items-center justify-between">
                     <div>
-                      <p class="font-medium text-sm">{{ app.name }}</p>
+                      <p class="font-medium text-sm">
+                        {{ app.name }}
+                      </p>
                       <p class="text-xs text-muted-foreground">
                         {{ app.requests }} {{ t('requests') }} · {{ formatCurrency(app.cost) }}
                       </p>
                     </div>
-                    <p class="font-mono text-sm">{{ formatNumber(app.tokens) }}</p>
+                    <p class="font-mono text-sm">
+                      {{ formatNumber(app.tokens) }}
+                    </p>
                   </div>
                   <div class="mt-3 h-2 rounded-full bg-muted overflow-hidden">
                     <div
@@ -292,12 +314,16 @@ onMounted(() => {
                 >
                   <div class="flex items-center justify-between">
                     <div>
-                      <p class="font-medium text-sm">{{ provider.name }}</p>
+                      <p class="font-medium text-sm">
+                        {{ provider.name }}
+                      </p>
                       <p class="text-xs text-muted-foreground">
                         {{ provider.requests }} {{ t('requests') }} · {{ formatCurrency(provider.cost) }}
                       </p>
                     </div>
-                    <p class="font-mono text-sm">{{ formatNumber(provider.tokens) }}</p>
+                    <p class="font-mono text-sm">
+                      {{ formatNumber(provider.tokens) }}
+                    </p>
                   </div>
                   <div class="mt-3 h-2 rounded-full bg-muted overflow-hidden">
                     <div
