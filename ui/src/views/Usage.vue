@@ -394,10 +394,10 @@ zh-CN:
   last30Days: 最近30天
   last90Days: 最近90天
   refresh: 刷新
-  totalTokens: 总Token消耗
+  totalTokens: 总 Token 消耗
   totalCost: 总费用
   totalRequests: 总请求数
-  averageTokensPerRequest: 平均每请求Token
+  averageTokensPerRequest: 平均每请求 Token
   loadFailed: 加载用量统计失败
   byApp: 按应用统计
   byProvider: 按提供商统计
