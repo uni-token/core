@@ -20,7 +20,7 @@ uv --directory sdk/python sync
 ```sh
 pnpm -C ui dev
 pnpm -C docs dev
-go -C service run main.go
+go -C service run main.go debug
 uv --directory sdk/python run example.py
 ```
 
