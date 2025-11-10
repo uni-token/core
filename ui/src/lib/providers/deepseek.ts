@@ -1,11 +1,10 @@
-import type { Provider, ProviderUserInfo } from './index'
-import { createSharedComposable } from '@vueuse/core'
-import { markRaw, ref } from 'vue'
-import DeepSeekLoginCard from '@/components/DeepSeekLoginCard.vue'
+import type { ProviderUserInfo } from './index'
+import { defineAsyncComponent, markRaw, ref } from 'vue'
 import { useServiceStore } from '@/stores'
 import { useI18n } from '../locals'
+import { defineProvider } from './index'
 
-export const useDeepSeekProvider = createSharedComposable((): Provider => {
+export const useDeepSeekProvider = defineProvider(() => {
   const { t } = useI18n({
     'zh-CN': {
       providerName: 'DeepSeek',
@@ -31,7 +30,7 @@ export const useDeepSeekProvider = createSharedComposable((): Provider => {
       return user.value
     },
     async refreshUser() {
-      const res = await api('deepseek/status', {
+      const res = await api('https://platform.deepseek.com/auth-api/v0/users/current', {
         method: 'GET',
       })
 
@@ -51,7 +50,7 @@ export const useDeepSeekProvider = createSharedComposable((): Provider => {
       user.value = null
     },
 
-    Login: markRaw(DeepSeekLoginCard),
+    Login: defineAsyncComponent(() => import('@/components/DeepSeekLoginCard.vue')),
     async logout() {
       const res = await api('deepseek/logout', {
         method: 'POST',
@@ -180,6 +179,10 @@ export const useDeepSeekProvider = createSharedComposable((): Provider => {
         }
       }
       throw new Error('API Key creation failed')
+    },
+
+    apis: {
+
     },
   }
 })

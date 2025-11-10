@@ -41,19 +41,32 @@ export const useSiliconFlowProvider = defineProvider(() => {
 
   const user = ref<null | ProviderUserInfo>()
 
-  const commonHeaders = {
-    'Accept': '*/*',
-    'Accept-Language': 'zh-CN,zh;q=0.9',
-    'Priority': 'u=1, i',
-    'Sec-CH-UA': `"Not)A;Brand";v="8", "Chromium";v="138", "Microsoft Edge";v="138"`,
-    'Sec-CH-UA-Mobile': '?0',
-    'Sec-CH-UA-Platform': `"Linux"`,
-    'Sec-Fetch-Dest': 'empty',
-    'Sec-Fetch-Mode': 'cors',
-    'Sec-Fetch-Site': 'same-origin',
-    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0',
-    'Origin': 'https://cloud.siliconflow.cn',
-    'Content-Type': 'application/json',
+  async function makeHeaders(requireSession: boolean, extra?: Record<string, string>) {
+    const s = requireSession ? null : await session.get()
+    if (requireSession && !s) {
+      throw new Error('No session found')
+    }
+    return {
+      'Accept': '*/*',
+      'Accept-Language': 'zh-CN,zh;q=0.9',
+      'Priority': 'u=1, i',
+      'Sec-CH-UA': `"Not)A;Brand";v="8", "Chromium";v="138", "Microsoft Edge";v="138"`,
+      'Sec-CH-UA-Mobile': '?0',
+      'Sec-CH-UA-Platform': `"Linux"`,
+      'Sec-Fetch-Dest': 'empty',
+      'Sec-Fetch-Mode': 'cors',
+      'Sec-Fetch-Site': 'same-origin',
+      'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0',
+      'Origin': 'https://cloud.siliconflow.cn',
+      'Content-Type': 'application/json',
+      ...extra,
+      ...(s
+        ? {
+            'X-Subject-ID': s.subjectID,
+            'Cookie': s.cookie,
+          }
+        : {}),
+    }
   }
 
   return {
@@ -74,12 +87,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
       }
 
       const { ok, json } = await proxy('https://cloud.siliconflow.cn/biz-server/api/v1/user/info', {
-        headers: {
-          ...commonHeaders,
-          'Referer': 'https://cloud.siliconflow.cn/me/account/info',
-          'X-Subject-ID': s.subjectID,
-          'Cookie': s.cookie,
-        },
+        headers: await makeHeaders(true),
       })
 
       if (!ok) {
@@ -105,17 +113,8 @@ export const useSiliconFlowProvider = defineProvider(() => {
 
     verification: {
       async check() {
-        const s = await session.get()
-        if (!s) {
-          throw new Error('No session found')
-        }
         const { ok, json } = await proxy('https://cloud.siliconflow.cn/biz-server/api/v1/subject/auth/info', {
-          headers: {
-            ...commonHeaders,
-            'Referer': 'https://cloud.siliconflow.cn/me/account/authentication/personal',
-            'X-Subject-ID': s.subjectID,
-            'Cookie': s.cookie,
-          },
+          headers: await makeHeaders(true),
         })
 
         if (ok && json.code === 20000 && json.status && json.data?.auth) {
@@ -152,19 +151,9 @@ export const useSiliconFlowProvider = defineProvider(() => {
       },
 
       async submit(data) {
-        const s = await session.get()
-        if (!s) {
-          throw new Error('No session found')
-        }
-
         const { ok, json } = await proxy('https://cloud.siliconflow.cn/biz-server/api/v1/subject/auth/save', {
           method: 'POST',
-          headers: {
-            ...commonHeaders,
-            'Referer': 'https://cloud.siliconflow.cn/me/account/authentication/personal',
-            'X-Subject-ID': s.subjectID,
-            'Cookie': s.cookie,
-          },
+          headers: await makeHeaders(true),
           body: JSON.stringify({
             username: data.name.trim(),
             cardType: data.cardType,
@@ -186,22 +175,13 @@ export const useSiliconFlowProvider = defineProvider(() => {
 
     payment: {
       async createWeChatPay(options) {
-        const s = await session.get()
-        if (!s) {
-          throw new Error('No session found')
-        }
         const { ok, json } = await proxy('https://cloud.siliconflow.cn/biz-server/api/v1/pay/transactions', {
           method: 'POST',
           body: JSON.stringify({
             platform: 'wx',
             amount: String(options.amount),
           }),
-          headers: {
-            ...commonHeaders,
-            'Referer': 'https://cloud.siliconflow.cn/me/expensebill',
-            'X-Subject-ID': s.subjectID,
-            'Cookie': s.cookie,
-          },
+          headers: await makeHeaders(true),
         })
 
         if (ok && json.code === 20000 && json.status && json.data) {
@@ -215,17 +195,9 @@ export const useSiliconFlowProvider = defineProvider(() => {
       },
 
       async checkWeChatPay(options) {
-        const s = await session.get()
-        if (!s) {
-          throw new Error('No session found')
-        }
         const { ok, json } = await proxy(`https://cloud.siliconflow.cn/biz-server/api/v1/pay/status?order=${options.orderId}`, {
           method: 'GET',
-          headers: {
-            ...commonHeaders,
-            'X-Subject-ID': s.subjectID,
-            'Cookie': s.cookie,
-          },
+          headers: await makeHeaders(true),
         })
 
         if (ok && json.code === 20000 && json.status && json.data) {
@@ -243,21 +215,12 @@ export const useSiliconFlowProvider = defineProvider(() => {
 
     baseURL: 'https://api.siliconflow.cn/v1',
     async createKey() {
-      const s = await session.get()
-      if (!s) {
-        throw new Error('No session found')
-      }
       const { ok, json } = await proxy('https://cloud.siliconflow.cn/biz-server/api/v1/apikey/create', {
         body: JSON.stringify({
           description: 'Generated by UniToken',
         }),
         method: 'POST',
-        headers: {
-          ...commonHeaders,
-          'Referer': 'https://cloud.siliconflow.cn/me/account/ak',
-          'X-Subject-ID': s.subjectID,
-          'Cookie': s.cookie,
-        },
+        headers: await makeHeaders(true),
       })
 
       if (ok) {
@@ -272,7 +235,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
       async sendSms(payload: unknown) {
         return proxy('https://account.siliconflow.cn/api/open/sms', {
           method: 'POST',
-          headers: commonHeaders,
+          headers: await makeHeaders(false),
           body: JSON.stringify(payload),
         })
       },
@@ -280,7 +243,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
       async sendEmail(payload: unknown) {
         return proxy('https://account.siliconflow.cn/api/open/email', {
           method: 'POST',
-          headers: commonHeaders,
+          headers: await makeHeaders(false),
           body: JSON.stringify(payload),
         })
       },
@@ -288,7 +251,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
       async loginViaSms(payload: unknown) {
         const { ok, status, headers } = await proxy('https://account.siliconflow.cn/api/open/login/user', {
           method: 'POST',
-          headers: commonHeaders,
+          headers: await makeHeaders(false),
           body: JSON.stringify(payload),
         })
 
@@ -304,8 +267,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
         const cookie = setCookieHeader.split(';').map(c => c.trim()).join('; ')
 
         const meRes = await proxy('https://cloud.siliconflow.cn/me', {
-          headers: {
-            ...commonHeaders,
+          headers: await makeHeaders(false, {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
             'Referer': 'https://account.siliconflow.cn/',
             'Sec-Fetch-Dest': 'document',
@@ -314,7 +276,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
             'Sec-Fetch-User': '?1',
             'Upgrade-Insecure-Requests': '1',
             'Cookie': cookie,
-          },
+          }),
         })
         const subjectID = meRes.headers.get('X-Subject-ID')!
         await session.put({ cookie, subjectID })
@@ -323,7 +285,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
       async loginViaEmail(payload: unknown) {
         const { ok, status, headers } = await proxy('https://account.siliconflow.cn/api/open/login/email', {
           method: 'POST',
-          headers: commonHeaders,
+          headers: await makeHeaders(false),
           body: JSON.stringify(payload),
         })
 
@@ -339,8 +301,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
         const cookie = setCookieHeader.split(';').map(c => c.trim()).join('; ')
 
         const meRes = await proxy('https://cloud.siliconflow.cn/me', {
-          headers: {
-            ...commonHeaders,
+          headers: await makeHeaders(false, {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
             'Referer': 'https://account.siliconflow.cn/',
             'Sec-Fetch-Dest': 'document',
@@ -349,7 +310,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
             'Sec-Fetch-User': '?1',
             'Upgrade-Insecure-Requests': '1',
             'Cookie': cookie,
-          },
+          }),
         })
         const subjectID = meRes.headers.get('X-Subject-ID')!
         await session.put({ cookie, subjectID })

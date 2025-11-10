@@ -1,6 +1,5 @@
 import type { ProviderUserInfo } from './index'
-import { markRaw, ref } from 'vue'
-import OpenRouterLoginCard from '@/components/OpenRouterLoginCard.vue'
+import { defineAsyncComponent, ref } from 'vue'
 import { useServiceStore } from '@/stores'
 import { useI18n } from '../locals'
 import { defineProvider, useProviderSession } from './index'
@@ -58,7 +57,7 @@ export const useOpenRouterProvider = defineProvider(() => {
       user.value = null
     },
 
-    Login: markRaw(OpenRouterLoginCard),
+    Login: defineAsyncComponent(() => import('@/components/OpenRouterLoginCard.vue')),
     async logout() {
       await session.delete()
       user.value = null
@@ -72,5 +71,7 @@ export const useOpenRouterProvider = defineProvider(() => {
       }
       return s.key
     },
+
+    apis: {},
   }
 })
