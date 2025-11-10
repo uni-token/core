@@ -1,11 +1,11 @@
-import type { Provider, ProviderUserInfo } from './index'
-import { createSharedComposable } from '@vueuse/core'
+import type { ProviderUserInfo } from './index'
 import { markRaw, ref } from 'vue'
 import OpenRouterLoginCard from '@/components/OpenRouterLoginCard.vue'
 import { useServiceStore } from '@/stores'
 import { useI18n } from '../locals'
+import { defineProvider, useProviderSession } from './index'
 
-export const useOpenRouterProvider = createSharedComposable((): Provider => {
+export const useOpenRouterProvider = defineProvider(() => {
   const { t } = useI18n({
     'zh-CN': {
       providerName: 'OpenRouter',
@@ -14,7 +14,12 @@ export const useOpenRouterProvider = createSharedComposable((): Provider => {
       providerName: 'OpenRouter',
     },
   })
-  const { fetch } = useServiceStore()
+  const { proxy } = useServiceStore()
+
+  const session = useProviderSession<{
+    key: string
+    userId: string
+  }>('openrouter')
 
   const user = ref<null | ProviderUserInfo>()
 
@@ -29,8 +34,15 @@ export const useOpenRouterProvider = createSharedComposable((): Provider => {
       return user.value
     },
     async refreshUser() {
-      const res = await fetch('openrouter/status', {
+      const s = await session.get()
+      if (!s) {
+        return
+      }
+      const res = await proxy('https://openrouter.ai/api/v1/credits', {
         method: 'GET',
+        headers: {
+          Authorization: `Bearer ${s.key}`,
+        },
       })
 
       if (res.ok) {
@@ -48,25 +60,17 @@ export const useOpenRouterProvider = createSharedComposable((): Provider => {
 
     Login: markRaw(OpenRouterLoginCard),
     async logout() {
-      const res = await fetch('openrouter/logout', {
-        method: 'POST',
-      })
-
-      if (!res.ok) {
-        throw new Error('Logout failed')
-      }
+      await session.delete()
       user.value = null
     },
 
     baseURL: 'https://openrouter.ai/api/v1',
     async createKey() {
-      const res = await fetch('openrouter/key')
-
-      if (res.ok) {
-        const data = await res.json()
-        return data.key
+      const s = await session.get()
+      if (!s) {
+        throw new Error('No session')
       }
-      throw new Error('API Key creation failed')
+      return s.key
     },
   }
 })

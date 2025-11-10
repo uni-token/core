@@ -7,7 +7,7 @@ import { useOpenRouterProvider } from '@/lib/providers/openrouter'
 import { useKeysStore, useServiceStore } from '@/stores'
 
 const { t } = useI18n()
-const { fetch } = useServiceStore()
+const { api: fetch } = useServiceStore()
 const provider = useOpenRouterProvider()
 const keysStore = useKeysStore()
 

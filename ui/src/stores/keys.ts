@@ -15,7 +15,7 @@ export interface APIKey {
 }
 
 export const useKeysStore = defineStore('keys', () => {
-  const { fetch } = useServiceStore()
+  const { api } = useServiceStore()
   const { t } = useI18n({
     'en-US': {
       addKeyFailed: 'Failed to add key',
@@ -39,7 +39,7 @@ export const useKeysStore = defineStore('keys', () => {
     loadingError.value = null
 
     try {
-      const response = await fetch('keys/list')
+      const response = await api('keys/list')
       if (response.ok) {
         const data = await response.json()
         keys.value = data.data
@@ -69,7 +69,7 @@ export const useKeysStore = defineStore('keys', () => {
 
   async function addKey(key: Omit<APIKey, 'id' | 'name'> & { name?: string }): Promise<APIKey> {
     try {
-      const response = await fetch('keys/add', {
+      const response = await api('keys/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ export const useKeysStore = defineStore('keys', () => {
 
   async function updateKey(keyId: string, key: APIKey) {
     try {
-      const response = await fetch(`keys/update/${encodeURIComponent(keyId)}`, {
+      const response = await api(`keys/update/${encodeURIComponent(keyId)}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -119,7 +119,7 @@ export const useKeysStore = defineStore('keys', () => {
 
   async function deleteKey(keyId: string) {
     try {
-      const response = await fetch(`keys/delete/${encodeURIComponent(keyId)}`, {
+      const response = await api(`keys/delete/${encodeURIComponent(keyId)}`, {
         method: 'DELETE',
       })
 

@@ -48,7 +48,7 @@ async function onUIOpened() {
 
   async function pingActive() {
     try {
-      const resp = await serviceStore.fetch('ui/active', {
+      const resp = await serviceStore.api('ui/active', {
         method: 'POST',
         body: JSON.stringify({ session }),
       })

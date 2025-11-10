@@ -9,13 +9,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { useSiliconFlowProvider } from '@/lib/providers/siliconflow'
-import { useKeysStore, useServiceStore, useThemeStore } from '@/stores'
+import { useKeysStore, useThemeStore } from '@/stores'
 
 const { t, locale } = useI18n()
 const themeStore = useThemeStore()
 const keysStore = useKeysStore()
 const provider = useSiliconFlowProvider()
-const { fetch } = useServiceStore()
 
 const isEmailLogin = ref(false)
 const phoneNumber = ref('')
@@ -38,24 +37,18 @@ const captchaConfig = {
 async function sendSMS(result: any) {
   if (isEmailLogin.value) {
     // Send email verification code
-    await fetch('siliconflow/email', {
-      body: JSON.stringify({
-        email: email.value,
-        ...result,
-      }),
-      method: 'POST',
-    })
+    await provider.sendEmail(JSON.stringify({
+      email: email.value,
+      ...result,
+    }))
   }
   else {
     // Send SMS verification code
-    await fetch('siliconflow/sms', {
-      body: JSON.stringify({
-        area: '+86',
-        phone: phoneNumber.value,
-        ...result,
-      }),
-      method: 'POST',
-    })
+    await provider.sendSms(JSON.stringify({
+      area: '+86',
+      phone: phoneNumber.value,
+      ...result,
+    }))
   }
 }
 
@@ -66,27 +59,21 @@ async function login() {
   try {
     isLoading.value = true
     const res = isEmailLogin.value
-      ? await fetch('siliconflow/login/email', {
-          body: JSON.stringify({
-            email: email.value,
-            code: smsCode.value,
-            agree: agreed.value,
-            keep: true,
-            area: '+86',
-          }),
-          method: 'POST',
-        })
-      : await fetch('siliconflow/login', {
-          body: JSON.stringify({
-            phone: phoneNumber.value,
-            code: smsCode.value,
-            shareCode: '',
-            agree: agreed.value,
-            keep: true,
-            area: '+86',
-          }),
-          method: 'POST',
-        })
+      ? await provider.loginByEmail(JSON.stringify({
+          email: email.value,
+          code: smsCode.value,
+          agree: agreed.value,
+          keep: true,
+          area: '+86',
+        }))
+      : await provider.login(JSON.stringify({
+          phone: phoneNumber.value,
+          code: smsCode.value,
+          shareCode: '',
+          agree: agreed.value,
+          keep: true,
+          area: '+86',
+        }))
 
     if (res.ok) {
       await provider.refreshUser()

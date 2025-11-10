@@ -12,7 +12,7 @@ import ShumeiCaptcha from './ShumeiCaptcha.vue'
 const { t, locale } = useI18n()
 const keysStore = useKeysStore()
 const provider = useDeepSeekProvider()
-const { fetch } = useServiceStore()
+const { api: fetch } = useServiceStore()
 
 const captchaConfig = {
   organization: 'P9usCUBauxft8eAmUXaZ',
@@ -50,7 +50,7 @@ function startCountdown() {
   }, 1000)
 }
 
-async function sendSMS(rid: string) {
+async function sendSMS(rid: string, device_id: string) {
   if (!canSendCode.value)
     return
 
@@ -61,10 +61,11 @@ async function sendSMS(rid: string) {
     const res = await fetch('deepseek/sms', {
       body: JSON.stringify({
         locale: locale.value === 'zh-CN' ? 'zh_CN' : 'en_US',
-        mobile_number: phoneNumber.value,
         turnstile_token: '',
-        shumei_verification: { region: 'GLOBAL', rid },
-        device_id: 'BpeI75x/8jEyx0Cf8+ceENFycckj5NmfAgbRg/za+xaDDzFfBlTiLwSJAqAg0PpFarvtePSmNZWgonTdCjntvWw==',
+        shumei_verification: { region: 'CN', rid },
+        device_id,
+        scenario: 'login',
+        mobile_number: phoneNumber.value,
       }),
       method: 'POST',
     })

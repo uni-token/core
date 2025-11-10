@@ -1,4 +1,6 @@
 import type { Component } from 'vue'
+import { createSharedComposable } from '@vueuse/core'
+import { defineDbStore } from '@/stores/db'
 
 export interface ProviderUserInfo {
   name: string
@@ -57,4 +59,26 @@ export interface Provider {
 
   readonly baseURL: string
   readonly createKey: () => Promise<string>
+}
+
+const useProviderSessionsDb = defineDbStore<unknown>('provider_sessions')
+
+export function useProviderSession<T>(providerId: string) {
+  const db = useProviderSessionsDb()
+
+  return {
+    get() {
+      return db.get(providerId) as Promise<T | null>
+    },
+    put(session: T) {
+      return db.put(providerId, session)
+    },
+    delete() {
+      return db.delete(providerId)
+    },
+  }
+}
+
+export function defineProvider<P extends Provider>(provider: () => P): () => P {
+  return createSharedComposable(provider)
 }

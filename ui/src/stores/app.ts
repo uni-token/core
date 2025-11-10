@@ -15,7 +15,7 @@ export interface App {
 }
 
 export const useAppStore = defineStore('app', () => {
-  const { fetch } = useServiceStore()
+  const { api: fetch } = useServiceStore()
   const { t } = useI18n({
     'zh-CN': {
       appDeleted: '应用已删除',

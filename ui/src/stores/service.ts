@@ -61,49 +61,68 @@ export const useServiceStore = defineStore('service', () => {
     requireFindService = true
   }, 5000)
 
+  async function api(path: string, options?: RequestInit) {
+    await initialLoad
+    if (!serviceUrl.value) {
+      throw new Error('Service not available')
+    }
+    try {
+      const resp = await fetch(
+        `${serviceUrl.value}${path}`,
+        token.value
+          ? {
+              ...options,
+              headers: {
+                Authorization: `Bearer ${token.value}`,
+                ...options?.headers,
+              },
+            }
+          : options,
+      )
+
+      if (resp.status === 401) {
+        console.error('Unauthorized access, please check your token')
+        authStore.currentUser = null
+        token.value = null
+      }
+
+      return resp
+    }
+    catch (error) {
+      requireFindService = true
+      console.error(`Error fetching ${path}:`, error)
+      throw error
+    }
+  }
+
+  async function proxy(url: string, options?: {
+    method?: string
+    headers?: { [key: string]: string }
+    body?: string
+  }) {
+    return await fetch(`${serviceUrl.value}proxy`, {
+      method: options?.method || 'GET',
+      headers: {
+        Authorization: `Bearer ${token.value}`,
+      },
+      body: JSON.stringify({
+        url,
+        headers: options?.headers || {},
+        body: options?.body || null,
+      }),
+    })
+  }
+
   return {
     serverConnected,
     serviceHost,
     serviceUrl,
     servicePort,
+    token,
     refreshService: () => {
       requireFindService = true
     },
-    token,
-    fetch: async (path: string, options?: RequestInit) => {
-      await initialLoad
-      if (!serviceUrl.value) {
-        throw new Error('Service not available')
-      }
-      try {
-        const resp = await fetch(
-          `${serviceUrl.value}${path}`,
-          token.value
-            ? {
-                ...options,
-                headers: {
-                  Authorization: `Bearer ${token.value}`,
-                  ...options?.headers,
-                },
-              }
-            : options,
-        )
-
-        if (resp.status === 401) {
-          if (resp.headers.get('X-Uni-Token-Error')) {
-            console.error('Unauthorized access, please check your token')
-            authStore.currentUser = null
-            token.value = null
-          }
-        }
-
-        return resp
-      }
-      catch (error) {
-        requireFindService = true
-        console.error(`Error fetching ${path}:`, error)
-        throw error
-      }
-    },
+    api,
+    proxy,
   }
 })
