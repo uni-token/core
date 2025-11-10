@@ -34,12 +34,12 @@ const captchaConfig = {
   protocol: 'https://',
 }
 
-async function sendSMS(result: any) {
+async function sendCode(captchaResult: any) {
   if (isEmailLogin.value) {
     // Send email verification code
     await provider.apis.sendEmail({
       email: email.value,
-      ...result,
+      ...captchaResult,
     })
   }
   else {
@@ -47,7 +47,7 @@ async function sendSMS(result: any) {
     await provider.apis.sendSms({
       area: '+86',
       phone: phoneNumber.value,
-      ...result,
+      ...captchaResult,
     })
   }
 }
@@ -162,7 +162,7 @@ function wxLogin() {
             :enabled="isEmailLogin ? email.length > 0 : phoneNumber.length > 0"
             :config="captchaConfig"
             class="h-10 px-4 bg-muted/50 rounded-r-md border-0 text-xs text-primary hover:bg-muted/70 transition-colors disabled:opacity-50"
-            @next="sendSMS"
+            @next="sendCode"
           />
         </div>
       </div>

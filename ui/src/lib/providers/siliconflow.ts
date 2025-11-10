@@ -269,7 +269,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
     },
 
     apis: {
-      async sendSms(payload: string) {
+      async sendSms(payload: unknown) {
         return proxy('https://account.siliconflow.cn/api/open/sms', {
           method: 'POST',
           headers: commonHeaders,
@@ -277,7 +277,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
         })
       },
 
-      async sendEmail(payload: string) {
+      async sendEmail(payload: unknown) {
         return proxy('https://account.siliconflow.cn/api/open/email', {
           method: 'POST',
           headers: commonHeaders,
@@ -285,7 +285,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
         })
       },
 
-      async loginViaSms(payload: any) {
+      async loginViaSms(payload: unknown) {
         const { ok, status, headers } = await proxy('https://account.siliconflow.cn/api/open/login/user', {
           method: 'POST',
           headers: commonHeaders,
@@ -320,7 +320,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
         await session.put({ cookie, subjectID })
       },
 
-      async loginViaEmail(payload: any) {
+      async loginViaEmail(payload: unknown) {
         const { ok, status, headers } = await proxy('https://account.siliconflow.cn/api/open/login/email', {
           method: 'POST',
           headers: commonHeaders,
