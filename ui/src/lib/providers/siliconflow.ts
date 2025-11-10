@@ -53,6 +53,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
     'Sec-Fetch-Site': 'same-origin',
     'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0',
     'Origin': 'https://cloud.siliconflow.cn',
+    'Content-Type': 'application/json',
   }
 
   return {
@@ -197,7 +198,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
           }),
           headers: {
             ...commonHeaders,
-            'Referer': 'https://cloud.siliconflow.cn/me/account/recharge',
+            'Referer': 'https://cloud.siliconflow.cn/me/expensebill',
             'X-Subject-ID': s.subjectID,
             'Cookie': s.cookie,
           },
@@ -267,90 +268,92 @@ export const useSiliconFlowProvider = defineProvider(() => {
       }
     },
 
-    async sendSms(payload: string) {
-      return proxy('https://account.siliconflow.cn/api/open/sms', {
-        method: 'POST',
-        headers: commonHeaders,
-        body: payload,
-      })
-    },
+    apis: {
+      async sendSms(payload: string) {
+        return proxy('https://account.siliconflow.cn/api/open/sms', {
+          method: 'POST',
+          headers: commonHeaders,
+          body: JSON.stringify(payload),
+        })
+      },
 
-    async sendEmail(payload: string) {
-      return proxy('https://account.siliconflow.cn/api/open/email', {
-        method: 'POST',
-        headers: commonHeaders,
-        body: payload,
-      })
-    },
+      async sendEmail(payload: string) {
+        return proxy('https://account.siliconflow.cn/api/open/email', {
+          method: 'POST',
+          headers: commonHeaders,
+          body: JSON.stringify(payload),
+        })
+      },
 
-    async loginViaSms(payload: any) {
-      const { ok, status, headers } = await proxy('https://account.siliconflow.cn/api/open/login/user', {
-        method: 'POST',
-        headers: commonHeaders,
-        body: JSON.stringify(payload),
-      })
+      async loginViaSms(payload: any) {
+        const { ok, status, headers } = await proxy('https://account.siliconflow.cn/api/open/login/user', {
+          method: 'POST',
+          headers: commonHeaders,
+          body: JSON.stringify(payload),
+        })
 
-      if (!ok) {
-        toast.error(status === 401 ? t('invalidCode') : t('loginFailed'))
-        throw new Error(`Login request failed with status ${status}`)
-      }
+        if (!ok) {
+          toast.error(status === 401 ? t('invalidCode') : t('loginFailed'))
+          throw new Error(`Login request failed with status ${status}`)
+        }
 
-      const setCookieHeader = headers.get('Set-Cookie')
-      if (!setCookieHeader) {
-        throw new Error('No Set-Cookie header found')
-      }
-      const cookie = setCookieHeader.split(';').map(c => c.trim()).join('; ')
+        const setCookieHeader = headers.get('Set-Cookie')
+        if (!setCookieHeader) {
+          throw new Error('No Set-Cookie header found')
+        }
+        const cookie = setCookieHeader.split(';').map(c => c.trim()).join('; ')
 
-      const meRes = await proxy('https://cloud.siliconflow.cn/me', {
-        headers: {
-          ...commonHeaders,
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-          'Referer': 'https://account.siliconflow.cn/',
-          'Sec-Fetch-Dest': 'document',
-          'Sec-Fetch-Mode': 'navigate',
-          'Sec-Fetch-Site': 'same-site',
-          'Sec-Fetch-User': '?1',
-          'Upgrade-Insecure-Requests': '1',
-          'Cookie': cookie,
-        },
-      })
-      const subjectID = meRes.headers.get('X-Subject-ID')!
-      await session.put({ cookie, subjectID })
-    },
+        const meRes = await proxy('https://cloud.siliconflow.cn/me', {
+          headers: {
+            ...commonHeaders,
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Referer': 'https://account.siliconflow.cn/',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'same-site',
+            'Sec-Fetch-User': '?1',
+            'Upgrade-Insecure-Requests': '1',
+            'Cookie': cookie,
+          },
+        })
+        const subjectID = meRes.headers.get('X-Subject-ID')!
+        await session.put({ cookie, subjectID })
+      },
 
-    async loginViaEmail(payload: any) {
-      const { ok, status, headers } = await proxy('https://account.siliconflow.cn/api/open/login/email', {
-        method: 'POST',
-        headers: commonHeaders,
-        body: JSON.stringify(payload),
-      })
+      async loginViaEmail(payload: any) {
+        const { ok, status, headers } = await proxy('https://account.siliconflow.cn/api/open/login/email', {
+          method: 'POST',
+          headers: commonHeaders,
+          body: JSON.stringify(payload),
+        })
 
-      if (!ok) {
-        toast.error(status === 401 ? t('invalidCode') : t('loginFailed'))
-        throw new Error(`Login request failed with status ${status}`)
-      }
+        if (!ok) {
+          toast.error(status === 401 ? t('invalidCode') : t('loginFailed'))
+          throw new Error(`Login request failed with status ${status}`)
+        }
 
-      const setCookieHeader = headers.get('Set-Cookie')
-      if (!setCookieHeader) {
-        throw new Error('No Set-Cookie header found')
-      }
-      const cookie = setCookieHeader.split(';').map(c => c.trim()).join('; ')
+        const setCookieHeader = headers.get('Set-Cookie')
+        if (!setCookieHeader) {
+          throw new Error('No Set-Cookie header found')
+        }
+        const cookie = setCookieHeader.split(';').map(c => c.trim()).join('; ')
 
-      const meRes = await proxy('https://cloud.siliconflow.cn/me', {
-        headers: {
-          ...commonHeaders,
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-          'Referer': 'https://account.siliconflow.cn/',
-          'Sec-Fetch-Dest': 'document',
-          'Sec-Fetch-Mode': 'navigate',
-          'Sec-Fetch-Site': 'same-site',
-          'Sec-Fetch-User': '?1',
-          'Upgrade-Insecure-Requests': '1',
-          'Cookie': cookie,
-        },
-      })
-      const subjectID = meRes.headers.get('X-Subject-ID')!
-      await session.put({ cookie, subjectID })
+        const meRes = await proxy('https://cloud.siliconflow.cn/me', {
+          headers: {
+            ...commonHeaders,
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Referer': 'https://account.siliconflow.cn/',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'same-site',
+            'Sec-Fetch-User': '?1',
+            'Upgrade-Insecure-Requests': '1',
+            'Cookie': cookie,
+          },
+        })
+        const subjectID = meRes.headers.get('X-Subject-ID')!
+        await session.put({ cookie, subjectID })
+      },
     },
   }
 })

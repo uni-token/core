@@ -37,18 +37,18 @@ const captchaConfig = {
 async function sendSMS(result: any) {
   if (isEmailLogin.value) {
     // Send email verification code
-    await provider.sendEmail(JSON.stringify({
+    await provider.apis.sendEmail({
       email: email.value,
       ...result,
-    }))
+    })
   }
   else {
     // Send SMS verification code
-    await provider.sendSms(JSON.stringify({
+    await provider.apis.sendSms({
       area: '+86',
       phone: phoneNumber.value,
       ...result,
-    }))
+    })
   }
 }
 
@@ -59,7 +59,7 @@ async function login() {
   try {
     isLoading.value = true
     if (isEmailLogin.value) {
-      await provider.loginViaEmail({
+      await provider.apis.loginViaEmail({
         email: email.value,
         code: smsCode.value,
         agree: agreed.value,
@@ -68,7 +68,7 @@ async function login() {
       })
     }
     else {
-      await provider.loginViaSms({
+      await provider.apis.loginViaSms({
         phone: phoneNumber.value,
         code: smsCode.value,
         shareCode: '',

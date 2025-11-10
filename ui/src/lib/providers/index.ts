@@ -17,7 +17,7 @@ export interface ProviderVerificationInfo {
   time?: number
 }
 
-export interface Provider {
+export interface Provider<A> {
   readonly id: string
   readonly name: string
   readonly homepage: string
@@ -64,6 +64,8 @@ export interface Provider {
 
   readonly baseURL: string
   readonly createKey: () => Promise<string>
+
+  readonly apis: A,
 }
 
 const useProviderSessionsDb = defineDbStore<unknown>('provider_sessions')
@@ -84,6 +86,6 @@ export function useProviderSession<T>(providerId: string) {
   }
 }
 
-export function defineProvider<P extends Provider>(provider: () => P): () => P {
+export function defineProvider<A>(provider: () => Provider<A>): () => Provider<A> {
   return createSharedComposable(provider)
 }
