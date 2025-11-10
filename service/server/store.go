@@ -13,7 +13,7 @@ func SetupStoreAPI(router gin.IRouter) {
 	{
 		api.DELETE("/:name", handleStoreDeleteAll)
 		api.GET("/:name/:key", handleStoreGet)
-		api.POST("/:name/:key", handleStorePut)
+		api.PUT("/:name/:key", handleStorePut)
 		api.DELETE("/:name/:key", handleStoreDelete)
 	}
 }

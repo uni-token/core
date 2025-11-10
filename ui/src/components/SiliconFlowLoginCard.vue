@@ -58,43 +58,36 @@ async function login() {
 
   try {
     isLoading.value = true
-    const res = isEmailLogin.value
-      ? await provider.loginByEmail(JSON.stringify({
-          email: email.value,
-          code: smsCode.value,
-          agree: agreed.value,
-          keep: true,
-          area: '+86',
-        }))
-      : await provider.login(JSON.stringify({
-          phone: phoneNumber.value,
-          code: smsCode.value,
-          shareCode: '',
-          agree: agreed.value,
-          keep: true,
-          area: '+86',
-        }))
-
-    if (res.ok) {
-      await provider.refreshUser()
-      // Clear login form
-      phoneNumber.value = ''
-      email.value = ''
-      smsCode.value = ''
-      toast.success(t('loginSuccess'))
-
-      // Automatically create API key after successful login
-      await keysStore.createAndAddKey(provider)
+    if (isEmailLogin.value) {
+      await provider.loginViaEmail({
+        email: email.value,
+        code: smsCode.value,
+        agree: agreed.value,
+        keep: true,
+        area: '+86',
+      })
     }
     else {
-      const errorData = await res.json()
-      if (res.status === 401) {
-        toast.error(errorData.message || t('invalidCode'))
-      }
-      else {
-        toast.error(errorData.message || t('loginFailed'))
-      }
+      await provider.loginViaSms({
+        phone: phoneNumber.value,
+        code: smsCode.value,
+        shareCode: '',
+        agree: agreed.value,
+        keep: true,
+        area: '+86',
+      })
     }
+
+    await provider.refreshUser()
+
+    // Clear login form
+    phoneNumber.value = ''
+    email.value = ''
+    smsCode.value = ''
+    toast.success(t('loginSuccess'))
+
+    // Automatically create API key after successful login
+    await keysStore.createAndAddKey(provider)
   }
   catch (error) {
     console.error('Login error:', error)

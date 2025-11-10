@@ -100,17 +100,37 @@ export const useServiceStore = defineStore('service', () => {
     headers?: { [key: string]: string }
     body?: string
   }) {
-    return await fetch(`${serviceUrl.value}proxy`, {
-      method: options?.method || 'GET',
+    const res = await fetch(`${serviceUrl.value}proxy`, {
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${token.value}`,
       },
       body: JSON.stringify({
+        method: options?.method || 'GET',
         url,
         headers: options?.headers || {},
         body: options?.body || null,
       }),
     })
+    if (!res.ok) {
+      throw new Error(`Proxy request failed with status ${res.status}`)
+    }
+    const data = await res.json() as {
+      status: number
+      headers: { [key: string]: string }
+      body: string
+    }
+    return {
+      ok: data.status >= 200 && data.status < 300,
+      status: data.status,
+      headers: new Headers(data.headers),
+      get text() {
+        return data.body
+      },
+      get json() {
+        return JSON.parse(data.body)
+      },
+    }
   }
 
   return {

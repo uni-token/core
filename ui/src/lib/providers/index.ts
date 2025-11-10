@@ -22,6 +22,11 @@ export interface Provider {
   readonly name: string
   readonly homepage: string
 
+  /**
+   * - `undefined`: loading
+   * - `null`: not logged in
+   * - `ProviderUserInfo`: logged in
+   */
   readonly user: undefined | null | ProviderUserInfo
   readonly refreshUser: () => Promise<void>
 

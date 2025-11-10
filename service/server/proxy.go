@@ -10,22 +10,24 @@ import (
 func SetupProxyAPI(router gin.IRouter) {
 	api := router.Group("/proxy").Use(RequireUserLogin())
 	{
-		api.GET("", handleProxy)
 		api.POST("", handleProxy)
-		api.DELETE("", handleProxy)
-		api.PUT("", handleProxy)
 	}
 }
 
 type ProxyRequest struct {
+	Method  string            `json:"method" binding:"required"`
 	Url     string            `json:"url" binding:"required"`
 	Headers map[string]string `json:"headers"`
 	Body    string            `json:"body"`
 }
 
-func handleProxy(c *gin.Context) {
-	println("Handle proxy")
+type ProxyResponse struct {
+	Status  int               `json:"status"`
+	Headers map[string]string `json:"headers"`
+	Body    string            `json:"body"`
+}
 
+func handleProxy(c *gin.Context) {
 	var req ProxyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -33,7 +35,7 @@ func handleProxy(c *gin.Context) {
 	}
 
 	client := &http.Client{}
-	proxyReq, err := http.NewRequest(c.Request.Method, req.Url, bytes.NewReader([]byte(req.Body)))
+	proxyReq, err := http.NewRequest(req.Method, req.Url, bytes.NewReader([]byte(req.Body)))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create proxy request"})
 		return
@@ -50,10 +52,23 @@ func handleProxy(c *gin.Context) {
 	}
 	defer resp.Body.Close()
 
+	var respBody bytes.Buffer
+	_, err = respBody.ReadFrom(resp.Body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read proxy response body"})
+		return
+	}
+
+	respHeaders := make(map[string]string)
 	for key, values := range resp.Header {
-		for _, value := range values {
-			c.Writer.Header().Add(key, value)
+		if len(values) > 0 {
+			respHeaders[key] = values[0]
 		}
 	}
-	c.Writer.WriteHeader(resp.StatusCode)
+
+	c.JSON(http.StatusOK, ProxyResponse{
+		Status:  resp.StatusCode,
+		Headers: respHeaders,
+		Body:    respBody.String(),
+	})
 }
