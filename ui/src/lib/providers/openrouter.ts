@@ -1,6 +1,5 @@
 import type { ProviderUserInfo } from './index'
 import { defineAsyncComponent, ref } from 'vue'
-import { useServiceStore } from '@/stores'
 import { useI18n } from '../locals'
 import { defineProvider, useProviderSession } from './index'
 
@@ -13,7 +12,6 @@ export const useOpenRouterProvider = defineProvider(() => {
       providerName: 'OpenRouter',
     },
   })
-  const { proxy } = useServiceStore()
 
   const session = useProviderSession<{
     key: string
@@ -35,26 +33,25 @@ export const useOpenRouterProvider = defineProvider(() => {
     async refreshUser() {
       const s = await session.get()
       if (!s) {
+        user.value = null
         return
       }
-      const res = await proxy('https://openrouter.ai/api/v1/credits', {
+
+      const res = await fetch('https://openrouter.ai/api/v1/credits', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${s.key}`,
         },
       })
-
-      if (res.ok) {
-        const data = await res.json()
-        if (data.userId) {
-          user.value = {
-            name: data.userId.slice(8),
-            balance: data.credits,
-          }
-          return
-        }
+      if (!res.ok) {
+        user.value = null
       }
-      user.value = null
+
+      const data = await res.json()
+      user.value = {
+        name: s.userId.slice(8),
+        balance: data.data.total_credits,
+      }
     },
 
     Login: defineAsyncComponent(() => import('@/components/OpenRouterLoginCard.vue')),
@@ -72,6 +69,8 @@ export const useOpenRouterProvider = defineProvider(() => {
       return s.key
     },
 
-    apis: {},
+    apis: {
+      session,
+    },
   }
 })
