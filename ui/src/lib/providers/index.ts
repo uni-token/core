@@ -65,7 +65,7 @@ export interface Provider<A> {
   readonly baseURL: string
   readonly createKey: () => Promise<string>
 
-  readonly apis: A,
+  readonly apis: A
 }
 
 const useProviderSessionsDb = defineDbStore<unknown>('provider_sessions')
