@@ -19,10 +19,16 @@ func SetupAPIServer() (int, error) {
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:        []string{"http://localhost:*", "https://uni-token.app"},
-		AllowWildcard:       true,
-		AllowMethods:        []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:        []string{"*"},
+		AllowOrigins:  []string{"http://localhost:*", "https://uni-token.app"},
+		AllowWildcard: true,
+		AllowMethods:  []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders: []string{
+			"Origin",
+			"Content-Length",
+			"Content-Type",
+			"Accept",
+			"Authorization",
+		},
 		ExposeHeaders:       []string{"*"},
 		AllowCredentials:    true,
 		AllowPrivateNetwork: true,

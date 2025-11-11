@@ -133,6 +133,10 @@ export const useServiceStore = defineStore('service', () => {
     }
   }
 
+  function getSimpleProxyUrl(targetUrl: string) {
+    return `${serviceUrl.value}proxy/${btoa(targetUrl)}${targetUrl.endsWith('/') ? '/' : ''}`
+  }
+
   return {
     serverConnected,
     serviceHost,
@@ -144,5 +148,6 @@ export const useServiceStore = defineStore('service', () => {
     },
     api,
     proxy,
+    getSimpleProxyUrl,
   }
 })

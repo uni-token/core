@@ -2,16 +2,15 @@ package server
 
 import (
 	"bytes"
+	"encoding/base64"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func SetupProxyAPI(router gin.IRouter) {
-	api := router.Group("/proxy").Use(RequireUserLogin())
-	{
-		api.POST("", handleProxy)
-	}
+	router.POST("/proxy", handleProxy, RequireUserLogin())
+	router.GET("/proxy/:base/*paths", handleSimpleProxy)
 }
 
 type ProxyRequest struct {
@@ -37,7 +36,7 @@ func handleProxy(c *gin.Context) {
 	client := &http.Client{}
 	proxyReq, err := http.NewRequest(req.Method, req.Url, bytes.NewReader([]byte(req.Body)))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create proxy request"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create proxy request: " + err.Error()})
 		return
 	}
 
@@ -47,7 +46,7 @@ func handleProxy(c *gin.Context) {
 
 	resp, err := client.Do(proxyReq)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to perform proxy request"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to perform proxy request: " + err.Error()})
 		return
 	}
 	defer resp.Body.Close()
@@ -55,7 +54,7 @@ func handleProxy(c *gin.Context) {
 	var respBody bytes.Buffer
 	_, err = respBody.ReadFrom(resp.Body)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read proxy response body"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read proxy response body: " + err.Error()})
 		return
 	}
 
@@ -71,4 +70,38 @@ func handleProxy(c *gin.Context) {
 		Headers: respHeaders,
 		Body:    respBody.String(),
 	})
+}
+
+func handleSimpleProxy(c *gin.Context) {
+	base, err := base64.StdEncoding.DecodeString(c.Param("base"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid base64 URL"})
+		return
+	}
+
+	paths := c.Param("paths")
+	targetUrl := string(base) + paths
+
+	client := &http.Client{}
+	proxyReq, err := http.NewRequest(c.Request.Method, targetUrl, c.Request.Body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create proxy request: " + err.Error()})
+		return
+	}
+
+	resp, err := client.Do(proxyReq)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to perform proxy request: " + err.Error()})
+		return
+	}
+	defer resp.Body.Close()
+
+	var respBody bytes.Buffer
+	_, err = respBody.ReadFrom(resp.Body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read proxy response body: " + err.Error()})
+		return
+	}
+
+	c.Data(resp.StatusCode, resp.Header.Get("Content-Type"), respBody.Bytes())
 }

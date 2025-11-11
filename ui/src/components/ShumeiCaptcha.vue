@@ -1,22 +1,11 @@
-<script setup lang="ts">
+<script lang="ts">
 import { useScriptTag } from '@vueuse/core'
 import { VisuallyHidden } from 'reka-ui'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from './ui/dialog'
 
-const props = defineProps<{
-  enabled: boolean
-  config: any
-}>()
-const emits = defineEmits<{
-  next: [result: any, device_id: string]
-}>()
-
-const { t } = useI18n()
-
 const state = ref<'loading' | 'init' | 'pending' | 'success'>('loading')
-const captcha = ref<any>(null)
 
 const window_ = window as unknown as {
   initSMCaptcha: any
@@ -44,13 +33,25 @@ window_._smConf = {
 }
 useScriptTag('https://static.portal101.cn/dist/web/v3.0.0/fp.min.js')
 
-function getDeviceId() {
-  return new Promise<string>((resolve) => {
-    window_.SMSdk.ready(() => {
-      resolve(window_.SMSdk.getDeviceId?.() || '')
-    })
+export const deviceId = new Promise<string>((resolve) => {
+  window_.SMSdk.ready(() => {
+    resolve(window_.SMSdk.getDeviceId?.() || '')
   })
-}
+})
+</script>
+
+<script setup lang="ts">
+const props = defineProps<{
+  enabled: boolean
+  config: any
+}>()
+const emits = defineEmits<{
+  next: [result: any]
+}>()
+
+const { t } = useI18n()
+
+const captcha = ref<any>(null)
 
 function onClick() {
   window_.initSMCaptcha({
@@ -62,7 +63,7 @@ function onClick() {
     c.onSuccess(async (e: any) => {
       if (e.pass) {
         state.value = 'success'
-        emits('next', e.rid, await getDeviceId())
+        emits('next', e.rid)
       }
       else {
         console.error('Captcha verification failed')

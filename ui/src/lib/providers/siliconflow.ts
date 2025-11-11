@@ -42,7 +42,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
   const user = ref<null | ProviderUserInfo>()
 
   async function makeHeaders(requireSession: boolean, extra?: Record<string, string>) {
-    const s = requireSession ? null : await session.get()
+    const s = requireSession ? await session.get() : null
     if (requireSession && !s) {
       throw new Error('No session found')
     }

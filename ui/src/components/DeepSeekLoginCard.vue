@@ -6,13 +6,12 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useDeepSeekProvider } from '@/lib/providers/deepseek'
-import { useKeysStore, useServiceStore } from '@/stores'
-import ShumeiCaptcha from './ShumeiCaptcha.vue'
+import { useKeysStore } from '@/stores'
+import ShumeiCaptcha, { deviceId } from './ShumeiCaptcha.vue'
 
 const { t, locale } = useI18n()
 const keysStore = useKeysStore()
 const provider = useDeepSeekProvider()
-const { api: fetch } = useServiceStore()
 
 const captchaConfig = {
   organization: 'P9usCUBauxft8eAmUXaZ',
@@ -50,7 +49,7 @@ function startCountdown() {
   }, 1000)
 }
 
-async function sendSMS(rid: string, device_id: string) {
+async function sendSMS(rid: string) {
   if (!canSendCode.value)
     return
 
@@ -58,27 +57,19 @@ async function sendSMS(rid: string, device_id: string) {
     isSendingCode.value = true
 
     // Send SMS with captcha verification result
-    const res = await fetch('deepseek/sms', {
-      body: JSON.stringify({
-        locale: locale.value === 'zh-CN' ? 'zh_CN' : 'en_US',
-        turnstile_token: '',
-        shumei_verification: { region: 'CN', rid },
-        device_id,
-        scenario: 'login',
-        mobile_number: phoneNumber.value,
-      }),
-      method: 'POST',
+    const json = await provider.apis.sendSMS({
+      locale: locale.value === 'zh-CN' ? 'zh_CN' : 'en_US',
+      turnstile_token: '',
+      shumei_verification: { region: 'CN', rid },
+      device_id: await deviceId,
+      scenario: 'login',
+      mobile_number: phoneNumber.value,
     })
 
-    if (res.ok) {
-      const { data } = await res.json()
-      if (data.code === 0) {
-        toast.success(t('smsSent'))
-        startCountdown()
-      }
-      else {
-        toast.error(t('smsFailure'))
-      }
+    const { data } = json
+    if (data.code === 0) {
+      toast.success(t('smsSent'))
+      startCountdown()
     }
     else {
       toast.error(t('smsFailure'))
@@ -100,29 +91,24 @@ async function login() {
   try {
     isLoading.value = true
 
-    const res = await fetch('deepseek/login', {
-      body: JSON.stringify({
-        phone: phoneNumber.value,
-        code: smsCode.value,
-        area_code: '+86',
-      }),
-      method: 'POST',
+    await provider.apis.loginWithSMS({
+      region: 'CN',
+      locale: 'zh_CN',
+      mobile_number: phoneNumber.value,
+      area_code: '+86',
+      sms_verification_code: smsCode.value,
+      device_id: await deviceId,
+      os: 'web',
     })
 
-    if (res.ok) {
-      await provider.refreshUser()
-      // Clear login form
-      phoneNumber.value = ''
-      smsCode.value = ''
-      toast.success(t('loginSuccess'))
+    await provider.refreshUser()
+    // Clear login form
+    phoneNumber.value = ''
+    smsCode.value = ''
+    toast.success(t('loginSuccess'))
 
-      // Automatically create API key after successful login
-      await keysStore.createAndAddKey(provider)
-    }
-    else {
-      const errorData = await res.json()
-      toast.error(errorData.message || t('loginFailure'))
-    }
+    // Automatically create API key after successful login
+    await keysStore.createAndAddKey(provider)
   }
   catch (error) {
     console.error('Login error:', error)
