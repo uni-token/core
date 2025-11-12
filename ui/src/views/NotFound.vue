@@ -1,19 +1,9 @@
 <script setup lang="ts">
-import {
-  Home,
-  RotateCcw,
-  Search,
-  Zap,
-} from 'lucide-vue-next'
+import { Home, RotateCcw, Search, Zap } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 const router = useRouter()
 const { t } = useI18n()

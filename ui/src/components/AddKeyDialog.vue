@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { useProvidersStore } from '@/stores'
+import { useProviders } from '@/lib/providers'
 import ManualConfigCard from './ManualConfigCard.vue'
 import ProviderCard from './ProviderCard.vue'
 
@@ -12,7 +12,7 @@ const emit = defineEmits<{
 const open = defineModel<boolean>('open')
 
 const { t } = useI18n()
-const providersStore = useProvidersStore()
+const providers = useProviders()
 
 async function handleConfigured(key: string) {
   emit('configured', key)
@@ -31,7 +31,7 @@ async function handleConfigured(key: string) {
       </DialogHeader>
 
       <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <ProviderCard v-for="provider in providersStore.list" :key="provider.id" :provider="provider" @configured="handleConfigured" />
+        <ProviderCard v-for="provider in providers" :key="provider.id" :provider="provider" @configured="handleConfigured" />
         <ManualConfigCard @configured="handleConfigured" />
       </div>
     </DialogContent>

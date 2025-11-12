@@ -1,6 +1,10 @@
 import type { Component } from 'vue'
 import { createSharedComposable } from '@vueuse/core'
+import { markRaw } from 'vue'
 import { defineDbStore } from '@/stores/db'
+import { useDeepSeekProvider } from './deepseek'
+import { useOpenRouterProvider } from './openrouter'
+import { useSiliconFlowProvider } from './siliconflow'
 
 export interface ProviderUserInfo {
   name: string
@@ -17,9 +21,13 @@ export interface ProviderVerificationInfo {
   time?: number
 }
 
-export interface Provider<A> {
+export interface Provider<A = unknown> {
   readonly id: string
   readonly name: string
+  /**
+   * Reference: https://github.com/CherryHQ/cherry-studio/tree/main/src/renderer/src/assets/images/providers
+   */
+  readonly logo: string
   readonly homepage: string
 
   /**
@@ -89,3 +97,18 @@ export function useProviderSession<T>(providerId: string) {
 export function defineProvider<A>(provider: () => Provider<A>): () => Provider<A> {
   return createSharedComposable(provider)
 }
+
+export const useProviders = createSharedComposable(() => {
+  const list = [
+    useSiliconFlowProvider(),
+    useDeepSeekProvider(),
+    useOpenRouterProvider(),
+  ]
+  const map = Object.fromEntries(list.map(p => [p.id, markRaw(p)])) as Record<string, Provider>
+
+  for (const provider of list) {
+    provider.refreshUser()
+  }
+
+  return map
+})

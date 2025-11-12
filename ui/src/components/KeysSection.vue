@@ -12,19 +12,20 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useKeysStore, useProvidersStore } from '@/stores'
+import { useProviders } from '@/lib/providers'
+import { useKeysStore } from '@/stores'
 
 const { t } = useI18n()
 const keysStore = useKeysStore()
-const providersStore = useProvidersStore()
+const providers = useProviders()
 
 const showProviderDialog = shallowRef<Provider | null>(null)
 const showEditDialog = ref(false)
 const editingKey = ref<APIKey | null>(null)
 
 function editKey(key: APIKey) {
-  if (providersStore.map[key.type]) {
-    showProviderDialog.value = providersStore.map[key.type]
+  if (providers[key.type]) {
+    showProviderDialog.value = providers[key.type]
     return
   }
   editingKey.value = key
@@ -66,7 +67,7 @@ onMounted(() => {
       <!-- Static cards for configuration (not draggable) -->
       <div class="grid gap-4 grid-cols-2 lg:grid-cols-3 mb-4">
         <!-- SiliconFlow configuration card (if not configured) -->
-        <Card v-for="provider in providersStore.list" :key="provider.id" class="relative gap-2">
+        <Card v-for="provider in providers" :key="provider.id" class="relative gap-2">
           <CardHeader>
             <div class="flex items-center justify-between">
               <CardTitle class="text-lg">

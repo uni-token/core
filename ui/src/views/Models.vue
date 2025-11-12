@@ -1,11 +1,11 @@
 <script setup lang="ts">
 // import PresetsSection from '@/components/PresetsSection.vue'
-import KeysSection from '@/components/KeysSection.vue'
+import ProvidersSection from '@/components/ProvidersSection.vue'
 </script>
 
 <template>
   <div class="p-6 flex flex-col gap-6 h-full">
-    <KeysSection />
+    <ProvidersSection />
     <!-- <PresetsSection /> -->
   </div>
 </template>

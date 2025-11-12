@@ -5,7 +5,8 @@ import { onMounted, ref, shallowRef, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { useKeysStore, useProvidersStore } from '@/stores'
+import { useProviders } from '@/lib/providers'
+import { useKeysStore } from '@/stores'
 import AddKeyDialog from './AddKeyDialog.vue'
 import ManualConfigCard from './ManualConfigCard.vue'
 import ProviderConfigDialog from './ProviderConfigDialog.vue'
@@ -16,7 +17,7 @@ const props = defineProps<{
 }>()
 const selectedKeyId = defineModel<string>()
 
-const providersStore = useProvidersStore()
+const providers = useProviders()
 const keysStore = useKeysStore()
 const { t } = useI18n()
 
@@ -52,7 +53,7 @@ watchEffect(() => {
       </template>
       <template v-else>
         <div class="grid gap-4 grid-cols-2 mb-4">
-          <Card v-for="provider in providersStore.list" :key="provider.id" class="relative gap-2">
+          <Card v-for="provider in providers" :key="provider.id" class="relative gap-2">
             <CardHeader>
               <div class="flex items-center justify-between">
                 <CardTitle class="text-lg">

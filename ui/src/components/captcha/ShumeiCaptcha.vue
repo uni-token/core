@@ -3,7 +3,7 @@ import { useScriptTag } from '@vueuse/core'
 import { VisuallyHidden } from 'reka-ui'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from './ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '../ui/dialog'
 
 const state = ref<'loading' | 'init' | 'pending' | 'success'>('loading')
 

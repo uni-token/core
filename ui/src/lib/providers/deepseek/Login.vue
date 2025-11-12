@@ -2,12 +2,12 @@
 import { computed, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
+import ShumeiCaptcha, { deviceId } from '@/components/captcha/ShumeiCaptcha.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useDeepSeekProvider } from '@/lib/providers/deepseek'
 import { useKeysStore } from '@/stores'
-import ShumeiCaptcha, { deviceId } from './ShumeiCaptcha.vue'
+import { useDeepSeekProvider } from '.'
 
 const { t, locale } = useI18n()
 const keysStore = useKeysStore()

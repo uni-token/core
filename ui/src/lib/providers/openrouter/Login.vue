@@ -3,8 +3,8 @@ import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { useOpenRouterProvider } from '@/lib/providers/openrouter'
 import { useKeysStore } from '@/stores'
+import { useOpenRouterProvider } from '.'
 
 const { t } = useI18n()
 const provider = useOpenRouterProvider()

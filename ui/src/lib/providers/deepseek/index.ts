@@ -1,8 +1,8 @@
-import type { ProviderUserInfo } from './index'
+import type { ProviderUserInfo } from '@/lib/providers'
 import { defineAsyncComponent, ref } from 'vue'
+import { useI18n } from '@/lib/locals'
+import { defineProvider, useProviderSession } from '@/lib/providers'
 import { useServiceStore } from '@/stores'
-import { useI18n } from '../locals'
-import { defineProvider, useProviderSession } from './index'
 
 export const useDeepSeekProvider = defineProvider(() => {
   const { t } = useI18n({
@@ -52,6 +52,9 @@ export const useDeepSeekProvider = defineProvider(() => {
     get name() {
       return t('providerName')
     },
+    get logo() {
+      return import.meta.resolve('./logo.png')
+    },
     homepage: 'https://www.deepseek.com/',
 
     get user() {
@@ -90,7 +93,7 @@ export const useDeepSeekProvider = defineProvider(() => {
       }
     },
 
-    Login: defineAsyncComponent(() => import('@/components/DeepSeekLoginCard.vue')),
+    Login: defineAsyncComponent(() => import('@/lib/providers/deepseek/Login.vue')),
     async logout() {
       await session.delete()
       user.value = null

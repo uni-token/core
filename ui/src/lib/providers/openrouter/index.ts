@@ -1,7 +1,7 @@
-import type { ProviderUserInfo } from './index'
+import type { ProviderUserInfo } from '@/lib/providers'
 import { defineAsyncComponent, ref } from 'vue'
-import { useI18n } from '../locals'
-import { defineProvider, useProviderSession } from './index'
+import { useI18n } from '@/lib/locals'
+import { defineProvider, useProviderSession } from '@/lib/providers'
 
 export const useOpenRouterProvider = defineProvider(() => {
   const { t } = useI18n({
@@ -24,6 +24,9 @@ export const useOpenRouterProvider = defineProvider(() => {
     id: 'openrouter',
     get name() {
       return t('providerName')
+    },
+    get logo() {
+      return import.meta.resolve('./logo.png')
     },
     homepage: 'https://openrouter.com/',
 
@@ -54,7 +57,7 @@ export const useOpenRouterProvider = defineProvider(() => {
       }
     },
 
-    Login: defineAsyncComponent(() => import('@/components/OpenRouterLoginCard.vue')),
+    Login: defineAsyncComponent(() => import('@/lib/providers/openrouter/Login.vue')),
     async logout() {
       await session.delete()
       user.value = null

@@ -3,13 +3,13 @@ import { useScriptTag } from '@vueuse/core'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
-import GeetestCaptcha from '@/components/GeetestCaptcha.vue'
+import GeetestCaptcha from '@/components/captcha/GeetestCaptcha.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { useSiliconFlowProvider } from '@/lib/providers/siliconflow'
 import { useKeysStore, useThemeStore } from '@/stores'
+import { useSiliconFlowProvider } from '.'
 
 const { t, locale } = useI18n()
 const themeStore = useThemeStore()
