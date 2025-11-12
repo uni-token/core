@@ -200,7 +200,7 @@ en-US:
   loadFailed: Failed to load
   description1: Purchase and configure API through
   description2: ''
-  loggedIn: Logged In
+  loggedIn: Configured
   loggedOut: Logged Out
   configure: Configure {0}
 </i18n>

@@ -148,11 +148,8 @@ onMounted(() => {
     <div class="space-y-6">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p class="text-xs uppercase tracking-wide text-muted-foreground">
-            {{ t('title') }}
-          </p>
           <h2 class="text-2xl font-bold">
-            {{ t('overview') }}
+            {{ t('title') }}
           </h2>
         </div>
         <div class="flex items-center gap-2">
@@ -388,8 +385,7 @@ onMounted(() => {
 
 <i18n lang="yaml">
 zh-CN:
-  title: Token 用量统计
-  overview: 用量总览
+  title: 用量统计
   last7Days: 最近7天
   last30Days: 最近30天
   last90Days: 最近90天
@@ -414,8 +410,7 @@ zh-CN:
   statusSuccess: 成功
   statusFailed: 失败
 en-US:
-  title: Token Usage Statistics
-  overview: Overview
+  title: Usage Statistics
   last7Days: Last 7 Days
   last30Days: Last 30 Days
   last90Days: Last 90 Days

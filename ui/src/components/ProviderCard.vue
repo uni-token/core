@@ -127,8 +127,8 @@ zh-CN:
   confirm: 确认
   userName: 用户名
 en-US:
-  loggedIn: Logged in
-  realname: Real Name
+  loggedIn: Configured
+  realname: Legal Name
   verified: Verified
   unverified: Unverified
   phone: Phone

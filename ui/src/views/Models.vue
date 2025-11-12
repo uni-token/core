@@ -23,5 +23,5 @@ zh-CN:
   title: 模型管理
 
 en-US:
-  title: Models
+  title: Model Providers
 </i18n>

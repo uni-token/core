@@ -119,7 +119,7 @@ async function checkAuthStatus() {
       </DialogHeader>
 
       <div v-if="status" class="space-y-4">
-        <Card>
+        <Card class="gap-y-2">
           <CardHeader class="pb-3">
             <CardTitle class="text-sm flex items-center gap-2 text-green-700">
               <div class="h-2 w-2 bg-green-500 rounded-full" />
@@ -264,7 +264,7 @@ en-US:
     description: As required by SiliconFlow, please complete real name authentication before recharging
     authStatusDescription: Your real name authentication status
     verified: Verified
-    realName: Real Name
+    realName: Legal Name
     realNamePlaceholder: Please enter your real name
     cardType: ID Type
     idCard: ID Card

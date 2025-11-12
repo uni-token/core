@@ -20,14 +20,19 @@ const showProviderDialog = shallowRef<Provider | null>(null)
 <template>
   <Dialog>
     <DialogTrigger>
-      <Card class="relative gap-2 hover:bg-secondary text-left">
+      <Card class="relative gap-2 hover:bg-secondary text-left h-full">
         <CardHeader>
           <CardTitle>
-            {{ t('title') }}
+            <div class="flex gap-2 items-center text-lg">
+              <ListPlusIcon class="w-6 mb-1" />
+              {{ t('title') }}
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          123
+          <div class="text-sm text-muted-foreground">
+            {{ t('description') }}
+          </div>
         </CardContent>
       </Card>
     </DialogTrigger>
@@ -67,16 +72,10 @@ const showProviderDialog = shallowRef<Provider | null>(null)
 <i18n lang="yaml">
 zh-CN:
   title: 其他提供商
-  description: 请输入您的 API 配置信息
-  manual: 手动配置
+  description: 选择或自定义您的模型提供商
+  manual: 自定义提供商
 en-US:
-  title: Manual API Configuration
-  description: Please enter your API configuration information
-  providerName: Provider Name
-  providerNamePlaceholder: e.g., OpenAI, Claude, etc.
-  baseUrl: Base URL
-  baseUrlPlaceholder: e.g., https://api.openai.com/v1
-  apiKey: API Key
-  apiKeyPlaceholder: Enter your API Key
-  save: Save Configuration
+  title: Other Providers
+  description: Select a provider or customize your own
+  manual: Custom Provider
 </i18n>

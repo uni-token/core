@@ -15,16 +15,16 @@ const showProviderDialog = shallowRef<Provider | null>(null)
 </script>
 
 <template>
-  <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+  <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
     <Card v-for="provider in providers" :key="provider.id" class="relative gap-2 hover:bg-secondary" @click="showProviderDialog = provider">
       <CardHeader>
         <div class="flex items-center justify-between flex-wrap gap-2">
-          <CardTitle class="flex text-lg min-w-0">
+          <CardTitle class="flex text-lg min-w-34">
             <ProviderName :provider="provider" />
           </CardTitle>
-          <div v-if="provider.user !== undefined" class="flex items-center gap-2 self-end">
+          <div v-if="provider.user !== undefined" class="flex items-center gap-2">
             <span
-              class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium text-accent-foreground"
+              class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium text-accent-foreground select-none"
               :class="{
                 'bg-emerald-200 dark:bg-green-500/60': !!provider.user,
                 'bg-accent': !provider.user,
@@ -73,6 +73,6 @@ en-US:
   loadFailed: Failed to load
   description1: Purchase and configure API through
   description2: ''
-  loggedIn: Logged In
-  loggedOut: Logged Out
+  loggedIn: Configured
+  loggedOut: Configure
 </i18n>
