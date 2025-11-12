@@ -49,7 +49,7 @@ async function handleManualConfigSave(config: ManualConfig) {
     </CardContent>
 
     <CardFooter>
-      <Button class="w-full" @click="showEditDialog = true">
+      <Button class="w-full" variant="secondary" @click="showEditDialog = true">
         {{ t('add') }}
       </Button>
     </CardFooter>

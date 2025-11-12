@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Provider } from '@/lib/providers'
+import { ExternalLinkIcon } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
@@ -29,6 +30,11 @@ onMounted(async () => {
 })
 
 function handleRecharge() {
+  if ('websiteURL' in props.provider.payment!) {
+    window.open(props.provider.payment!.websiteURL, '_blank', 'width=600,height=600,noopener=yes,noreferrer=yes')
+    return
+  }
+
   if (!userInfo.value?.verified) {
     toast.error(t('realNameRequired'))
     openRealNameDialog.value = true
@@ -76,7 +82,10 @@ function handleRecharge() {
         </div>
         <div v-if="userInfo.balance != null" class="flex justify-between items-center text-sm">
           <span class="text-muted-foreground">{{ t('balance') }}</span>
-          <span class="font-medium">{{ userInfo.balance }} {{ t('yuan') }}</span>
+          <span class="font-medium">
+            {{ userInfo.balance.currency === 'USD' ? '$' : '' }}{{ userInfo.balance.amount }}
+            {{ userInfo.balance.currency === 'CNY' ? t('yuan') : userInfo.balance.currency === 'USD' ? '' : `(${userInfo.balance.currency})` }}
+          </span>
         </div>
       </div>
     </CardContent>
@@ -87,6 +96,7 @@ function handleRecharge() {
       <div class="flex-grow" />
       <Button v-if="!!provider.payment" variant="secondary" size="sm" class="h-8" @click="handleRecharge">
         {{ t('recharge') }}
+        <ExternalLinkIcon v-if="'websiteURL' in provider.payment" />
       </Button>
       <Button variant="secondary" size="sm" class="h-8" @click="provider.logout">
         {{ t('logout') }}
@@ -101,7 +111,7 @@ function handleRecharge() {
 <i18n lang="yaml">
 zh-CN:
   loggedIn: 已登录
-  realname: 实名
+  realname: 实名认证
   verified: 已认证
   unverified: 未认证
   phone: 手机
@@ -123,7 +133,7 @@ en-US:
   unverified: Unverified
   phone: Phone
   balance: Balance
-  yuan: Yuan
+  yuan: CNY
   createKey: Create Key
   confirmCreateKey: Confirm Create Key
   confirmCreateKeyDescription: Are you sure you want to create a new API key? This will generate a new access key for your account.

@@ -112,7 +112,7 @@ zh-CN:
   appDescription: AI Token 聚合服务
   navigation: 导航
   appManagement: 应用管理
-  models: 模型提供商
+  models: 模型管理
   usage: 用量统计
   tools: 工具
   settings: 设置

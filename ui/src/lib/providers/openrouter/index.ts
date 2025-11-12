@@ -53,7 +53,10 @@ export const useOpenRouterProvider = defineProvider(() => {
       const data = await res.json()
       user.value = {
         name: s.userId.slice(8),
-        balance: data.data.total_credits,
+        balance: {
+          amount: data.data.total_credits,
+          currency: 'USD',
+        },
       }
     },
 
@@ -61,6 +64,10 @@ export const useOpenRouterProvider = defineProvider(() => {
     async logout() {
       await session.delete()
       user.value = null
+    },
+
+    payment: {
+      websiteURL: 'https://openrouter.ai/settings/credits',
     },
 
     baseURL: 'https://openrouter.ai/api/v1',

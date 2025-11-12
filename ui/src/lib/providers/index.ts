@@ -12,7 +12,10 @@ export interface ProviderUserInfo {
   verified?: boolean
   phone?: string
   email?: string
-  balance?: number
+  balance?: {
+    amount: number
+    currency?: 'USD' | 'CNY' | string
+  }
 }
 
 export interface ProviderVerificationInfo {
@@ -68,6 +71,8 @@ export interface Provider<A = unknown> {
     checkWeChatPay: (options: {
       orderId: string
     }) => Promise<'success' | 'wait' | 'canceled'>
+  } | {
+    readonly websiteURL: string
   }
 
   readonly baseURL: string

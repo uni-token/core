@@ -104,7 +104,10 @@ export const useSiliconFlowProvider = defineProvider(() => {
           verified: json.data.auth === 1,
           phone: json.data.phone,
           email: json.data.email,
-          balance: json.data.balance,
+          balance: {
+            amount: json.data.balance,
+            currency: 'CNY',
+          }
         }
       }
     },

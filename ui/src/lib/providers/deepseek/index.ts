@@ -85,7 +85,10 @@ export const useDeepSeekProvider = defineProvider(() => {
           verified: !!json.data.identity_verification_id,
           phone: json.data.mobile_number,
           email: json.data.email,
-          balance: +balanceJson.data.normal_wallets[0].balance,
+          balance: {
+            amount: +balanceJson.data.normal_wallets[0].balance,
+            currency: 'CNY',
+          },
         }
       }
       else {

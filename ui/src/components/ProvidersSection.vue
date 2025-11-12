@@ -4,6 +4,7 @@ import { shallowRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ManualConfigCard from '@/components/ManualConfigCard.vue'
 import ProviderConfigDialog from '@/components/ProviderConfigDialog.vue'
+import ProviderName from '@/components/ProviderName.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { useProviders } from '@/lib/providers'
@@ -23,16 +24,14 @@ const showProviderDialog = shallowRef<Provider | null>(null)
     </div>
 
     <div class="flex-grow flex flex-col">
-      <!-- Static cards for configuration (not draggable) -->
-      <div class="grid gap-4 grid-cols-2 lg:grid-cols-3 mb-4">
-        <!-- SiliconFlow configuration card (if not configured) -->
-        <Card v-for="provider in providers" :key="provider.id" class="relative gap-2">
+      <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <Card v-for="provider in providers" :key="provider.id" class="relative gap-2 hover:bg-secondary" @click="showProviderDialog = provider">
           <CardHeader>
-            <div class="flex items-center justify-between">
-              <CardTitle class="text-lg">
-                {{ provider.name }}
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <CardTitle class="flex ">
+                <ProviderName :provider="provider" />
               </CardTitle>
-              <div v-show="provider.user !== undefined" class="flex items-center gap-2">
+              <div v-if="provider.user !== undefined" class="flex items-center gap-2 self-end">
                 <span
                   class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium text-accent-foreground"
                   :class="{
@@ -50,22 +49,15 @@ const showProviderDialog = shallowRef<Provider | null>(null)
             <div class="text-sm text-muted-foreground">
               <p>
                 {{ t('description1') }}
-                <a :href="provider.homepage" target="_blank" class="text-blue-900 dark:text-blue-200 hover:underline">
+                <a :href="provider.homepage" target="_blank" class="text-blue-900 dark:text-blue-200 hover:underline" @click.stop>
                   {{ provider.name }}
                 </a>
                 {{ t('description2') }}
               </p>
             </div>
           </CardContent>
-
-          <CardFooter>
-            <Button class="w-full" @click="showProviderDialog = provider">
-              {{ t('configure', [provider.name]) }}
-            </Button>
-          </CardFooter>
         </Card>
 
-        <!-- Manual Configuration Provider Card -->
         <ManualConfigCard class="relative gap-2" />
       </div>
     </div>
@@ -86,7 +78,6 @@ zh-CN:
   description2: 购买和配置 API
   loggedIn: 已登录
   loggedOut: 未登录
-  configure: 配置 {0}
 
 en-US:
   title: Model Providers
@@ -95,5 +86,4 @@ en-US:
   description2: ''
   loggedIn: Logged In
   loggedOut: Logged Out
-  configure: Configure {0}
 </i18n>

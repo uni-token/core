@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Provider } from '@/lib/providers'
+import { CircleQuestionMarkIcon } from 'lucide-vue-next'
 import { renderSVG } from 'uqr'
 import { computed, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -14,6 +15,12 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 const props = defineProps<{
   provider: Provider
@@ -137,6 +144,16 @@ function clear() {
         <DialogTitle>{{ t('accountRecharge') }}</DialogTitle>
         <DialogDescription class="flex">
           {{ t('accountRechargeDescription', [provider.name]) }}
+          <TooltipProvider>
+            <Tooltip ignore-non-keyboard-focus>
+              <TooltipTrigger>
+                <CircleQuestionMarkIcon class="w-4 h-4  ml-1" />
+              </TooltipTrigger>
+              <TooltipContent>
+                {{ t('accountRechargeTooltip', [provider.name]) }}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <div class="flex-grow" />
           <div v-if="qrcSvg" class="text-sm text-muted-foreground">
             {{ formAmount }} {{ t('currency') }}
@@ -235,6 +252,7 @@ en-US:
   paymentPending: Payment Not Completed
   generating: Generating...
   generatePaymentQRCode: Generate Payment QR Code
+  accountRechargeTooltip: The funds will be directly recharged to your {0} account without going through the UniToken platform, ensuring the safety of your funds.
 
 zh-CN:
   accountRecharge: 账户充值
@@ -252,4 +270,5 @@ zh-CN:
   paymentPending: 支付未完成
   generating: 生成中...
   generatePaymentQRCode: 生成支付二维码
+  accountRechargeTooltip: 钱款会直接充值到您的{0}账户，不会经过 UniToken 平台，保证您的资金安全。
 </i18n>
