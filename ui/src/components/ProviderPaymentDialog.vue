@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Provider } from '@/lib/providers'
+import type { Provider, ProviderPaymentWeChat } from '@/lib/providers'
 import { CircleQuestionMarkIcon } from 'lucide-vue-next'
 import { renderSVG } from 'uqr'
 import { computed, onUnmounted, ref } from 'vue'
@@ -30,7 +30,7 @@ const open = defineModel<boolean>()
 
 const { t } = useI18n()
 
-const payment = computed(() => props.provider.payment!)
+const payment = computed(() => props.provider.payment as ProviderPaymentWeChat)
 const quickAmounts = [10, 50, 100, 200, 500, 1000]
 const formAmount = ref('')
 const creating = ref(false)

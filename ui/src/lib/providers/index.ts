@@ -24,6 +24,21 @@ export interface ProviderVerificationInfo {
   time?: number
 }
 
+export interface ProviderPaymentWeChat {
+  createWeChatPay: (options: {
+    amount: string
+  }) => Promise<{
+    orderId: string
+    qrcUrl: string
+    interval?: number
+    timeout?: number
+  }>
+
+  checkWeChatPay: (options: {
+    orderId: string
+  }) => Promise<'success' | 'wait' | 'canceled'>
+}
+
 export interface Provider<A = unknown> {
   readonly id: string
   readonly name: string
@@ -58,20 +73,7 @@ export interface Provider<A = unknown> {
     }>
   }
 
-  readonly payment?: {
-    createWeChatPay: (options: {
-      amount: string
-    }) => Promise<{
-      orderId: string
-      qrcUrl: string
-      interval?: number
-      timeout?: number
-    }>
-
-    checkWeChatPay: (options: {
-      orderId: string
-    }) => Promise<'success' | 'wait' | 'canceled'>
-  } | {
+  readonly payment?: ProviderPaymentWeChat | {
     readonly websiteURL: string
   }
 

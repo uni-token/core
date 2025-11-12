@@ -15,58 +15,48 @@ const showProviderDialog = shallowRef<Provider | null>(null)
 </script>
 
 <template>
-  <div class="space-y-6 flex-grow flex flex-col min-h-100">
-    <div class="flex items-center justify-between">
-      <h2 class="text-2xl font-bold">
-        {{ t('title') }}
-      </h2>
-    </div>
+  <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+    <Card v-for="provider in providers" :key="provider.id" class="relative gap-2 hover:bg-secondary" @click="showProviderDialog = provider">
+      <CardHeader>
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <CardTitle class="flex ">
+            <ProviderName :provider="provider" />
+          </CardTitle>
+          <div v-if="provider.user !== undefined" class="flex items-center gap-2 self-end">
+            <span
+              class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium text-accent-foreground"
+              :class="{
+                'bg-emerald-200 dark:bg-green-500/60': !!provider.user,
+                'bg-accent': !provider.user,
+              }"
+            >
+              {{ provider.user ? t('loggedIn') : t('loggedOut') }}
+            </span>
+          </div>
+        </div>
+      </CardHeader>
 
-    <div class="flex-grow flex flex-col">
-      <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        <Card v-for="provider in providers" :key="provider.id" class="relative gap-2 hover:bg-secondary" @click="showProviderDialog = provider">
-          <CardHeader>
-            <div class="flex items-center justify-between flex-wrap gap-2">
-              <CardTitle class="flex ">
-                <ProviderName :provider="provider" />
-              </CardTitle>
-              <div v-if="provider.user !== undefined" class="flex items-center gap-2 self-end">
-                <span
-                  class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium text-accent-foreground"
-                  :class="{
-                    'bg-emerald-200 dark:bg-green-500/60': !!provider.user,
-                    'bg-accent': !provider.user,
-                  }"
-                >
-                  {{ provider.user ? t('loggedIn') : t('loggedOut') }}
-                </span>
-              </div>
-            </div>
-          </CardHeader>
+      <CardContent>
+        <div class="text-sm text-muted-foreground">
+          <p>
+            {{ t('description1') }}
+            <a :href="provider.homepage" target="_blank" class="text-blue-900 dark:text-blue-200 hover:underline" @click.stop>
+              {{ provider.name }}
+            </a>
+            {{ t('description2') }}
+          </p>
+        </div>
+      </CardContent>
+    </Card>
 
-          <CardContent>
-            <div class="text-sm text-muted-foreground">
-              <p>
-                {{ t('description1') }}
-                <a :href="provider.homepage" target="_blank" class="text-blue-900 dark:text-blue-200 hover:underline" @click.stop>
-                  {{ provider.name }}
-                </a>
-                {{ t('description2') }}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <ManualConfigCard class="relative gap-2" />
-      </div>
-    </div>
-
-    <ProviderConfigDialog
-      v-if="showProviderDialog != null"
-      :provider="showProviderDialog"
-      @close="showProviderDialog = null"
-    />
+    <ManualConfigCard class="relative gap-2" />
   </div>
+
+  <ProviderConfigDialog
+    v-if="showProviderDialog != null"
+    :provider="showProviderDialog"
+    @close="showProviderDialog = null"
+  />
 </template>
 
 <i18n lang="yaml">
