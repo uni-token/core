@@ -139,9 +139,12 @@ func handleRegister(c *gin.Context) {
 
 func RequireUserLogin() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if c.Request.Method == "OPTIONS" {
+			c.Next()
+			return
+		}
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			c.Header("X-Uni-Token-Error", "missing_authorization_header")
 			c.Status(http.StatusUnauthorized)
 			c.Abort()
 			return
@@ -149,7 +152,6 @@ func RequireUserLogin() gin.HandlerFunc {
 
 		tokenParts := strings.Split(authHeader, " ")
 		if len(tokenParts) != 2 || tokenParts[0] != "Bearer" {
-			c.Header("X-Uni-Token-Error", "missing_authorization_header")
 			c.Status(http.StatusUnauthorized)
 			c.Abort()
 			return
@@ -157,7 +159,6 @@ func RequireUserLogin() gin.HandlerFunc {
 
 		claims, err := logic.ValidateJWT(tokenParts[1])
 		if err != nil {
-			c.Header("X-Uni-Token-Error", "invalid_token")
 			c.Status(http.StatusUnauthorized)
 			c.Abort()
 			return

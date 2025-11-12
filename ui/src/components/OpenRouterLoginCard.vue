@@ -4,10 +4,9 @@ import { toast } from 'vue-sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useOpenRouterProvider } from '@/lib/providers/openrouter'
-import { useKeysStore, useServiceStore } from '@/stores'
+import { useKeysStore } from '@/stores'
 
 const { t } = useI18n()
-const { fetch } = useServiceStore()
 const provider = useOpenRouterProvider()
 const keysStore = useKeysStore()
 
@@ -30,12 +29,9 @@ function handleLogin() {
           code: event.data.code,
         }),
       })
-      const { key, user_id } = await response.json()
+      const { key, user_id: userId } = await response.json()
 
-      await fetch('openrouter/authed', {
-        method: 'POST',
-        body: JSON.stringify({ key, userId: user_id }),
-      })
+      await provider.apis.session.put({ key, userId })
       await provider.refreshUser()
       await keysStore.createAndAddKey(provider)
     }

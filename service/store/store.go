@@ -10,18 +10,27 @@ import (
 
 type Bucket[T any] struct {
 	bucketName string
-	db         *bbolt.DB
 }
 
-func NewBucket[T any](bucketName string, db *bbolt.DB) Bucket[T] {
+func CreateBucket[T any](bucketName string) (Bucket[T], error) {
 	b := Bucket[T]{
 		bucketName: bucketName,
-		db:         db,
 	}
-	err := b.db.Update(func(tx *bbolt.Tx) error {
+	err := Db.Update(func(tx *bbolt.Tx) error {
 		_, err := tx.CreateBucketIfNotExists([]byte(b.bucketName))
 		return err
 	})
+	return b, err
+}
+
+func DeleteBucket(bucketName string) error {
+	return Db.Update(func(tx *bbolt.Tx) error {
+		return tx.DeleteBucket([]byte(bucketName))
+	})
+}
+
+func InitBucket[T any](bucketName string) Bucket[T] {
+	b, err := CreateBucket[T](bucketName)
 	if err != nil {
 		log.Fatal("Failed to create bucket:", err)
 	}
@@ -30,7 +39,7 @@ func NewBucket[T any](bucketName string, db *bbolt.DB) Bucket[T] {
 
 func (b *Bucket[T]) List() ([]T, error) {
 	result := make([]T, 0)
-	return result, b.db.View(func(tx *bbolt.Tx) error {
+	return result, Db.View(func(tx *bbolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucketName))
 		return b.ForEach(func(k, v []byte) error {
 			var data T
@@ -50,7 +59,7 @@ func (b *Bucket[T]) Put(key string, data T) error {
 		return err
 	}
 
-	return b.db.Update(func(tx *bbolt.Tx) error {
+	return Db.Update(func(tx *bbolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucketName))
 		return b.Put([]byte(key), v)
 	})
@@ -58,7 +67,7 @@ func (b *Bucket[T]) Put(key string, data T) error {
 
 func (b *Bucket[T]) Get(key string) (T, error) {
 	var data T
-	err := b.db.View(func(tx *bbolt.Tx) error {
+	err := Db.View(func(tx *bbolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucketName))
 		v := b.Get([]byte(key))
 		return json.Unmarshal(v, &data)
@@ -67,14 +76,14 @@ func (b *Bucket[T]) Get(key string) (T, error) {
 }
 
 func (b *Bucket[T]) Delete(key string) error {
-	return b.db.Update(func(tx *bbolt.Tx) error {
+	return Db.Update(func(tx *bbolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucketName))
 		return b.Delete([]byte(key))
 	})
 }
 
 func (b *Bucket[T]) Clear() error {
-	return b.db.Update(func(tx *bbolt.Tx) error {
+	return Db.Update(func(tx *bbolt.Tx) error {
 		err := tx.DeleteBucket([]byte(b.bucketName))
 		if err != nil {
 			return err
@@ -86,7 +95,7 @@ func (b *Bucket[T]) Clear() error {
 
 func (b *Bucket[T]) Count() (int, error) {
 	var count int
-	err := b.db.View(func(tx *bbolt.Tx) error {
+	err := Db.View(func(tx *bbolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucketName))
 		count = b.Inspect().KeyN
 		return nil
@@ -95,7 +104,7 @@ func (b *Bucket[T]) Count() (int, error) {
 }
 
 var (
-	db *bbolt.DB
+	Db *bbolt.DB
 
 	Users      Bucket[UserInfo]
 	Apps       Bucket[AppInfo]
@@ -107,17 +116,17 @@ var (
 
 func Init(dbPath string) {
 	var err error
-	db, err = bbolt.Open(dbPath, 0600, &bbolt.Options{Timeout: 1 * time.Second})
+	Db, err = bbolt.Open(dbPath, 0600, &bbolt.Options{Timeout: 1 * time.Second})
 	if err != nil {
 		log.Fatal("Failed to open database:", err)
 	}
 
-	Users = NewBucket[UserInfo]("users", db)
-	Usage = NewBucket[TokenUsage]("usage", db)
-	Apps = NewBucket[AppInfo]("apps", db)
-	LLMKeys = NewBucket[LLMKey]("llm_keys", db)
-	AppPresets = NewBucket[AppPreset]("app_presets", db)
-	Providers = NewBucket[[]byte]("providers", db)
+	Users = InitBucket[UserInfo]("users")
+	Usage = InitBucket[TokenUsage]("usage")
+	Apps = InitBucket[AppInfo]("apps")
+	LLMKeys = InitBucket[LLMKey]("llm_keys")
+	AppPresets = InitBucket[AppPreset]("app_presets")
+	Providers = InitBucket[[]byte]("providers")
 
 	count, err := AppPresets.Count()
 	if err != nil {

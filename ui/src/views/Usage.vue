@@ -43,7 +43,7 @@ interface UsageStats {
 }
 
 const { t } = useI18n()
-const { fetch } = useServiceStore()
+const { api: fetch } = useServiceStore()
 const stats = ref<UsageStats | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)

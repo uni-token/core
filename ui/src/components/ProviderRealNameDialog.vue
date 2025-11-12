@@ -304,7 +304,7 @@ zh-CN:
     description: 应硅基流动要求，充值前需要先完成实名认证
     authStatusDescription: 您的实名认证状态
     verified: 已认证
-    realName: 真实姓名
+    realName: 姓名
     realNamePlaceholder: 请输入您的真实姓名
     cardType: 证件类型
     idCard: 身份证

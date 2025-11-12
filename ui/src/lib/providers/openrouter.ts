@@ -1,11 +1,9 @@
-import type { Provider, ProviderUserInfo } from './index'
-import { createSharedComposable } from '@vueuse/core'
-import { markRaw, ref } from 'vue'
-import OpenRouterLoginCard from '@/components/OpenRouterLoginCard.vue'
-import { useServiceStore } from '@/stores'
+import type { ProviderUserInfo } from './index'
+import { defineAsyncComponent, ref } from 'vue'
 import { useI18n } from '../locals'
+import { defineProvider, useProviderSession } from './index'
 
-export const useOpenRouterProvider = createSharedComposable((): Provider => {
+export const useOpenRouterProvider = defineProvider(() => {
   const { t } = useI18n({
     'zh-CN': {
       providerName: 'OpenRouter',
@@ -14,7 +12,11 @@ export const useOpenRouterProvider = createSharedComposable((): Provider => {
       providerName: 'OpenRouter',
     },
   })
-  const { fetch } = useServiceStore()
+
+  const session = useProviderSession<{
+    key: string
+    userId: string
+  }>('openrouter')
 
   const user = ref<null | ProviderUserInfo>()
 
@@ -29,44 +31,46 @@ export const useOpenRouterProvider = createSharedComposable((): Provider => {
       return user.value
     },
     async refreshUser() {
-      const res = await fetch('openrouter/status', {
-        method: 'GET',
-      })
-
-      if (res.ok) {
-        const data = await res.json()
-        if (data.userId) {
-          user.value = {
-            name: data.userId.slice(8),
-            balance: data.credits,
-          }
-          return
-        }
+      const s = await session.get()
+      if (!s) {
+        user.value = null
+        return
       }
-      user.value = null
+
+      const res = await fetch('https://openrouter.ai/api/v1/credits', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${s.key}`,
+        },
+      })
+      if (!res.ok) {
+        user.value = null
+      }
+
+      const data = await res.json()
+      user.value = {
+        name: s.userId.slice(8),
+        balance: data.data.total_credits,
+      }
     },
 
-    Login: markRaw(OpenRouterLoginCard),
+    Login: defineAsyncComponent(() => import('@/components/OpenRouterLoginCard.vue')),
     async logout() {
-      const res = await fetch('openrouter/logout', {
-        method: 'POST',
-      })
-
-      if (!res.ok) {
-        throw new Error('Logout failed')
-      }
+      await session.delete()
       user.value = null
     },
 
     baseURL: 'https://openrouter.ai/api/v1',
     async createKey() {
-      const res = await fetch('openrouter/key')
-
-      if (res.ok) {
-        const data = await res.json()
-        return data.key
+      const s = await session.get()
+      if (!s) {
+        throw new Error('No session')
       }
-      throw new Error('API Key creation failed')
+      return s.key
+    },
+
+    apis: {
+      session,
     },
   }
 })

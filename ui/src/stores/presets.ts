@@ -13,7 +13,7 @@ export interface AppPreset {
 }
 
 export const usePresetsStore = defineStore('presets', () => {
-  const { fetch } = useServiceStore()
+  const { api: fetch } = useServiceStore()
   const { t } = useI18n({
     'en-US': {
       preset: 'Preset',

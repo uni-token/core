@@ -1,4 +1,6 @@
 import type { Component } from 'vue'
+import { createSharedComposable } from '@vueuse/core'
+import { defineDbStore } from '@/stores/db'
 
 export interface ProviderUserInfo {
   name: string
@@ -15,11 +17,16 @@ export interface ProviderVerificationInfo {
   time?: number
 }
 
-export interface Provider {
+export interface Provider<A> {
   readonly id: string
   readonly name: string
   readonly homepage: string
 
+  /**
+   * - `undefined`: loading
+   * - `null`: not logged in
+   * - `ProviderUserInfo`: logged in
+   */
   readonly user: undefined | null | ProviderUserInfo
   readonly refreshUser: () => Promise<void>
 
@@ -57,4 +64,28 @@ export interface Provider {
 
   readonly baseURL: string
   readonly createKey: () => Promise<string>
+
+  readonly apis: A
+}
+
+const useProviderSessionsDb = defineDbStore<unknown>('provider_sessions')
+
+export function useProviderSession<T>(providerId: string) {
+  const db = useProviderSessionsDb()
+
+  return {
+    get() {
+      return db.get(providerId) as Promise<T | null>
+    },
+    put(session: T) {
+      return db.put(providerId, session)
+    },
+    delete() {
+      return db.delete(providerId)
+    },
+  }
+}
+
+export function defineProvider<A>(provider: () => Provider<A>): () => Provider<A> {
+  return createSharedComposable(provider)
 }

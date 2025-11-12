@@ -9,13 +9,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { useSiliconFlowProvider } from '@/lib/providers/siliconflow'
-import { useKeysStore, useServiceStore, useThemeStore } from '@/stores'
+import { useKeysStore, useThemeStore } from '@/stores'
 
 const { t, locale } = useI18n()
 const themeStore = useThemeStore()
 const keysStore = useKeysStore()
 const provider = useSiliconFlowProvider()
-const { fetch } = useServiceStore()
 
 const isEmailLogin = ref(false)
 const phoneNumber = ref('')
@@ -35,26 +34,20 @@ const captchaConfig = {
   protocol: 'https://',
 }
 
-async function sendSMS(result: any) {
+async function sendCode(captchaResult: any) {
   if (isEmailLogin.value) {
     // Send email verification code
-    await fetch('siliconflow/email', {
-      body: JSON.stringify({
-        email: email.value,
-        ...result,
-      }),
-      method: 'POST',
+    await provider.apis.sendEmail({
+      email: email.value,
+      ...captchaResult,
     })
   }
   else {
     // Send SMS verification code
-    await fetch('siliconflow/sms', {
-      body: JSON.stringify({
-        area: '+86',
-        phone: phoneNumber.value,
-        ...result,
-      }),
-      method: 'POST',
+    await provider.apis.sendSms({
+      area: '+86',
+      phone: phoneNumber.value,
+      ...captchaResult,
     })
   }
 }
@@ -65,49 +58,36 @@ async function login() {
 
   try {
     isLoading.value = true
-    const res = isEmailLogin.value
-      ? await fetch('siliconflow/login/email', {
-          body: JSON.stringify({
-            email: email.value,
-            code: smsCode.value,
-            agree: agreed.value,
-            keep: true,
-            area: '+86',
-          }),
-          method: 'POST',
-        })
-      : await fetch('siliconflow/login', {
-          body: JSON.stringify({
-            phone: phoneNumber.value,
-            code: smsCode.value,
-            shareCode: '',
-            agree: agreed.value,
-            keep: true,
-            area: '+86',
-          }),
-          method: 'POST',
-        })
-
-    if (res.ok) {
-      await provider.refreshUser()
-      // Clear login form
-      phoneNumber.value = ''
-      email.value = ''
-      smsCode.value = ''
-      toast.success(t('loginSuccess'))
-
-      // Automatically create API key after successful login
-      await keysStore.createAndAddKey(provider)
+    if (isEmailLogin.value) {
+      await provider.apis.loginViaEmail({
+        email: email.value,
+        code: smsCode.value,
+        agree: agreed.value,
+        keep: true,
+        area: '+86',
+      })
     }
     else {
-      const errorData = await res.json()
-      if (res.status === 401) {
-        toast.error(errorData.message || t('invalidCode'))
-      }
-      else {
-        toast.error(errorData.message || t('loginFailed'))
-      }
+      await provider.apis.loginViaSms({
+        phone: phoneNumber.value,
+        code: smsCode.value,
+        shareCode: '',
+        agree: agreed.value,
+        keep: true,
+        area: '+86',
+      })
     }
+
+    await provider.refreshUser()
+
+    // Clear login form
+    phoneNumber.value = ''
+    email.value = ''
+    smsCode.value = ''
+    toast.success(t('loginSuccess'))
+
+    // Automatically create API key after successful login
+    await keysStore.createAndAddKey(provider)
   }
   catch (error) {
     console.error('Login error:', error)
@@ -182,7 +162,7 @@ function wxLogin() {
             :enabled="isEmailLogin ? email.length > 0 : phoneNumber.length > 0"
             :config="captchaConfig"
             class="h-10 px-4 bg-muted/50 rounded-r-md border-0 text-xs text-primary hover:bg-muted/70 transition-colors disabled:opacity-50"
-            @next="sendSMS"
+            @next="sendCode"
           />
         </div>
       </div>

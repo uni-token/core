@@ -1,11 +1,11 @@
-import type { Provider, ProviderUserInfo } from './index'
-import { createSharedComposable } from '@vueuse/core'
-import { markRaw, ref } from 'vue'
-import SiliconFlowLoginCard from '@/components/SiliconFlowLoginCard.vue'
+import type { ProviderUserInfo } from './index'
+import { defineAsyncComponent, ref } from 'vue'
+import { toast } from 'vue-sonner'
 import { useServiceStore } from '@/stores'
 import { useI18n } from '../locals'
+import { defineProvider, useProviderSession } from './index'
 
-export const useSiliconFlowProvider = createSharedComposable((): Provider => {
+export const useSiliconFlowProvider = defineProvider(() => {
   const { t } = useI18n({
     'zh-CN': {
       providerName: '硅基流动',
@@ -16,6 +16,8 @@ export const useSiliconFlowProvider = createSharedComposable((): Provider => {
       taiwanResidence: '台湾居民居住证',
       foreignerPermit: '外国人永久居留证',
       otherType: '其他类型用户',
+      invalidCode: '验证码无效，请重试',
+      loginFailed: '登录失败，请稍后重试',
     },
     'en-US': {
       providerName: 'SiliconFlow',
@@ -26,11 +28,46 @@ export const useSiliconFlowProvider = createSharedComposable((): Provider => {
       taiwanResidence: 'Taiwan Residence Permit',
       foreignerPermit: 'Foreigner Permanent Residence Permit',
       otherType: 'Other Type',
+      invalidCode: 'Invalid code, please try again',
+      loginFailed: 'Login failed, please try again later',
     },
   })
-  const { fetch } = useServiceStore()
+  const { proxy } = useServiceStore()
+
+  const session = useProviderSession<{
+    cookie: string
+    subjectID: string
+  }>('siliconflow')
 
   const user = ref<null | ProviderUserInfo>()
+
+  async function makeHeaders(requireSession: boolean, extra?: Record<string, string>) {
+    const s = requireSession ? await session.get() : null
+    if (requireSession && !s) {
+      throw new Error('No session found')
+    }
+    return {
+      'Accept': '*/*',
+      'Accept-Language': 'zh-CN,zh;q=0.9',
+      'Priority': 'u=1, i',
+      'Sec-CH-UA': `"Not)A;Brand";v="8", "Chromium";v="138", "Microsoft Edge";v="138"`,
+      'Sec-CH-UA-Mobile': '?0',
+      'Sec-CH-UA-Platform': `"Linux"`,
+      'Sec-Fetch-Dest': 'empty',
+      'Sec-Fetch-Mode': 'cors',
+      'Sec-Fetch-Site': 'same-origin',
+      'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0',
+      'Origin': 'https://cloud.siliconflow.cn',
+      'Content-Type': 'application/json',
+      ...extra,
+      ...(s
+        ? {
+            'X-Subject-ID': s.subjectID,
+            'Cookie': s.cookie,
+          }
+        : {}),
+    }
+  }
 
   return {
     id: 'siliconflow',
@@ -43,63 +80,61 @@ export const useSiliconFlowProvider = createSharedComposable((): Provider => {
       return user.value
     },
     async refreshUser() {
-      const res = await fetch('siliconflow/status', {
-        method: 'GET',
+      const s = await session.get()
+      if (!s) {
+        user.value = null
+        return
+      }
+
+      const { ok, json } = await proxy('https://cloud.siliconflow.cn/biz-server/api/v1/user/info', {
+        headers: await makeHeaders(true),
       })
 
-      if (res.ok) {
-        const data = await res.json()
-        if (data.code === 20000 && data.status && data.data) {
-          user.value = {
-            name: data.data.name,
-            verified: data.data.auth === 1,
-            phone: data.data.phone,
-            email: data.data.email,
-            balance: data.data.balance,
-          }
-          return
+      if (!ok) {
+        user.value = null
+        return
+      }
+
+      if (json.code === 20000 && json.status && json.data) {
+        user.value = {
+          name: json.data.name,
+          verified: json.data.auth === 1,
+          phone: json.data.phone,
+          email: json.data.email,
+          balance: json.data.balance,
         }
       }
-      user.value = null
     },
 
-    Login: markRaw(SiliconFlowLoginCard),
+    Login: defineAsyncComponent(() => import('@/components/SiliconFlowLoginCard.vue')),
     async logout() {
-      const res = await fetch('siliconflow/logout', {
-        method: 'POST',
-      })
-
-      if (!res.ok) {
-        throw new Error('Logout failed')
-      }
+      await session.delete()
     },
 
     verification: {
       async check() {
-        const res = await fetch('siliconflow/auth/info', {
-          method: 'GET',
+        const { ok, json } = await proxy('https://cloud.siliconflow.cn/biz-server/api/v1/subject/auth/info', {
+          headers: await makeHeaders(true),
         })
 
-        if (res.ok) {
-          const data = await res.json()
-          if (data.code === 20000 && data.status && data.data?.auth) {
-            let name = data.data.username
-            if (name.length > 1) {
-              name = name.charAt(0) + '*'.repeat(name.length - 1)
-            }
+        if (ok && json.code === 20000 && json.status && json.data?.auth) {
+          let name = json.data.username
+          if (name.length > 1) {
+            name = name.charAt(0) + '*'.repeat(name.length - 1)
+          }
 
-            let cardId = data.data.cardId
-            if (cardId.length > 8) {
-              cardId = cardId.substring(0, 6) + '*'.repeat(cardId.length - 10) + cardId.substring(cardId.length - 4)
-            }
+          let cardId = json.data.cardId
+          if (cardId.length > 8) {
+            cardId = cardId.substring(0, 6) + '*'.repeat(cardId.length - 10) + cardId.substring(cardId.length - 4)
+          }
 
-            return {
-              name,
-              cardId,
-              time: data.data.authTime?.seconds ? data.data.authTime.seconds * 1000 : undefined,
-            }
+          return {
+            name,
+            cardId,
+            time: json.data.authTime?.seconds ? json.data.authTime.seconds * 1000 : undefined,
           }
         }
+
         return null
       },
 
@@ -116,7 +151,9 @@ export const useSiliconFlowProvider = createSharedComposable((): Provider => {
       },
 
       async submit(data) {
-        const res = await fetch('siliconflow/auth/save', {
+        const { ok, json } = await proxy('https://cloud.siliconflow.cn/biz-server/api/v1/subject/auth/save', {
+          method: 'POST',
+          headers: await makeHeaders(true),
           body: JSON.stringify({
             username: data.name.trim(),
             cardType: data.cardType,
@@ -126,15 +163,10 @@ export const useSiliconFlowProvider = createSharedComposable((): Provider => {
             industry: '其他',
             authOperationType: 1,
           }),
-          method: 'POST',
         })
-
-        if (res.ok) {
-          const data = await res.json()
-          if (data.code === 20000 && data.status && data.data) {
-            return {
-              qrcUrl: data.data.authUrl,
-            }
+        if (ok && json.code === 20000 && json.status && json.data) {
+          return {
+            qrcUrl: json.data.authUrl,
           }
         }
         return 'failed'
@@ -143,42 +175,38 @@ export const useSiliconFlowProvider = createSharedComposable((): Provider => {
 
     payment: {
       async createWeChatPay(options) {
-        const res = await fetch('siliconflow/payment/create', {
+        const { ok, json } = await proxy('https://cloud.siliconflow.cn/biz-server/api/v1/pay/transactions', {
+          method: 'POST',
           body: JSON.stringify({
             platform: 'wx',
             amount: String(options.amount),
           }),
-          method: 'POST',
+          headers: await makeHeaders(true),
         })
 
-        if (res.ok) {
-          const data = await res.json()
-          if (data.code === 20000 && data.status && data.data) {
-            return {
-              orderId: data.data.order,
-              qrcUrl: data.data.codeUrl,
-              qrcTimeout: 120 * 1000,
-            }
+        if (ok && json.code === 20000 && json.status && json.data) {
+          return {
+            orderId: json.data.order,
+            qrcUrl: json.data.codeUrl,
+            qrcTimeout: 120 * 1000,
           }
         }
         throw new Error('QR code generation failed')
       },
 
       async checkWeChatPay(options) {
-        const res = await fetch(`siliconflow/payment/status?order=${options.orderId}`, {
+        const { ok, json } = await proxy(`https://cloud.siliconflow.cn/biz-server/api/v1/pay/status?order=${options.orderId}`, {
           method: 'GET',
+          headers: await makeHeaders(true),
         })
 
-        if (res.ok) {
-          const data = await res.json()
-          if (data.code === 20000 && data.status && data.data) {
-            const payStatus = data.data.payStatus
-            if (payStatus === 1) {
-              return 'success'
-            }
-            else if (payStatus === 2) {
-              return 'wait'
-            }
+        if (ok && json.code === 20000 && json.status && json.data) {
+          const payStatus = json.data.payStatus
+          if (payStatus === 1) {
+            return 'success'
+          }
+          else if (payStatus === 2) {
+            return 'wait'
           }
         }
         throw new Error('Payment status check failed')
@@ -187,20 +215,106 @@ export const useSiliconFlowProvider = createSharedComposable((): Provider => {
 
     baseURL: 'https://api.siliconflow.cn/v1',
     async createKey() {
-      const res = await fetch('siliconflow/apikey/create', {
+      const { ok, json } = await proxy('https://cloud.siliconflow.cn/biz-server/api/v1/apikey/create', {
         body: JSON.stringify({
           description: 'Generated by UniToken',
         }),
         method: 'POST',
+        headers: await makeHeaders(true),
       })
 
-      if (res.ok) {
-        const data = await res.json()
-        return data.data.secretKey
+      if (ok) {
+        return json.data.secretKey
       }
       else {
         throw new Error('API Key creation failed')
       }
+    },
+
+    apis: {
+      async sendSms(payload: unknown) {
+        return proxy('https://account.siliconflow.cn/api/open/sms', {
+          method: 'POST',
+          headers: await makeHeaders(false),
+          body: JSON.stringify(payload),
+        })
+      },
+
+      async sendEmail(payload: unknown) {
+        return proxy('https://account.siliconflow.cn/api/open/email', {
+          method: 'POST',
+          headers: await makeHeaders(false),
+          body: JSON.stringify(payload),
+        })
+      },
+
+      async loginViaSms(payload: unknown) {
+        const { ok, status, headers } = await proxy('https://account.siliconflow.cn/api/open/login/user', {
+          method: 'POST',
+          headers: await makeHeaders(false),
+          body: JSON.stringify(payload),
+        })
+
+        if (!ok) {
+          toast.error(status === 401 ? t('invalidCode') : t('loginFailed'))
+          throw new Error(`Login request failed with status ${status}`)
+        }
+
+        const setCookieHeader = headers.get('Set-Cookie')
+        if (!setCookieHeader) {
+          throw new Error('No Set-Cookie header found')
+        }
+        const cookie = setCookieHeader.split(';').map(c => c.trim()).join('; ')
+
+        const meRes = await proxy('https://cloud.siliconflow.cn/me', {
+          headers: await makeHeaders(false, {
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Referer': 'https://account.siliconflow.cn/',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'same-site',
+            'Sec-Fetch-User': '?1',
+            'Upgrade-Insecure-Requests': '1',
+            'Cookie': cookie,
+          }),
+        })
+        const subjectID = meRes.headers.get('X-Subject-ID')!
+        await session.put({ cookie, subjectID })
+      },
+
+      async loginViaEmail(payload: unknown) {
+        const { ok, status, headers } = await proxy('https://account.siliconflow.cn/api/open/login/email', {
+          method: 'POST',
+          headers: await makeHeaders(false),
+          body: JSON.stringify(payload),
+        })
+
+        if (!ok) {
+          toast.error(status === 401 ? t('invalidCode') : t('loginFailed'))
+          throw new Error(`Login request failed with status ${status}`)
+        }
+
+        const setCookieHeader = headers.get('Set-Cookie')
+        if (!setCookieHeader) {
+          throw new Error('No Set-Cookie header found')
+        }
+        const cookie = setCookieHeader.split(';').map(c => c.trim()).join('; ')
+
+        const meRes = await proxy('https://cloud.siliconflow.cn/me', {
+          headers: await makeHeaders(false, {
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Referer': 'https://account.siliconflow.cn/',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'same-site',
+            'Sec-Fetch-User': '?1',
+            'Upgrade-Insecure-Requests': '1',
+            'Cookie': cookie,
+          }),
+        })
+        const subjectID = meRes.headers.get('X-Subject-ID')!
+        await session.put({ cookie, subjectID })
+      },
     },
   }
 })

@@ -28,7 +28,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(username: string, password: string): Promise<AuthState> {
     isLoading.value = true
     try {
-      const response = await serviceStore.fetch('auth/login', {
+      const response = await serviceStore.api('auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ export const useAuthStore = defineStore('auth', () => {
   ): Promise<AuthState> {
     isLoading.value = true
     try {
-      const response = await serviceStore.fetch('auth/register', {
+      const response = await serviceStore.api('auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
