@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 
 export interface ManualConfig {
@@ -54,6 +54,10 @@ watch(open, (newValue) => {
 
 <template>
   <Dialog v-model:open="open">
+    <DialogTrigger>
+      <slot name="trigger" />
+    </DialogTrigger>
+
     <DialogContent class="sm:max-w-lg">
       <DialogHeader>
         <DialogTitle>{{ t('title') }}</DialogTitle>

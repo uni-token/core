@@ -2,11 +2,11 @@
 import type { Provider } from '@/lib/providers'
 import { shallowRef } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ManualConfigCard from '@/components/ManualConfigCard.vue'
 import ProviderConfigDialog from '@/components/ProviderConfigDialog.vue'
 import ProviderName from '@/components/ProviderName.vue'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useProviders } from '@/lib/providers'
+import ProvidersListCard from './ProvidersListCard.vue'
 
 const { t } = useI18n()
 const providers = useProviders()
@@ -19,7 +19,7 @@ const showProviderDialog = shallowRef<Provider | null>(null)
     <Card v-for="provider in providers" :key="provider.id" class="relative gap-2 hover:bg-secondary" @click="showProviderDialog = provider">
       <CardHeader>
         <div class="flex items-center justify-between flex-wrap gap-2">
-          <CardTitle class="flex ">
+          <CardTitle class="flex text-lg min-w-0">
             <ProviderName :provider="provider" />
           </CardTitle>
           <div v-if="provider.user !== undefined" class="flex items-center gap-2 self-end">
@@ -49,7 +49,7 @@ const showProviderDialog = shallowRef<Provider | null>(null)
       </CardContent>
     </Card>
 
-    <ManualConfigCard class="relative gap-2" />
+    <ProvidersListCard />
   </div>
 
   <ProviderConfigDialog

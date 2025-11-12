@@ -49,15 +49,17 @@ async function handleManualConfigSave(config: ManualConfig) {
     </CardContent>
 
     <CardFooter>
-      <Button class="w-full" variant="secondary" @click="showEditDialog = true">
-        {{ t('add') }}
-      </Button>
+      <ManualConfigDialog
+        v-model:open="showEditDialog"
+        @save="handleManualConfigSave"
+      >
+        <template #trigger>
+          <Button class="w-full" variant="secondary" @click="showEditDialog = true">
+            {{ t('add') }}
+          </Button>
+        </template>
+      </ManualConfigDialog>
     </CardFooter>
-
-    <ManualConfigDialog
-      v-model:open="showEditDialog"
-      @save="handleManualConfigSave"
-    />
   </Card>
 </template>
 
