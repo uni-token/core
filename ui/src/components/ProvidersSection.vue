@@ -5,8 +5,7 @@ import { useI18n } from 'vue-i18n'
 import ManualConfigCard from '@/components/ManualConfigCard.vue'
 import ProviderConfigDialog from '@/components/ProviderConfigDialog.vue'
 import ProviderName from '@/components/ProviderName.vue'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useProviders } from '@/lib/providers'
 
 const { t } = useI18n()

@@ -107,7 +107,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
           balance: {
             amount: json.data.balance,
             currency: 'CNY',
-          }
+          },
         }
       }
     },

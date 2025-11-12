@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Provider } from '@/lib/providers'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 defineProps<{
   provider: Provider
