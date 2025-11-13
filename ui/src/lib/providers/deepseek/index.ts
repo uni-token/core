@@ -8,10 +8,12 @@ export const useDeepSeekProvider = defineProvider(() => {
   const { t } = useI18n({
     'zh-CN': {
       providerName: 'DeepSeek',
+      description: '支持 DeepSeek 系列模型',
       mainlandIdCard: '中国大陆二代居民身份证',
     },
     'en-US': {
       providerName: 'DeepSeek',
+      description: 'Provide access to advanced DeepSeek models',
       mainlandIdCard: 'Mainland China ID Card',
     },
   })
@@ -51,6 +53,9 @@ export const useDeepSeekProvider = defineProvider(() => {
     id: 'deepseek',
     get name() {
       return t('providerName')
+    },
+    get description() {
+      return t('description')
     },
     get logo() {
       return import.meta.resolve('./logo.png')

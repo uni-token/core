@@ -9,6 +9,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
   const { t } = useI18n({
     'zh-CN': {
       providerName: '硅基流动',
+      description: '支持 DeepSeek, Qwen 等开源模型',
       mainlandIdCard: '中国大陆二代居民身份证',
       hkMacaoPass: '港澳居民来往内地通行证',
       taiwanPass: '台湾居民来往内地通行证',
@@ -21,6 +22,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
     },
     'en-US': {
       providerName: 'SiliconFlow',
+      description: '支持 DeepSeek 系列模型',
       mainlandIdCard: 'Mainland China ID Card',
       hkMacaoPass: 'Hong Kong/Macau Resident Travel Permit',
       taiwanPass: 'Taiwan Resident Travel Permit',
@@ -73,6 +75,9 @@ export const useSiliconFlowProvider = defineProvider(() => {
     id: 'siliconflow',
     get name() {
       return t('providerName')
+    },
+    get description() {
+      return t('description')
     },
     get logo() {
       return import.meta.resolve('./logo.png')

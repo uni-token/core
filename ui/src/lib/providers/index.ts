@@ -42,6 +42,7 @@ export interface ProviderPaymentWeChat {
 export interface Provider<A = unknown> {
   readonly id: string
   readonly name: string
+  readonly description: string
   /**
    * Reference: https://github.com/CherryHQ/cherry-studio/tree/main/src/renderer/src/assets/images/providers
    */
@@ -107,9 +108,9 @@ export function defineProvider<A>(provider: () => Provider<A>): () => Provider<A
 
 export const useProviders = createSharedComposable(() => {
   const list = [
+    useOpenRouterProvider(),
     useSiliconFlowProvider(),
     useDeepSeekProvider(),
-    useOpenRouterProvider(),
   ]
   const map = Object.fromEntries(list.map(p => [p.id, markRaw(p)])) as Record<string, Provider>
 

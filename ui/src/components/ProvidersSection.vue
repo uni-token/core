@@ -39,11 +39,7 @@ const showProviderDialog = shallowRef<Provider | null>(null)
       <CardContent>
         <div class="text-sm text-muted-foreground">
           <p>
-            {{ t('description1') }}
-            <a :href="provider.homepage" target="_blank" class="text-blue-900 dark:text-blue-200 hover:underline" @click.stop>
-              {{ provider.name }}
-            </a>
-            {{ t('description2') }}
+            {{ provider.description }}
           </p>
         </div>
       </CardContent>

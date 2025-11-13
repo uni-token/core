@@ -6,7 +6,6 @@ import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 import ProviderPaymentDialog from './ProviderPaymentDialog.vue'
 import ProviderRealNameDialog from './ProviderRealNameDialog.vue'
 
@@ -46,8 +45,7 @@ function handleRecharge() {
 </script>
 
 <template>
-  <Skeleton v-if="userInfo === undefined" class="h-48 w-full max-w-md mx-auto" />
-  <component :is="provider.Login" v-else-if="userInfo === null" />
+ <component :is="provider.Login" v-if="userInfo === null" />
   <Card v-else>
     <CardHeader>
       <CardTitle class="flex items-center gap-2">
@@ -63,11 +61,11 @@ function handleRecharge() {
     </CardHeader>
     <CardContent class="flex-grow">
       <div class="space-y-2">
-        <div v-if="userInfo.name" class="flex justify-between items-center text-sm">
+        <div v-if="userInfo?.name" class="flex justify-between items-center text-sm">
           <span class="text-muted-foreground">{{ t('userName') }}</span>
           <span class="font-medium text-ellipsis max-w-24 text-nowrap overflow-hidden" :title="userInfo.name">{{ userInfo.name }}</span>
         </div>
-        <div v-if="userInfo.verified != null" class="flex justify-between items-center text-sm">
+        <div v-if="userInfo?.verified != null" class="flex justify-between items-center text-sm">
           <span class="text-muted-foreground">{{ t('realname') }}</span>
           <button
             class="font-medium border-b border-dashed border-primary text-primary hover:bg-muted/50 transition-colors"
@@ -76,17 +74,17 @@ function handleRecharge() {
             {{ userInfo.verified ? t('verified') : t('unverified') }}
           </button>
         </div>
-        <div v-if="userInfo.phone" class="flex justify-between items-center text-sm">
+        <div v-if="userInfo?.phone" class="flex justify-between items-center text-sm">
           <span class="text-muted-foreground">{{ t('phone') }}</span>
           <span class="font-medium">{{ userInfo.phone }}</span>
         </div>
-        <div v-if="userInfo.balance != null" class="flex justify-between items-center text-sm">
+        <div v-if="userInfo?.balance != null" class="flex justify-between items-center text-sm">
           <span class="text-muted-foreground">{{ t('balance') }}</span>
           <span class="font-medium">
             {{ userInfo.balance.currency === 'USD' ? '$' : '' }}{{ userInfo.balance.amount }}
             {{ userInfo.balance.currency === 'CNY' ? t('yuan') : userInfo.balance.currency === 'USD' ? '' : `(${userInfo.balance.currency})` }}
           </span>
-        </div>
+        </div>  
       </div>
     </CardContent>
     <CardFooter class="pt-2 flex gap-2">

@@ -7,9 +7,11 @@ export const useOpenRouterProvider = defineProvider(() => {
   const { t } = useI18n({
     'zh-CN': {
       providerName: 'OpenRouter',
+      description: '支持 Gemini, ChatGPT 等多种模型',
     },
     'en-US': {
       providerName: 'OpenRouter',
+      description: 'The unified interface for LLMs. Access multiple models with one API key.',
     },
   })
 
@@ -24,6 +26,9 @@ export const useOpenRouterProvider = defineProvider(() => {
     id: 'openrouter',
     get name() {
       return t('providerName')
+    },
+    get description() {
+      return t('description')
     },
     get logo() {
       return import.meta.resolve('./logo.png')

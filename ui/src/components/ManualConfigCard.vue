@@ -1,34 +1,20 @@
 <script setup lang="ts">
-import type { ManualConfig } from '@/components/ManualConfigDialog.vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { toast } from 'vue-sonner'
 import ManualConfigDialog from '@/components/ManualConfigDialog.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { useKeysStore } from '@/stores'
 
 const emit = defineEmits<{
   configured: [key: string]
 }>()
 
 const { t } = useI18n()
-const keysStore = useKeysStore()
 
 const showEditDialog = ref(false)
 
-async function handleManualConfigSave(config: ManualConfig) {
-  const key = await keysStore.addKey({
-    name: config.name,
-    type: 'manual',
-    protocol: config.protocol,
-    baseUrl: config.baseUrl,
-    token: config.token,
-  })
-
-  emit('configured', key.id)
-  showEditDialog.value = false
-  toast.success(t('success'))
+async function handleManualConfigSave(config: string) {
+  emit('configured', config)
 }
 </script>
 

@@ -1,26 +1,21 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { toast } from 'vue-sonner'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-
-export interface ManualConfig {
-  name: string
-  protocol: 'openai'
-  baseUrl: string
-  token: string
-}
+import { useKeysStore } from '@/stores'
 
 const emit = defineEmits<{
-  save: [config: ManualConfig]
+  configured: [id: string]
 }>()
 const { t } = useI18n()
+const keysStore = useKeysStore()
 const open = defineModel<boolean>('open')
 
-const config = ref<ManualConfig>({
+const config = ref({
   name: '',
-  protocol: 'openai',
   baseUrl: '',
   token: '',
 })
@@ -29,9 +24,18 @@ const isConfigValid = computed(() => {
   return config.value.name && config.value.baseUrl && config.value.token
 })
 
-function handleSave() {
+async function handleSave() {
   if (isConfigValid.value) {
-    emit('save', { ...config.value })
+    const key = await keysStore.addKey({
+      name: config.value.name,
+      type: 'manual',
+      protocol: 'openai',
+      baseUrl: config.value.baseUrl,
+      token: config.value.token,
+    })
+    toast.success(t('success'))
+    emit('configured', key.id)
+    open.value = false
     resetConfig()
   }
 }
@@ -39,7 +43,6 @@ function handleSave() {
 function resetConfig() {
   config.value = {
     name: '',
-    protocol: 'openai',
     baseUrl: '',
     token: '',
   }
@@ -113,21 +116,23 @@ watch(open, (newValue) => {
 zh-CN:
   title: 手动配置 API
   description: 请输入您的 API 配置信息
-  providerName: 提供商名称
+  providerName: 名称
   providerNamePlaceholder: 例如：OpenAI、Claude 等
   baseUrl: Base URL
   baseUrlPlaceholder: 例如：https://api.openai.com/v1
   apiKey: API Key
   apiKeyPlaceholder: 输入您的 API Key
   save: 保存配置
+  success: 配置成功
 en-US:
   title: Manual API Configuration
   description: Please enter your API configuration information
-  providerName: Provider Name
+  providerName: Name
   providerNamePlaceholder: e.g., OpenAI, Claude, etc.
   baseUrl: Base URL
   baseUrlPlaceholder: e.g., https://api.openai.com/v1
   apiKey: API Key
   apiKeyPlaceholder: Enter your API Key
   save: Save Configuration
+  success: Configured
 </i18n>
