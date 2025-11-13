@@ -45,7 +45,7 @@ function handleRecharge() {
 </script>
 
 <template>
- <component :is="provider.Login" v-if="userInfo === null" />
+  <component :is="provider.Login" v-if="userInfo === null" />
   <Card v-else>
     <CardHeader>
       <CardTitle class="flex items-center gap-2">
@@ -84,7 +84,7 @@ function handleRecharge() {
             {{ userInfo.balance.currency === 'USD' ? '$' : '' }}{{ userInfo.balance.amount }}
             {{ userInfo.balance.currency === 'CNY' ? t('yuan') : userInfo.balance.currency === 'USD' ? '' : `(${userInfo.balance.currency})` }}
           </span>
-        </div>  
+        </div>
       </div>
     </CardContent>
     <CardFooter class="pt-2 flex gap-2">
