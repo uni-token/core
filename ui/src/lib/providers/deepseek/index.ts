@@ -101,7 +101,7 @@ export const useDeepSeekProvider = defineProvider(() => {
       }
     },
 
-    Login: defineAsyncComponent(() => import('@/lib/providers/deepseek/Login.vue')),
+    Login: defineAsyncComponent(() => import('./Login.vue')),
     async logout() {
       await session.delete()
       user.value = null
@@ -152,7 +152,7 @@ export const useDeepSeekProvider = defineProvider(() => {
     },
 
     payment: {
-      async createWeChatPay(options) {
+      async create(options) {
         // Generate a random UUID for request_id
         const requestId = crypto.randomUUID()
 
@@ -180,7 +180,7 @@ export const useDeepSeekProvider = defineProvider(() => {
         throw new Error('QR code generation failed')
       },
 
-      async checkWeChatPay(options) {
+      async check(options) {
         const { ok, json } = await proxy(`https://platform.deepseek.com/api/v1/payments/${options.orderId}/capture`, {
           method: 'GET',
           headers: await makeHeaders(true),

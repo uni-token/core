@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Provider, ProviderPaymentWeChat } from '@/lib/providers'
+import type { Provider, ProviderPaymentQRC } from '@/lib/providers'
 import { CircleQuestionMarkIcon } from 'lucide-vue-next'
 import { renderSVG } from 'uqr'
 import { computed, onUnmounted, ref } from 'vue'
@@ -30,7 +30,7 @@ const open = defineModel<boolean>()
 
 const { t } = useI18n()
 
-const payment = computed(() => props.provider.payment as ProviderPaymentWeChat)
+const payment = computed(() => props.provider.payment as ProviderPaymentQRC)
 const quickAmounts = [10, 50, 100, 200, 500, 1000]
 const formAmount = ref('')
 const creating = ref(false)
@@ -53,7 +53,7 @@ async function createPayment() {
   creating.value = true
 
   try {
-    const { orderId: newOrderId, qrcUrl, interval, timeout } = await payment.value.createWeChatPay({
+    const { orderId: newOrderId, qrcUrl, interval, timeout } = await payment.value.create({
       amount: formAmount.value,
     })
     qrcSvg.value = renderSVG(qrcUrl, {})
@@ -74,6 +74,7 @@ async function createPayment() {
     }
   }
   catch (error) {
+    toast.error(t('paymentCreationFailed'))
     console.error(error)
   }
   finally {
@@ -86,15 +87,17 @@ async function checkPayment(manual?: boolean) {
     checking.value = true
   }
   try {
-    const result = await payment.value.checkWeChatPay({ orderId: orderId.value })
+    const result = await payment.value.check({ orderId: orderId.value })
 
     if (result === 'success') {
       toast.success(t('paymentCompleted'))
       open.value = false
+      clearTimers()
     }
     else if (result === 'canceled') {
       toast.error(t('paymentCanceled'))
       open.value = false
+      clearTimers()
     }
     else if (result === 'wait') {
       if (manual) {
@@ -156,7 +159,7 @@ function clear() {
           </TooltipProvider>
           <div class="flex-grow" />
           <div v-if="qrcSvg" class="text-sm text-muted-foreground">
-            {{ formAmount }} {{ t('currency') }}
+            {{ payment.currency === 'CNY' ? formAmount + t('yuan') : `$${formAmount}` }}
           </div>
         </DialogDescription>
         <DialogClose />
@@ -174,7 +177,7 @@ function clear() {
               min="0.01"
               class="flex-1"
             />
-            <span class="text-sm text-muted-foreground">{{ t('currency') }}</span>
+            <span class="text-sm text-muted-foreground">{{ payment.currency === 'CNY' ? t('yuan') : t('usd') }}</span>
           </div>
         </div>
 
@@ -188,7 +191,7 @@ function clear() {
             class="h-8"
             @click="formAmount = amount.toString()"
           >
-            {{ amount }}{{ t('currency') }}
+            {{ amount }}{{ payment.currency === 'CNY' ? t('yuan') : t('usd') }}
           </Button>
         </div>
 
@@ -201,7 +204,7 @@ function clear() {
           </div>
           <div class="text-center space-y-2">
             <p class="text-sm text-muted-foreground">
-              {{ t('scanQRCodeMessage') }}
+              {{ t('scanQRCodeMessage', [payment.platform]) }}
             </p>
             <div v-if="expired" class="text-center text-sm text-red-500">
               {{ t('qrCodeExpired') }}
@@ -241,12 +244,14 @@ en-US:
   accountRechargeDescription: Recharge to your {0} account
   rechargeAmount: Recharge Amount
   rechargeAmountPlaceholder: Please enter recharge amount
-  currency: Yuan
-  scanQRCodeMessage: Please use your phone to open WeChat and scan the QR code to complete payment
+  yuan: Yuan
+  usd: USD
+  scanQRCodeMessage: Please use your phone to open {0} and scan the QR code to complete payment
   qrCodeExpired: QR code has expired, please regenerate
   regenerateQRCode: Regenerate QR Code
   checking: Checking...
   check: Complete
+  paymentCreationFailed: Payment creation failed
   paymentCompleted: Payment Completed
   paymentCanceled: Payment Canceled
   paymentPending: Payment Not Completed
@@ -259,12 +264,14 @@ zh-CN:
   accountRechargeDescription: 向{0}账户充值
   rechargeAmount: 充值金额
   rechargeAmountPlaceholder: 请输入充值金额
-  currency: 元
-  scanQRCodeMessage: 请使用手机打开微信扫描二维码完成支付
+  yuan: 元
+  usd: 美元
+  scanQRCodeMessage: 请使用手机打开{0}扫描二维码完成支付
   qrCodeExpired: 二维码已过期，请重新生成
   regenerateQRCode: 重新生成二维码
   checking: 检查中...
   check: 我已支付
+  paymentCreationFailed: 支付创建失败
   paymentCompleted: 已完成
   paymentCanceled: 已取消支付
   paymentPending: 支付未完成

@@ -19,6 +19,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
       otherType: '其他类型用户',
       invalidCode: '验证码无效，请重试',
       loginFailed: '登录失败，请稍后重试',
+      wechat: '微信',
     },
     'en-US': {
       providerName: 'SiliconFlow',
@@ -32,6 +33,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
       otherType: 'Other Type',
       invalidCode: 'Invalid code, please try again',
       loginFailed: 'Login failed, please try again later',
+      wechat: 'WeChat',
     },
   })
   const { proxy } = useServiceStore()
@@ -117,7 +119,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
       }
     },
 
-    Login: defineAsyncComponent(() => import('@/lib/providers/siliconflow/Login.vue')),
+    Login: defineAsyncComponent(() => import('./Login.vue')),
     async logout() {
       await session.delete()
     },
@@ -185,7 +187,12 @@ export const useSiliconFlowProvider = defineProvider(() => {
     },
 
     payment: {
-      async createWeChatPay(options) {
+      type: 'qrc',
+      currency: 'CNY',
+      get platform() {
+        return t('wechat')
+      },
+      async create(options) {
         const { ok, json } = await proxy('https://cloud.siliconflow.cn/biz-server/api/v1/pay/transactions', {
           method: 'POST',
           body: JSON.stringify({
@@ -204,8 +211,7 @@ export const useSiliconFlowProvider = defineProvider(() => {
         }
         throw new Error('QR code generation failed')
       },
-
-      async checkWeChatPay(options) {
+      async check(options) {
         const { ok, json } = await proxy(`https://cloud.siliconflow.cn/biz-server/api/v1/pay/status?order=${options.orderId}`, {
           method: 'GET',
           headers: await makeHeaders(true),

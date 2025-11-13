@@ -2,6 +2,7 @@ import type { Component } from 'vue'
 import { createSharedComposable } from '@vueuse/core'
 import { markRaw } from 'vue'
 import { defineDbStore } from '@/stores/db'
+import { useAIHubMixProvider } from './aihubmix'
 import { useDeepSeekProvider } from './deepseek'
 import { useOpenRouterProvider } from './openrouter'
 import { useSiliconFlowProvider } from './siliconflow'
@@ -24,8 +25,11 @@ export interface ProviderVerificationInfo {
   time?: number
 }
 
-export interface ProviderPaymentWeChat {
-  createWeChatPay: (options: {
+export interface ProviderPaymentQRC {
+  readonly type: 'qrc'
+  readonly currency: 'CNY' | 'USD'
+  readonly platform: string
+  readonly create: (options: {
     amount: string
   }) => Promise<{
     orderId: string
@@ -33,11 +37,17 @@ export interface ProviderPaymentWeChat {
     interval?: number
     timeout?: number
   }>
-
-  checkWeChatPay: (options: {
+  readonly check: (options: {
     orderId: string
   }) => Promise<'success' | 'wait' | 'canceled'>
 }
+
+export interface ProviderPaymentWebsite {
+  readonly type: 'website'
+  readonly websiteURL: string
+}
+
+export type ProviderPayment = ProviderPaymentQRC | ProviderPaymentWebsite
 
 export interface Provider<A = unknown> {
   readonly id: string
@@ -74,9 +84,7 @@ export interface Provider<A = unknown> {
     }>
   }
 
-  readonly payment?: ProviderPaymentWeChat | {
-    readonly websiteURL: string
-  }
+  readonly payment?: ProviderPayment
 
   readonly baseURL: string
   readonly createKey: () => Promise<string>
@@ -111,6 +119,7 @@ export const useProviders = createSharedComposable(() => {
     useOpenRouterProvider(),
     useSiliconFlowProvider(),
     useDeepSeekProvider(),
+    useAIHubMixProvider(),
   ]
   const map = Object.fromEntries(list.map(p => [p.id, markRaw(p)])) as Record<string, Provider>
 

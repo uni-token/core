@@ -6,8 +6,8 @@ import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import ProviderPaymentDialog from './ProviderPaymentDialog.vue'
 import ProviderRealNameDialog from './ProviderRealNameDialog.vue'
+import QRCPaymentDialog from './QRCPaymentDialog.vue'
 
 const props = defineProps<{
   provider: Provider
@@ -29,12 +29,12 @@ onMounted(async () => {
 })
 
 function handleRecharge() {
-  if ('websiteURL' in props.provider.payment!) {
-    window.open(props.provider.payment!.websiteURL, '_blank', 'width=600,height=600,noopener=yes,noreferrer=yes')
+  if (props.provider.payment?.type === 'website') {
+    window.open(props.provider.payment.websiteURL, '_blank', 'width=600,height=600,noopener=yes,noreferrer=yes')
     return
   }
 
-  if (!userInfo.value?.verified) {
+  if (props.provider.verification && !userInfo.value?.verified) {
     toast.error(t('realNameRequired'))
     openRealNameDialog.value = true
   }
@@ -94,7 +94,7 @@ function handleRecharge() {
       <div class="flex-grow" />
       <Button v-if="!!provider.payment" variant="secondary" size="sm" class="h-8" @click="handleRecharge">
         {{ t('recharge') }}
-        <ExternalLinkIcon v-if="'websiteURL' in provider.payment" />
+        <ExternalLinkIcon v-if="provider.payment?.type === 'website'" />
       </Button>
       <Button variant="secondary" size="sm" class="h-8" @click="provider.logout">
         {{ t('logout') }}
@@ -102,7 +102,7 @@ function handleRecharge() {
     </CardFooter>
 
     <ProviderRealNameDialog v-if="!!provider.verification" v-model="openRealNameDialog" :provider="provider" />
-    <ProviderPaymentDialog v-if="!!provider.payment" v-model="openPaymentDialog" :provider="provider" />
+    <QRCPaymentDialog v-if="!!provider.payment" v-model="openPaymentDialog" :provider="provider" />
   </Card>
 </template>
 

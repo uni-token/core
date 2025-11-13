@@ -7,7 +7,7 @@ export const useOpenRouterProvider = defineProvider(() => {
   const { t } = useI18n({
     'zh-CN': {
       providerName: 'OpenRouter',
-      description: '支持 Gemini, ChatGPT 等多种模型',
+      description: '支持大部分主流模型',
     },
     'en-US': {
       providerName: 'OpenRouter',
@@ -65,13 +65,14 @@ export const useOpenRouterProvider = defineProvider(() => {
       }
     },
 
-    Login: defineAsyncComponent(() => import('@/lib/providers/openrouter/Login.vue')),
+    Login: defineAsyncComponent(() => import('./Login.vue')),
     async logout() {
       await session.delete()
       user.value = null
     },
 
     payment: {
+      type: 'website',
       websiteURL: 'https://openrouter.ai/settings/credits',
     },
 
