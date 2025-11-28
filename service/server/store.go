@@ -11,6 +11,7 @@ import (
 func SetupStoreAPI(router gin.IRouter) {
 	api := router.Group("/store").Use(RequireUserLogin())
 	{
+		api.GET("/:name", handleStoreGetAll)
 		api.DELETE("/:name", handleStoreDeleteAll)
 		api.GET("/:name/:key", handleStoreGet)
 		api.PUT("/:name/:key", handleStorePut)
@@ -29,6 +30,28 @@ func ensureBucket(name string) error {
 		_, err := tx.CreateBucketIfNotExists([]byte(name))
 		return err
 	})
+}
+
+func handleStoreGetAll(c *gin.Context) {
+	name := c.Param("name")
+	err := ensureBucket(name)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	result := map[string]string{}
+	err = store.Db.View(func(tx *bbolt.Tx) error {
+		b := tx.Bucket([]byte(name))
+		return b.ForEach(func(k, v []byte) error {
+			result[string(k)] = string(v)
+			return nil
+		})
+	})
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(200, result)
 }
 
 func handleStoreDeleteAll(c *gin.Context) {

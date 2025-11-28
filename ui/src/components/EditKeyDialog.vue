@@ -7,7 +7,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { useKeysStore, usePresetsStore } from '@/stores'
+import { useKeysStore } from '@/stores'
 
 interface EditConfig {
   name: string
@@ -21,7 +21,6 @@ const props = defineProps<{
 const { t } = useI18n()
 const open = defineModel<boolean>('open')
 const keysStore = useKeysStore()
-const presetsStore = usePresetsStore()
 
 const config = ref<EditConfig>({
   name: '',
@@ -38,7 +37,7 @@ async function handleSave() {
     return
   }
 
-  const success = await keysStore.updateKey(props.apiKey.id, {
+  await keysStore.updateKey(props.apiKey.id, {
     id: props.apiKey.id,
     name: config.value.name,
     type: props.apiKey.type,
@@ -47,9 +46,7 @@ async function handleSave() {
     token: config.value.token,
   })
 
-  if (success) {
-    open.value = false
-  }
+  open.value = false
 }
 
 async function handleDelete() {
@@ -57,12 +54,9 @@ async function handleDelete() {
     return
   }
 
-  const success = await keysStore.deleteKey(props.apiKey.id)
-  await presetsStore.loadPresets()
+  await keysStore.deleteKey(props.apiKey.id)
 
-  if (success) {
-    open.value = false
-  }
+  open.value = false
 }
 
 watch(() => props.apiKey, (newKey) => {

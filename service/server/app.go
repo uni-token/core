@@ -15,10 +15,6 @@ import (
 
 func SetupAppAPI(router gin.IRouter) {
 	router.POST("/app/register", handleAppRegister)
-	router.Group("/app").Use(RequireUserLogin()).GET("/list", handleAppList)
-	router.Group("/app").Use(RequireUserLogin()).POST("/toggle", handleAppToggle)
-	router.Group("/app").Use(RequireUserLogin()).DELETE("/delete/:id", handleAppDelete)
-	router.Group("/app").Use(RequireUserLogin()).DELETE("/clear", handleAppClear)
 }
 
 var waitForGrant = make(map[string]chan<- bool)
@@ -132,106 +128,9 @@ func handleAppRegister(c *gin.Context) {
 	}
 }
 
-func handleAppList(c *gin.Context) {
-	apps, err := store.Apps.List()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve apps"})
-		return
-	}
-
-	c.JSON(http.StatusOK, apps)
-}
-
-func handleAppToggle(c *gin.Context) {
-	var req struct {
-		ID      string `json:"id" binding:"required"`
-		Granted bool   `json:"granted"`
-		Key     string `json:"key"`
-	}
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	if info, err := store.Apps.Get(req.ID); err == nil {
-		info.Granted = req.Granted
-		if req.Key != "" {
-			info.Key = req.Key
-		}
-		store.Apps.Put(req.ID, info)
-		action := "authorized"
-		if !req.Granted {
-			action = "revoked"
-		}
-		c.JSON(http.StatusOK, gin.H{"message": "App " + action + " successfully"})
-
-		if waitForGrant[req.ID] != nil {
-			waitForGrant[req.ID] <- req.Granted
-		}
-	} else {
-		c.JSON(http.StatusNotFound, gin.H{"error": "App not found"})
-	}
-}
-
 func updateLastActiveTime(appID string) {
 	if app, err := store.Apps.Get(appID); err == nil {
 		app.LastActiveAt = time.Now()
 		store.Apps.Put(appID, app)
 	}
-}
-
-func handleAppDelete(c *gin.Context) {
-	appID := c.Param("id")
-	if appID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "App ID is required"})
-		return
-	}
-
-	// Check if app exists
-	_, err := store.Apps.Get(appID)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "App not found"})
-		return
-	}
-
-	// Delete the app
-	err = store.Apps.Delete(appID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete app"})
-		return
-	}
-
-	// Clean up any pending grant channel
-	if waitForGrant[appID] != nil {
-		close(waitForGrant[appID])
-		delete(waitForGrant, appID)
-	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "App deleted successfully"})
-}
-
-func handleAppClear(c *gin.Context) {
-	// Get all apps first
-	apps, err := store.Apps.List()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve apps"})
-		return
-	}
-
-	// Delete all apps
-	for _, app := range apps {
-		err = store.Apps.Delete(app.ID)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete some apps"})
-			return
-		}
-
-		// Clean up any pending grant channel
-		if waitForGrant[app.ID] != nil {
-			close(waitForGrant[app.ID])
-			delete(waitForGrant, app.ID)
-		}
-	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "All apps deleted successfully"})
 }

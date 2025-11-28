@@ -1,7 +1,7 @@
 import type { Component } from 'vue'
 import { createSharedComposable } from '@vueuse/core'
 import { markRaw } from 'vue'
-import { defineDbStore } from '@/stores/db'
+import { useProviderSessionsDb } from '@/stores/db'
 import { useAIHubMixProvider } from './aihubmix'
 import { useDeepSeekProvider } from './deepseek'
 import { useOpenRouterProvider } from './openrouter'
@@ -91,8 +91,6 @@ export interface Provider<A = unknown> {
 
   readonly apis: A
 }
-
-const useProviderSessionsDb = defineDbStore<unknown>('provider_sessions')
 
 export function useProviderSession<T>(providerId: string) {
   const db = useProviderSessionsDb()

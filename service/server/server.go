@@ -49,8 +49,6 @@ func setupRoutes(router *gin.Engine) {
 	SetupActionAPI(router)
 	SetupGatewayAPI(router)
 	SetupAppAPI(router)
-	SetupKeysAPI(router)
-	SetupPresetsAPI(router)
 	SetupUsageAPI(router)
 	SetupAuthAPI(router)
 	SetupProxyAPI(router)

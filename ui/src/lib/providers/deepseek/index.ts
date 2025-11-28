@@ -152,6 +152,9 @@ export const useDeepSeekProvider = defineProvider(() => {
     },
 
     payment: {
+      type: 'qrc',
+      currency: 'CNY',
+      platform: 'WECHAT',
       async create(options) {
         // Generate a random UUID for request_id
         const requestId = crypto.randomUUID()

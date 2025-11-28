@@ -106,12 +106,11 @@ func (b *Bucket[T]) Count() (int, error) {
 var (
 	Db *bbolt.DB
 
-	Users      Bucket[UserInfo]
-	Apps       Bucket[AppInfo]
-	LLMKeys    Bucket[LLMKey]
-	AppPresets Bucket[AppPreset]
-	Usage      Bucket[TokenUsage]
-	Providers  Bucket[[]byte]
+	Users     Bucket[UserInfo]
+	Apps      Bucket[AppInfo]
+	LLMKeys   Bucket[LLMKey]
+	Usage     Bucket[TokenUsage]
+	Providers Bucket[[]byte]
 )
 
 func Init(dbPath string) {
@@ -125,24 +124,5 @@ func Init(dbPath string) {
 	Usage = InitBucket[TokenUsage]("usage")
 	Apps = InitBucket[AppInfo]("apps")
 	LLMKeys = InitBucket[LLMKey]("llm_keys")
-	AppPresets = InitBucket[AppPreset]("app_presets")
 	Providers = InitBucket[[]byte]("providers")
-
-	count, err := AppPresets.Count()
-	if err != nil {
-		panic("Failed to count app presets: " + err.Error())
-	}
-	if count == 0 {
-		defaultPreset := AppPreset{
-			ID:        "default",
-			Name:      "Default Preset",
-			Keys:      []string{},
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
-		}
-		err = AppPresets.Put("default", defaultPreset)
-		if err != nil {
-			panic("Failed to create default app preset: " + err.Error())
-		}
-	}
 }

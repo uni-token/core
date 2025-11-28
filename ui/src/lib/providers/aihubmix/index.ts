@@ -117,7 +117,7 @@ export const useAIHubMixProvider = defineProvider(() => {
         })
 
         if (!ok || !json.success || json.data.code !== '10000') {
-          throw new Error('QR code generation failed')
+          throw new Error(json.data.sub_msg || 'QR code generation failed')
         }
 
         return {

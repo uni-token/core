@@ -1,6 +1,5 @@
 export { type App, useAppStore } from './app'
 export { type AuthState, useAuthStore } from './auth'
 export { type APIKey, useKeysStore } from './keys'
-export { type AppPreset, usePresetsStore } from './presets'
 export { useServiceStore } from './service'
 export { type Theme, useThemeStore } from './theme'

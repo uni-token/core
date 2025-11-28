@@ -32,17 +32,6 @@ func handleOpenAIProxy(c *gin.Context) {
 		return
 	}
 
-	// preset, err := store.AppPresets.Get(appInfo.Preset)
-	// if err != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get app preset"})
-	// 	return
-	// }
-
-	// if len(preset.Providers) == 0 {
-	// 	c.JSON(http.StatusNotFound, gin.H{"error": "No providers configured for this app"})
-	// 	return
-	// }
-
 	key, err := store.LLMKeys.Get(appInfo.Key)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to resolve key"})

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-// import PresetsSection from '@/components/PresetsSection.vue'
 import ProvidersSection from '@/components/ProvidersSection.vue'
 
 const { t } = useI18n()
@@ -14,7 +13,6 @@ const { t } = useI18n()
       </h2>
     </div>
     <ProvidersSection />
-    <!-- <PresetsSection /> -->
   </div>
 </template>
 

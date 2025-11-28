@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { toast } from 'vue-sonner'
 import { useI18n } from '@/lib/locals'
-import { useServiceStore } from './service'
+import { useAppsDb } from './db'
 
 export interface App {
   id: string
@@ -15,7 +15,7 @@ export interface App {
 }
 
 export const useAppStore = defineStore('app', () => {
-  const { api: fetch } = useServiceStore()
+  const db = useAppsDb()
   const { t } = useI18n({
     'zh-CN': {
       appDeleted: '应用已删除',
@@ -47,17 +47,8 @@ export const useAppStore = defineStore('app', () => {
   const loadApps = async () => {
     loading.value = true
     error.value = null
-
     try {
-      const response = await fetch('app/list')
-      if (response.ok) {
-        const data = await response.json()
-        apps.value = data.data || data || []
-      }
-      else {
-        error.value = `HTTP ${response.status}: ${response.statusText}`
-        toast.error(error.value)
-      }
+      apps.value = Object.values(await db.all())
     }
     catch (err) {
       error.value = err instanceof Error ? err.message : 'Unknown error'
@@ -74,32 +65,22 @@ export const useAppStore = defineStore('app', () => {
 
   const toggleAppAuthorization = async (id: string, granted: boolean, key?: string) => {
     try {
-      const body: any = { id, granted }
+      const app = await db.get(id)
+      if (!app) {
+        throw new Error('App not found')
+      }
+
+      app.granted = granted
       if (granted && key) {
-        body.key = key
+        app.key = key
+      }
+      await db.put(id, app)
+      const appIndex = apps.value.findIndex(app => app.id === id)
+      if (appIndex !== -1) {
+        apps.value[appIndex].granted = granted
       }
 
-      const response = await fetch('app/toggle', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      })
-
-      if (response.ok) {
-        const appIndex = apps.value.findIndex(app => app.id === id)
-        if (appIndex !== -1) {
-          apps.value[appIndex].granted = granted
-        }
-
-        toast.success(granted ? t('appAuthorized') : t('appAuthorizationRevoked'))
-      }
-      else {
-        const errorData = await response.json()
-        toast.error(errorData.error || `Operation failed: HTTP ${response.status}`)
-        throw new Error(errorData.error || `Operation failed: HTTP ${response.status}`)
-      }
+      toast.success(granted ? t('appAuthorized') : t('appAuthorizationRevoked'))
     }
     catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Operation failed'
@@ -110,23 +91,13 @@ export const useAppStore = defineStore('app', () => {
 
   const deleteApp = async (id: string) => {
     try {
-      const response = await fetch(`app/delete/${id}`, {
-        method: 'DELETE',
-      })
-
-      if (response.ok) {
-        const appIndex = apps.value.findIndex(app => app.id === id)
-        if (appIndex !== -1) {
-          apps.value.splice(appIndex, 1)
-        }
-
-        toast.success(t('appDeleted'))
+      await db.delete(id)
+      const appIndex = apps.value.findIndex(app => app.id === id)
+      if (appIndex !== -1) {
+        apps.value.splice(appIndex, 1)
       }
-      else {
-        const errorData = await response.json()
-        toast.error(errorData.error || `Delete failed: HTTP ${response.status}`)
-        throw new Error(errorData.error || `Delete failed: HTTP ${response.status}`)
-      }
+
+      toast.success(t('appDeleted'))
     }
     catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Delete failed'
@@ -137,19 +108,9 @@ export const useAppStore = defineStore('app', () => {
 
   const deleteAllApps = async () => {
     try {
-      const response = await fetch('app/clear', {
-        method: 'DELETE',
-      })
-
-      if (response.ok) {
-        apps.value = []
-        toast.success(t('allAppsDeleted'))
-      }
-      else {
-        const errorData = await response.json()
-        toast.error(errorData.error || `Delete failed: HTTP ${response.status}`)
-        throw new Error(errorData.error || `Delete failed: HTTP ${response.status}`)
-      }
+      await db.clear()
+      apps.value = []
+      toast.success(t('allAppsDeleted'))
     }
     catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Delete failed'

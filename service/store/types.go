@@ -16,14 +16,6 @@ type LLMKey struct {
 	Token    string `json:"token"`
 }
 
-type AppPreset struct {
-	ID        string    `json:"id"`
-	Name      string    `json:"name"`
-	Keys      []string  `json:"keys"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
-}
-
 type AppInfo struct {
 	ID           string    `json:"id"`
 	Name         string    `json:"name"`

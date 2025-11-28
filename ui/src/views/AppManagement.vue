@@ -9,13 +9,12 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Switch } from '@/components/ui/switch'
-import { useAppStore, usePresetsStore } from '@/stores'
+import { useAppStore } from '@/stores'
 
 const { t } = useI18n()
 const appStore = useAppStore()
 const { apps, loading, error } = storeToRefs(appStore)
 const { loadApps, refreshApps, toggleAppAuthorization } = appStore
-const presetsStore = usePresetsStore()
 
 const showDetailDialog = ref(false)
 const selectedApp = ref<any | null>(null)
@@ -27,7 +26,6 @@ function openAppDetail(app: any) {
 
 onMounted(() => {
   loadApps()
-  presetsStore.loadPresets()
 })
 </script>
 

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { toast } from 'vue-sonner'
 import { useI18n } from '@/lib/locals'
-import { useServiceStore } from './service'
+import { useKeysDb } from './db'
 
 export interface APIKey {
   id: string
@@ -15,7 +15,7 @@ export interface APIKey {
 }
 
 export const useKeysStore = defineStore('keys', () => {
-  const { api } = useServiceStore()
+  const db = useKeysDb()
   const { t } = useI18n({
     'en-US': {
       addKeyFailed: 'Failed to add key',
@@ -39,14 +39,7 @@ export const useKeysStore = defineStore('keys', () => {
     loadingError.value = null
 
     try {
-      const response = await api('keys/list')
-      if (response.ok) {
-        const data = await response.json()
-        keys.value = data.data
-      }
-      else {
-        loadingError.value = `HTTP ${response.status}: ${response.statusText}`
-      }
+      keys.value = Object.values(await db.all())
     }
     catch (err) {
       loadingError.value = err instanceof Error ? err.message : 'Unknown error'
@@ -68,73 +61,42 @@ export const useKeysStore = defineStore('keys', () => {
   }
 
   async function addKey(key: Omit<APIKey, 'id' | 'name'> & { name?: string }): Promise<APIKey> {
+    const id = crypto.randomUUID()
+    const data: APIKey = {
+      ...key,
+      id,
+      name: key.name ?? '',
+    }
     try {
-      const response = await api('keys/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(key),
-      })
-
-      if (response.ok) {
-        await loadKeys()
-        return (await response.json()).data
-      }
-      else {
-        toast.error(t('addKeyFailed'))
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
-      }
+      await db.put(id, data)
+      await loadKeys()
+      return data
     }
     catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Unknown error')
+      toast.error(t('addKeyFailed'))
       throw err
     }
   }
 
   async function updateKey(keyId: string, key: APIKey) {
     try {
-      const response = await api(`keys/update/${encodeURIComponent(keyId)}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(key),
-      })
-
-      if (response.ok) {
-        await loadKeys()
-        return true
-      }
-      else {
-        toast.error(t('updateKeyFailed'))
-        return false
-      }
+      await db.put(keyId, key)
+      await loadKeys()
     }
     catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Unknown error')
-      return false
+      toast.error(t('updateKeyFailed'))
+      throw err
     }
   }
 
   async function deleteKey(keyId: string) {
     try {
-      const response = await api(`keys/delete/${encodeURIComponent(keyId)}`, {
-        method: 'DELETE',
-      })
-
-      if (response.ok) {
-        await loadKeys()
-        return true
-      }
-      else {
-        toast.error(t('deleteKeyFailed'))
-        return false
-      }
+      await db.delete(keyId)
+      await loadKeys()
     }
     catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Unknown error')
-      return false
+      toast.error(t('deleteKeyFailed'))
+      throw err
     }
   }
 
