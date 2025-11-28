@@ -11,7 +11,7 @@ const provider = useOpenRouterProvider()
 const keysStore = useKeysStore()
 
 function handleLogin() {
-  const callbackUrl = `${window.location.protocol}//${window.location.host}/action/openrouter-auth`
+  const callbackUrl = `${window.location.protocol}//${window.location.host}/action/oauth-callback`
   const authUrl = `https://openrouter.ai/auth?callback_url=${encodeURIComponent(callbackUrl)}`
   window.open(authUrl, '_blank', 'width=600,height=600,noopener=yes,noreferrer=yes')
 

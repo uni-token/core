@@ -80,6 +80,8 @@ onUIOpened()
 
     <LoginForm v-else-if="!authStore.isLoggedIn" :register="authState?.status === 'not_registered'" />
 
+    <RouterView v-else-if="currentRoute.meta.fullPage" />
+
     <SidebarProvider v-else>
       <AppSidebar />
       <SidebarInset>

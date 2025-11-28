@@ -101,7 +101,7 @@ func handleAppRegister(c *gin.Context) {
 		"appName":        {req.Name},
 		"appDescription": {req.Description},
 	}
-	uiActive, cleanup, err := logic.OpenAction("register", params)
+	uiActive, cleanup, err := logic.OpenAction("grant-app", params)
 	if cleanup != nil {
 		defer cleanup()
 	}

@@ -1,13 +1,15 @@
+import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHistory } from 'vue-router'
 import About from '@/views/About.vue'
-import ActionHandler from '@/views/ActionHandler.vue'
+import GrantApp from '@/views/action/GrantApp.vue'
+import OAuthCallback from '@/views/action/OAuthCallback.vue'
 import AppManagement from '@/views/AppManagement.vue'
 import Models from '@/views/Models.vue'
 import NotFound from '@/views/NotFound.vue'
 import Settings from '@/views/Settings.vue'
 import Usage from '@/views/Usage.vue'
 
-const routes = [
+const routes: RouteRecordRaw[] = [
   {
     path: '/',
     redirect: '/apps',
@@ -38,9 +40,15 @@ const routes = [
     component: About,
   },
   {
-    path: '/action/:actionType',
-    name: 'ActionHandler',
-    component: ActionHandler,
+    path: '/action/grant-app',
+    name: 'GrantApp',
+    component: GrantApp,
+    meta: { fullPage: true },
+  },
+  {
+    path: '/action/oauth-callback',
+    name: 'OAuthCallback',
+    component: OAuthCallback,
   },
   {
     path: '/:pathMatch(.*)*',
